@@ -1,0 +1,231 @@
+.ficheRecette-container {
+  max-width: 1100px;
+  margin: 6rem auto;
+  background: linear-gradient(to bottom, #fffaf1, #fffdf8);
+  border-radius: 1rem;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
+  padding: 2.5rem 3rem;
+  font-family: "Montserrat", sans-serif;
+  color: #3b2a1b;
+}
+
+/* --- Retour --- */
+.ficheRecette-back {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  color: #c87a1a;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  transition: color 0.3s ease;
+}
+.ficheRecette-back:hover {
+  color: #3b2a1b;
+}
+
+/* --- Header --- */
+.ficheRecette-header {
+  display: flex;
+  gap: 2.5rem;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+.ficheRecette-header img {
+  width: 100%;
+  max-width: 460px;
+  height: 360px;
+  object-fit: cover;
+  border-radius: 1rem;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+.ficheRecette-info {
+  flex: 1;
+}
+.ficheRecette-info h1 {
+  font-family: "Playfair Display", serif;
+  font-size: 2.6rem;
+  color: #3b2a1b;
+  margin-bottom: 0.8rem;
+}
+.ficheRecette-description {
+  font-size: 1.1rem;
+  color: #5c4630;
+  margin-bottom: 1.2rem;
+  line-height: 1.6;
+}
+
+/* --- Bouton Télécharger --- */
+.btn-download {
+  margin-top: 1.5rem;
+  background-color: #c87a1a;
+  color: #fff;
+  border: none;
+  padding: 0.8rem 1.6rem;
+  border-radius: 30px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+.btn-download:hover {
+  background-color: #3b2a1b;
+  transform: scale(1.05);
+}
+
+/* --- Stats --- */
+.ficheRecette-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.3rem 2rem;
+  margin-bottom: 1rem;
+}
+.ficheRecette-stats div {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-weight: 600;
+}
+.ficheRecette-stats svg {
+  color: #c87a1a;
+}
+
+/* --- Personnes --- */
+.ficheRecette-personnes {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background-color: #fff3e0;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+}
+
+/* --- Centrage parfait des boutons + et - --- */
+.ficheRecette-personnes-btns {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+}
+
+.ficheRecette-personnes-btns button {
+  background-color: #c87a1a;
+  color: #fff;
+  border: none;
+  width: 1.9rem;
+  height: 1.9rem;
+  border-radius: 100px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex; /* centrage horizontal et vertical */
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.ficheRecette-personnes-btns button:hover {
+  background-color: #3b2a1b;
+  transform: scale(1.1);
+}
+
+/* --- Note --- */
+.ficheRecette-note {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.6rem;
+}
+.ficheRecette-note span {
+  color: #5c4630;
+  font-weight: 600;
+}
+
+/* --- Body --- */
+.ficheRecette-body {
+  margin-top: 2.5rem;
+  display: flex;
+  gap: 3rem;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+/* --- Ingrédients --- */
+.ficheRecette-ingredients {
+  flex: 1;
+  background-color: #fff;
+  padding: 1.6rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+.ficheRecette-ingredients h2 {
+  color: #c87a1a;
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+}
+.ficheRecette-ingredients ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.ficheRecette-ingredients li {
+  font-size: 1rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid #f0e0cc;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.ficheRecette-ingredients li.checked {
+  text-decoration: line-through;
+  color: #aaa;
+}
+.check-icon {
+  margin-right: 0.6rem;
+  color: #d2c3a1;
+  transition: color 0.3s ease;
+}
+.check-icon.active {
+  color: #27ae60;
+}
+.ingredient-nom {
+  font-weight: 600;
+  color: #3b2a1b;
+}
+
+/* --- Étapes --- */
+.ficheRecette-etapes {
+  flex: 2;
+}
+.ficheRecette-etapes h2 {
+  color: #c87a1a;
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+}
+.ficheRecette-etapes ol {
+  padding-left: 1.5rem;
+}
+.ficheRecette-etapes li {
+  margin-bottom: 1rem;
+  line-height: 1.7;
+  font-size: 1.05rem;
+}
+
+/* --- Responsive --- */
+@media (max-width: 992px) {
+  .ficheRecette-header {
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+  }
+  .ficheRecette-body {
+    flex-direction: column;
+  }
+}
