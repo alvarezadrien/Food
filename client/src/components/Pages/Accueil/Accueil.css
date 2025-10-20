@@ -1,60 +1,98 @@
-/* -------- CONTAINER PRINCIPAL -------- */
-.container-accueil {
+/* -------- HERO BANNER (Nouveau CONTAINER PRINCIPAL) -------- */
+.hero-banner {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: var(--primary-color);
-  height: 34.5rem;
+  background-color: var(
+    --primary-color,
+    #3e2a1d
+  ); /* Utilisation d'une variable ou fallback */
+  height: 38rem; /* Augmentation de la hauteur pour un effet plus "waw" */
   overflow: hidden;
   margin: 0;
   padding: 0;
 }
 
-/* -------- PARTIE GAUCHE -------- */
-.gauche {
+.droite-hero img {
+  --mask: radial-gradient(34.26px at 46.75px 50%, #000 99%, #0000 101%) 0
+      calc(50% - 34px) / 100% 68px,
+    radial-gradient(34.26px at -29.75px 50%, #0000 99%, #000 101%) 17px 50%/100%
+      68px repeat-y;
+  -webkit-mask: var(--mask);
+  mask: var(--mask);
+}
+
+/* -------- PARTIE GAUCHE (TEXTE & CTA) -------- */
+.gauche-hero {
   flex: 1;
   display: flex;
+  flex-direction: column;
   justify-content: center;
-  align-items: center;
+  padding: 0 4rem 0 8rem; /* Espacement intérieur */
   height: 100%;
 }
 
-.liste-assiettes {
-  list-style: none;
+.hero-title {
+  color: var(--titre-white, #ffb347);
+  font-size: 3.8rem;
+  margin-bottom: 1rem;
+  line-height: 1.1;
+}
+
+.hero-subtitle {
+  color: var(--text-white, #fff);
+  font-size: 1.35rem;
+  margin-bottom: 2.5rem;
+  line-height: 1.5;
+}
+
+.hero-cta-buttons {
   display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  align-items: center;
-  padding: 0;
-  margin: 0;
+  gap: 1.5rem;
 }
 
-.liste-assiettes li {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.liste-assiettes li:hover {
-  transform: scale(1.08);
-  box-shadow: 0 0 25px rgba(255, 213, 153, 0.4);
-}
-
-.liste-assiettes img {
-  width: 11rem;
-  height: 11rem;
-  object-fit: cover;
-  border-radius: 50%;
-  border: 3px solid #f4d6a0;
-  transition: all 0.3s ease;
+.cta-button {
+  border: none;
+  padding: 1rem 2.5rem;
+  font-size: 1.2rem;
+  font-weight: bold;
   cursor: pointer;
+  border-radius: 5px;
+  transition: all 0.3s ease;
 }
 
-.liste-assiettes img:hover {
-  border-color: #ffb347;
-  transform: scale(1.1);
+.cta-button a {
+  text-decoration: none;
+  color: inherit;
 }
 
-/* -------- PARTIE DROITE -------- */
-.droite {
+.primary-cta {
+  background-color: var(--btn-1-color, #ffb347);
+  color: var(--text-black, #3e2a1d);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.primary-cta:hover {
+  background-color: #ffd685;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+.secondary-cta {
+  background-color: transparent;
+  color: var(--text-white, #fff);
+  border: 2px solid var(--text-white, #fff);
+}
+
+.secondary-cta:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-3px);
+  border-color: var(--btn-1-color, #ffb347);
+  color: var(--btn-1-color, #ffb347);
+}
+
+/* -------- PARTIE DROITE (IMAGE) -------- */
+.droite-hero {
   flex: 2;
   display: flex;
   justify-content: flex-end;
@@ -64,19 +102,11 @@
   overflow: hidden;
 }
 
-.droite img {
-  width: 90rem;
-  height: 40rem;
+.droite-hero img {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-}
-
-.droite {
-  --mask: radial-gradient(30.24px at 42.3px 50%, #000 99%, #0000 101%) 0
-      calc(50% - 36px) / 100% 72px,
-    radial-gradient(30.24px at -24.3px 50%, #0000 99%, #000 101%) 18px 50%/100%
-      72px repeat-y;
-  -webkit-mask: var(--mask);
-  mask: var(--mask);
+  /* Retrait du masque complexe pour un effet plus net et simple */
 }
 
 /* -------- BANNIÈRE DE CHOIX -------- */
@@ -163,12 +193,12 @@
 
 /* -------- SECTION POPULAIRES -------- */
 .Container_populaires {
-  background-color: var(--primary-color);
+  background-color: var(--primary-color, #3e2a1d);
   padding: 1rem 8rem;
 }
 
 .h2_populaires1 {
-  color: var(--titre-white);
+  color: var(--titre-white, #ffb347);
   font-size: 2.5rem;
   margin-top: 1rem;
   margin-left: 9rem;
@@ -182,7 +212,7 @@
 }
 
 .para_populaires1 {
-  color: var(--text-white);
+  color: var(--text-white, #fff);
   font-size: 1.1rem;
   line-height: 1.6;
   width: 50%;
@@ -203,8 +233,8 @@
 }
 
 .Btn_populaires1 button {
-  background-color: var(--btn-1-color);
-  color: var(--text-black);
+  background-color: var(--btn-1-color, #ffb347);
+  color: var(--text-black, #3e2a1d);
   border: none;
   padding: 0.9rem 2rem;
   font-size: 1.2rem;
@@ -264,7 +294,7 @@
 .div_saison2 h3 {
   font-size: 1.7rem;
   margin-bottom: 1rem;
-  color: var(--color-orange);
+  color: var(--color-orange, #ffb347);
 }
 
 .div_saison2 p {
@@ -296,8 +326,8 @@
 }
 
 .div_saison3 button {
-  background-color: var(--color-orange);
-  color: var(--text-white);
+  background-color: var(--color-orange, #ffb347);
+  color: var(--text-white, #fff);
   border: none;
   padding: 0.8rem 1.8rem;
   font-size: 1.1rem;
@@ -375,33 +405,64 @@
   color: #27ae60;
 }
 
-/* -------- RESPONSIVE -------- */
+/* Styles pour les cartes */
+.div_cartes_h2 {
+  background-color: var(--primary-color, #3e2a1d);
+  color: var(--text-white, #fff);
+  padding: 15px;
+  font-size: 1.5rem;
+  width: fit-content;
+  justify-self: center;
+  margin-top: 1rem;
+}
+
+/* -------- RESPONSIVE (Mise à jour pour la Hero Banner) -------- */
+@media (max-width: 1200px) {
+  /* Ajustement de la taille de la Hero Banner sur les grands écrans */
+  .gauche-hero {
+    padding: 0 2rem 0 6rem;
+  }
+  .hero-title {
+    font-size: 3rem;
+  }
+}
+
 @media (max-width: 1024px) {
-  .container-accueil {
+  /* Anciens styles de container-accueil retirés */
+  .hero-banner {
     flex-direction: column;
     height: auto;
+    padding-bottom: 3rem; /* Espace en bas pour la version mobile */
   }
 
-  .gauche {
+  .gauche-hero {
+    padding: 3rem 4rem 2rem 4rem;
+    text-align: center;
+  }
+
+  .hero-title {
+    font-size: 2.5rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1.1rem;
+  }
+
+  .hero-cta-buttons {
     justify-content: center;
-    padding: 2rem 0;
   }
 
-  .liste-assiettes {
-    flex-direction: row;
-    gap: 2rem;
-  }
-
-  .droite {
+  .droite-hero {
     width: 100%;
-    height: auto;
+    height: 18rem; /* Hauteur fixe pour l'image en mobile */
   }
 
-  .droite img {
+  .droite-hero img {
     width: 100%;
-    height: auto;
+    height: 100%;
   }
 
+  /* Reste des styles Responsive inchangés */
   .div_saison1 {
     flex-direction: column;
   }
@@ -440,12 +501,55 @@
   }
 }
 
-.div_cartes_h2 {
-  background-color: var(--primary-color);
-  color: var(--text-white);
-  padding: 15px;
-  font-size: 1.5rem;
-  width: fit-content;
-  justify-self: center;
-  margin-top: 1rem;
+@media (max-width: 768px) {
+  .gauche-hero {
+    padding: 2rem;
+  }
+
+  .hero-title {
+    font-size: 2rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+
+  .hero-cta-buttons {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .cta-button {
+    padding: 0.8rem 1.5rem;
+    font-size: 1.1rem;
+  }
+
+  .Container_populaires,
+  .container_saison1 {
+    padding: 1rem 2rem;
+  }
+
+  .h2_populaires1 {
+    margin-left: 0;
+    text-align: center;
+  }
+
+  .div_populaires1 {
+    flex-direction: column-reverse; /* Image en bas, texte en haut */
+  }
+
+  .para_populaires1 {
+    width: 100%;
+  }
+
+  .img_populaires1 {
+    width: 20rem;
+    height: 20rem;
+  }
+
+  .Btn_populaires1 {
+    margin-top: 2rem;
+    justify-content: center;
+    flex-direction: column;
+  }
 }

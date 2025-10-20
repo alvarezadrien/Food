@@ -5,6 +5,31 @@ import "./Accueil.css";
 import CartesAccueil from "../../Cartes/CarteAccueil/CartesA";
 import AvisPages from "../../Widgets/Avis/Avis";
 
+// Nouveau composant de la bannière principale
+const HeroBanner = () => (
+  <div className="hero-banner">
+    <div className="gauche-hero">
+      <h1 className="hero-title">L'Inspiration Culinaire à Portée de Main</h1>
+      <p className="hero-subtitle">
+        Des recettes saines, gourmandes et de saison pour égayer votre
+        quotidien. Trouvez votre prochain plat signature !
+      </p>
+      <div className="hero-cta-buttons">
+        <button className="cta-button primary-cta">
+          <a href="#recettes-populaires">Explorer les Recettes</a>
+        </button>
+        <button className="cta-button secondary-cta">
+          <a href="#saison">Saison Actuelle 🍂</a>
+        </button>
+      </div>
+    </div>
+
+    <div className="droite-hero">
+      <img src="/Images/Img_banniere1.jpg" alt="Bannière aliments" />
+    </div>
+  </div>
+);
+
 function Accueil() {
   const categories = [
     { nom: "Petit-déjeuner", image: "/Images/Img_choix/Petit_dejeuner.png" },
@@ -22,32 +47,8 @@ function Accueil() {
 
   return (
     <>
-      {/* SECTION PRINCIPALE */}
-      <div className="container-accueil">
-        <div className="gauche">
-          <ul className="liste-assiettes">
-            <li>
-              <a href="#recette1">
-                <img src="/Images/Assiette_1.png" alt="Assiette 1" />
-              </a>
-            </li>
-            <li>
-              <a href="#recette2">
-                <img src="/Images/Assiette_2.png" alt="Assiette 2" />
-              </a>
-            </li>
-            <li>
-              <a href="#recette3">
-                <img src="/Images/Assiette_3.png" alt="Assiette 3" />
-              </a>
-            </li>
-          </ul>
-        </div>
-
-        <div className="droite">
-          <img src="/Images/Img_banniere1.jpg" alt="Bannière aliments" />
-        </div>
-      </div>
+      {/* SECTION PRINCIPALE MODIFIÉE */}
+      <HeroBanner />
 
       {/* BANNIÈRE DE CHOIX */}
       <div className="banniere_choix">
@@ -66,7 +67,7 @@ function Accueil() {
       </div>
 
       {/* SECTION POPULAIRES */}
-      <div className="Container_populaires">
+      <div className="Container_populaires" id="recettes-populaires">
         <h2 className="h2_populaires1">Les recettes populaires</h2>
 
         <div className="div_populaires1">
@@ -101,7 +102,7 @@ function Accueil() {
       </div>
 
       {/* SECTION SAISON enrichie */}
-      <section className="container_saison1">
+      <section className="container_saison1" id="saison">
         <h2 className="h2_saison1">
           🍂 La Fête des Saveurs d'Automne : Cuisinez selon la Saison
         </h2>
