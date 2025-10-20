@@ -1,0 +1,176 @@
+/* -------- SECTION AVIS -------- */
+.avis-section {
+  background-color: #fff8ee;
+  padding: 5rem 8rem;
+  text-align: center;
+}
+
+.avis-titre {
+  font-size: 2.5rem;
+  color: #784f23;
+  margin-bottom: 0.5rem;
+}
+
+.avis-intro {
+  font-size: 1.1rem;
+  color: #5a4630;
+  margin-bottom: 3rem;
+}
+
+/* -------- CONTAINER DES CARTES -------- */
+.avis-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2.5rem;
+}
+
+/* -------- CARTE AVIS -------- */
+.avis-carte {
+  background: #fff;
+  width: 18rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+}
+
+.avis-carte:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
+}
+
+/* -------- IMAGE -------- */
+.avis-image img {
+  width: 100%;
+  height: 12rem;
+  object-fit: cover;
+  border-bottom: 3px solid #f0c987;
+}
+
+/* -------- CONTENU -------- */
+.avis-contenu {
+  padding: 1.3rem 1.5rem;
+  text-align: left;
+}
+
+.avis-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.avis-header h3 {
+  font-size: 1.25rem;
+  color: #3b2a1b;
+  margin: 0;
+}
+
+/* -------- ICONES -------- */
+.avis-icons {
+  display: flex;
+  gap: 0.7rem;
+}
+
+.icon-share,
+.icon-flag {
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.icon-share:hover {
+  transform: scale(1.15);
+  opacity: 0.8;
+}
+
+.icon-flag:hover {
+  transform: scale(1.15);
+  opacity: 0.8;
+}
+
+/* -------- ETOILES -------- */
+.avis-stars {
+  margin-top: 0.4rem;
+  margin-bottom: 0.7rem;
+}
+
+.star {
+  color: #d6c4a1;
+  font-size: 1.1rem;
+}
+
+.star.active {
+  color: #ffb347;
+}
+
+/* -------- TEXTE -------- */
+.avis-commentaire {
+  font-size: 0.95rem;
+  color: #444;
+  line-height: 1.5;
+  margin-bottom: 0.6rem;
+}
+
+.avis-user {
+  font-weight: 600;
+  color: #7a5a3c;
+}
+
+/* -------- MENU PARTAGE -------- */
+.menu-partage {
+  display: flex;
+  gap: 0.7rem;
+  margin-top: 1rem;
+}
+
+.menu-partage button {
+  background-color: #f6e3c0;
+  border: none;
+  border-radius: 1.5rem;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.85rem;
+  color: #5c3b1e;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.menu-partage button:hover {
+  background-color: #ffdca2;
+}
+
+/* -------- AJOUT D’AVIS -------- */
+.ajout-avis {
+  margin-top: 3.5rem;
+}
+
+.btn-ajouter {
+  background-color: #784f23;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border: none;
+  padding: 0.9rem 2rem;
+  border-radius: 2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(120, 79, 35, 0.25);
+}
+
+.btn-ajouter:hover {
+  background-color: #c87a1a;
+  transform: translateY(-3px);
+}
+
+/* -------- RESPONSIVE -------- */
+@media (max-width: 1024px) {
+  .avis-section {
+    padding: 4rem 2rem;
+  }
+
+  .avis-carte {
+    width: 90%;
+  }
+}

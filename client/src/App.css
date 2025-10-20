@@ -1,0 +1,98 @@
+/* -------------------- */
+/* 🌍 RESET DE BASE */
+/* -------------------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* -------------------- */
+/* 🖤 STYLE GLOBAL */
+/* -------------------- */
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  background-color: #fdfdfd;
+  color: #333;
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* -------------------- */
+/* 🔠 TITRES & TEXTES */
+/* -------------------- */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 600;
+  color: #222;
+}
+
+p {
+  font-size: 1rem;
+  color: #444;
+  margin-bottom: 1rem;
+}
+
+/* -------------------- */
+/* 🔗 LIENS */
+/* -------------------- */
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: #6b8e23;
+}
+
+/* -------------------- */
+/* 🔘 BOUTONS GLOBAUX */
+/* -------------------- */
+button {
+  font-family: inherit;
+  font-size: 1rem;
+  cursor: pointer;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.8rem 1.6rem;
+  background-color: #556b2f;
+  color: white;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+  background-color: #6b8e23;
+  transform: translateY(-2px);
+}
+
+/* -------------------- */
+/* 🧭 CONTAINER PRINCIPAL */
+/* -------------------- */
+.App {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+:root {
+  --primary-color: #656d4a;
+  --text-white: #fff;
+  --text-black: #000;
+  --titre-white: #fff;
+  --btn-1-color: #f1eccc;
+  --color-div: #fbf6e9;
+  --color-orange: #d8833a;
+}

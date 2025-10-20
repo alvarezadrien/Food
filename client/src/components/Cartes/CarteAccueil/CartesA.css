@@ -1,0 +1,135 @@
+.cartes-accueil {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2.5rem;
+  padding: 4rem 6rem;
+}
+
+/* --- Cartes --- */
+.carte {
+  background: #ffffff;
+  border-radius: 1rem;
+  box-shadow: 2px 9px 15px 2px rgba(0, 0, 0, 0.2);
+  width: 18rem;
+  padding: 1.5rem;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.carte:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* --- Image --- */
+.carte-img {
+  width: 100%;
+  height: 12rem;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-bottom: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.carte:hover .carte-img {
+  transform: scale(1.05);
+}
+
+/* --- Titre et icônes --- */
+.carte-titre {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.8rem;
+}
+
+.carte-titre h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #3b2a1b;
+  margin: 0;
+  text-align: left;
+}
+
+.icons-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* --- Icônes --- */
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.icon-btn:hover {
+  transform: scale(1.2);
+}
+
+/* --- Description --- */
+.carte p {
+  font-size: 0.95rem;
+  color: #555;
+  line-height: 1.4;
+  margin-bottom: 1.2rem;
+  text-align: left;
+}
+
+/* --- Bouton Voir la recette --- */
+.btn-recette {
+  background-color: #3b2a1b;
+  color: #fff;
+  border: none;
+  padding: 0.7rem 1.4rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-recette:hover {
+  background-color: #c87a1a;
+  transform: scale(1.05);
+}
+
+/* --- Message Copié ou Partagé --- */
+.copied-msg {
+  display: block;
+  margin-top: 0.8rem;
+  font-size: 0.9rem;
+  color: #27ae60;
+  font-weight: 600;
+  animation: fadeOut 2s ease forwards;
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+}
+
+/* --- Responsive --- */
+@media (max-width: 1024px) {
+  .cartes-accueil {
+    padding: 3rem 2rem;
+    gap: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .carte {
+    width: 90%;
+  }
+}

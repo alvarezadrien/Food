@@ -1,0 +1,451 @@
+/* -------- CONTAINER PRINCIPAL -------- */
+.container-accueil {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--primary-color);
+  height: 34.5rem;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+/* -------- PARTIE GAUCHE -------- */
+.gauche {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.liste-assiettes {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: center;
+  padding: 0;
+  margin: 0;
+}
+
+.liste-assiettes li {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.liste-assiettes li:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 25px rgba(255, 213, 153, 0.4);
+}
+
+.liste-assiettes img {
+  width: 11rem;
+  height: 11rem;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid #f4d6a0;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.liste-assiettes img:hover {
+  border-color: #ffb347;
+  transform: scale(1.1);
+}
+
+/* -------- PARTIE DROITE -------- */
+.droite {
+  flex: 2;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.droite img {
+  width: 90rem;
+  height: 40rem;
+  object-fit: cover;
+}
+
+.droite {
+  --mask: radial-gradient(30.24px at 42.3px 50%, #000 99%, #0000 101%) 0
+      calc(50% - 36px) / 100% 72px,
+    radial-gradient(30.24px at -24.3px 50%, #0000 99%, #000 101%) 18px 50%/100%
+      72px repeat-y;
+  -webkit-mask: var(--mask);
+  mask: var(--mask);
+}
+
+/* -------- BANNIÈRE DE CHOIX -------- */
+.banniere_choix {
+  background: linear-gradient(90deg, #f7e8d3, #f4d6a0);
+  padding: 2.5rem 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-top: 0.3rem solid #cfa25f;
+  border-bottom: 0.3rem solid #cfa25f;
+  overflow-x: auto;
+  white-space: nowrap;
+  scrollbar-width: none;
+}
+
+.banniere_choix::-webkit-scrollbar {
+  display: none;
+}
+
+.liste_choix1 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 3rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.categorie-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.icone-container {
+  width: 8rem;
+  height: 8rem;
+  border-radius: 50%;
+  background-color: #fff7eb;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 0.2rem solid transparent;
+  box-shadow: 0 0.6rem 1.2rem rgba(0, 0, 0, 0.1);
+  transition: all 0.4s ease;
+  margin-bottom: 0.8rem;
+}
+
+.icone-container img {
+  width: 70%;
+  height: 70%;
+  object-fit: contain;
+  display: block;
+  margin: auto;
+  transition: transform 0.4s ease;
+}
+
+.nom-categorie {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #5c3b1e;
+  text-align: center;
+  width: 9rem;
+}
+
+/* Effet au survol */
+.categorie-item:hover .icone-container {
+  border-color: #ffb347;
+  transform: translateY(-6px);
+  background-color: #fff3de;
+}
+
+.categorie-item:hover img {
+  transform: scale(1.12);
+}
+
+.categorie-item:hover .nom-categorie {
+  color: #c87a1a;
+}
+
+/* -------- SECTION POPULAIRES -------- */
+.Container_populaires {
+  background-color: var(--primary-color);
+  padding: 1rem 8rem;
+}
+
+.h2_populaires1 {
+  color: var(--titre-white);
+  font-size: 2.5rem;
+  margin-top: 1rem;
+  margin-left: 9rem;
+}
+
+.div_populaires1 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 3rem;
+}
+
+.para_populaires1 {
+  color: var(--text-white);
+  font-size: 1.1rem;
+  line-height: 1.6;
+  width: 50%;
+  text-align: justify;
+}
+
+.img_populaires1 {
+  width: 27rem;
+  height: 27rem;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.Btn_populaires1 {
+  display: flex;
+  gap: 2rem;
+  margin-top: -5rem;
+}
+
+.Btn_populaires1 button {
+  background-color: var(--btn-1-color);
+  color: var(--text-black);
+  border: none;
+  padding: 0.9rem 2rem;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.Btn_populaires1 button:hover {
+  transform: scale(1.05);
+}
+
+/* -------- SECTION SAISON -------- */
+.container_saison1 {
+  background-color: #fff8ee;
+  color: #3e2a1d;
+  padding: 4rem 8rem;
+}
+
+.h2_saison1 {
+  font-size: 2.4rem;
+  text-align: center;
+  color: #784f23;
+  margin-bottom: 2rem;
+}
+
+.container_saison1 img {
+  display: block;
+  margin: 0 auto 3rem auto;
+  width: 80%;
+  height: 22rem;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 1rem;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+
+.div_saison1 {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: 3rem;
+  position: relative;
+  margin-bottom: 3rem;
+}
+
+.saison-divider {
+  width: 2px;
+  background-color: #cfa25f;
+  height: auto;
+}
+
+/* Partie gauche */
+.div_saison2 {
+  flex: 1;
+}
+
+.div_saison2 h3 {
+  font-size: 1.7rem;
+  margin-bottom: 1rem;
+  color: var(--color-orange);
+}
+
+.div_saison2 p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  text-align: justify;
+}
+
+/* Partie droite */
+.div_saison3 {
+  flex: 1;
+  background-color: #f7e8d3;
+  padding: 2rem;
+  border-radius: 1rem;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.div_saison3 h3 {
+  color: #c87a1a;
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.div_saison3 span {
+  display: block;
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.div_saison3 button {
+  background-color: var(--color-orange);
+  color: var(--text-white);
+  border: none;
+  padding: 0.8rem 1.8rem;
+  font-size: 1.1rem;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.div_saison3 button:hover {
+  transform: scale(1.05);
+}
+
+/* -------- CADRES FRUITS ET LÉGUMES -------- */
+.saison-produits {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 3rem;
+  margin-top: 3rem;
+}
+
+.product-card {
+  background-color: #fffdf9;
+  border-radius: 1.2rem;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  width: 48%;
+  min-width: 320px;
+  padding: 2rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+.product-card h2 {
+  font-size: 1.9rem;
+  margin-bottom: 1.2rem;
+  color: #a85b1f;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+#legumes h2 {
+  color: #2d8659;
+}
+
+.product-list {
+  list-style: none;
+  padding: 0;
+  columns: 2;
+  column-gap: 2rem;
+}
+
+.product-list li {
+  font-size: 1.05rem;
+  padding: 6px 0;
+  position: relative;
+  padding-left: 20px;
+}
+
+.product-list li::before {
+  content: "•";
+  color: #a85b1f;
+  font-size: 1.4rem;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+#legumes .product-list li::before {
+  color: #27ae60;
+}
+
+/* -------- RESPONSIVE -------- */
+@media (max-width: 1024px) {
+  .container-accueil {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .gauche {
+    justify-content: center;
+    padding: 2rem 0;
+  }
+
+  .liste-assiettes {
+    flex-direction: row;
+    gap: 2rem;
+  }
+
+  .droite {
+    width: 100%;
+    height: auto;
+  }
+
+  .droite img {
+    width: 100%;
+    height: auto;
+  }
+
+  .div_saison1 {
+    flex-direction: column;
+  }
+
+  .saison-divider {
+    display: none;
+  }
+
+  .div_saison3 {
+    width: 100%;
+  }
+
+  .saison-produits {
+    flex-direction: column;
+  }
+
+  .product-card {
+    width: 100%;
+  }
+
+  .product-list {
+    columns: 1;
+  }
+
+  .liste_choix1 {
+    gap: 1.5rem;
+  }
+
+  .icone-container {
+    width: 6.5rem;
+    height: 6.5rem;
+  }
+
+  .nom-categorie {
+    font-size: 0.95rem;
+  }
+}
+
+.div_cartes_h2 {
+  background-color: var(--primary-color);
+  color: var(--text-white);
+  padding: 15px;
+  font-size: 1.5rem;
+  width: fit-content;
+  justify-self: center;
+  margin-top: 1rem;
+}
