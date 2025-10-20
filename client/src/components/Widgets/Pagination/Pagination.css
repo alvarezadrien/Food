@@ -1,0 +1,73 @@
+/* ===== PAGINATION ===== */
+.pagination-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin: 2.5rem auto 4rem;
+  padding: 0.8rem 1.5rem;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
+  border-bottom: 4px solid var(--primary-color);
+  border-radius: 0.8rem;
+  background-color: #fff;
+  width: fit-content;
+}
+
+/* --- Boutons Précédent / Suivant --- */
+.pagination-btn {
+  background: none;
+  border: 1px solid #3b2a1b;
+  color: #3b2a1b;
+  padding: 0.5rem 1.2rem;
+  border-radius: 5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background-color: #3b2a1b;
+  color: #fff;
+}
+
+.pagination-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* --- Conteneur des pages --- */
+.pagination-pages {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+}
+
+/* --- Cercles numérotés --- */
+.pagination-circle {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50px;
+  border: 1px solid #3b2a1b;
+  background: #fff;
+  color: #3b2a1b;
+  font-weight: 600;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.pagination-circle:hover {
+  background-color: #f4d6a0;
+}
+
+.pagination-circle.active {
+  background-color: #3b2a1b;
+  color: #fff;
+  border-color: #3b2a1b;
+  transform: scale(1.05);
+}

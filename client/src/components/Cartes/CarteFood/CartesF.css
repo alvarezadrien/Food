@@ -1,0 +1,136 @@
+/* ===== CONTAINER ===== */
+.cartesAccueil-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2.5rem;
+  padding: 4rem 6rem;
+}
+
+/* ===== CARTE ===== */
+.carteAccueil {
+  background: #ffffff;
+  border-radius: 1rem;
+  box-shadow: 2px 9px 15px 2px rgba(0, 0, 0, 0.2);
+  width: 18rem;
+  padding: 1.5rem;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.carteAccueil:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* ===== IMAGE ===== */
+.carteAccueil-img {
+  width: 100%;
+  height: 12rem;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-bottom: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.carteAccueil:hover .carteAccueil-img {
+  transform: scale(1.05);
+}
+
+/* ===== HEADER ===== */
+.carteAccueil-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.8rem;
+}
+
+.carteAccueil-header h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #3b2a1b;
+  margin: 0;
+  text-align: left;
+}
+
+/* ===== ICONES ===== */
+.carteAccueil-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.carteAccueil-iconBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.carteAccueil-iconBtn:hover {
+  transform: scale(1.2);
+}
+
+/* ===== DESCRIPTION ===== */
+.carteAccueil-description {
+  font-size: 0.95rem;
+  color: #555;
+  line-height: 1.4;
+  margin-bottom: 1.2rem;
+  text-align: left;
+}
+
+/* ===== BOUTON ===== */
+.carteAccueil-btn {
+  background-color: #3b2a1b;
+  color: #fff;
+  border: none;
+  padding: 0.7rem 1.4rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.carteAccueil-btn:hover {
+  background-color: #c87a1a;
+  transform: scale(1.05);
+}
+
+/* ===== MESSAGE ===== */
+.carteAccueil-message {
+  display: block;
+  margin-top: 0.8rem;
+  font-size: 0.9rem;
+  color: #27ae60;
+  font-weight: 600;
+  animation: fadeOut 2s ease forwards;
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .cartesAccueil-container {
+    padding: 3rem 2rem;
+    gap: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .carteAccueil {
+    width: 90%;
+  }
+}
