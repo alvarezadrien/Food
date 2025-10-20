@@ -7,11 +7,13 @@ import PlatPrincipaux from "./components/Pages/PlatPrincipaux/Principaux.jsx";
 
 //Import Widgets
 import Footer from "../src/components/Widgets/Footer/Footer.jsx";
+import Navbar from "./components/Widgets/Navbar/Navbar.jsx";
 
 function App() {
   return (
     <Router>
       <div className="App">
+        <Navbar />
         <Routes>
           <Route path="/" element={<Accueil />} />
           <Route path="Plats_Principaux" element={<PlatPrincipaux />} />
