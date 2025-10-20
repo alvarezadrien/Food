@@ -5,6 +5,7 @@ import "./App.css";
 import Accueil from "./components/Pages/Accueil/Accueil.jsx";
 import PlatPrincipaux from "./components/Pages/PlatPrincipaux/Principaux.jsx";
 import FicheRecettes from "./components/Pages/FichesRecettes/FichesR.jsx";
+import Contact from "./components/Pages/Contact/Contact.jsx";
 
 //Import Widgets
 import Footer from "../src/components/Widgets/Footer/Footer.jsx";
@@ -18,7 +19,8 @@ function App() {
         <Routes>
           <Route path="/" element={<Accueil />} />
           <Route path="Plats_Principaux" element={<PlatPrincipaux />} />
-          <Route path="Fiches_Recettes" element={<FicheRecettes />} />
+          <Route path="/" element={<Accueil />} />
+          <Route path="Contact" element={<Contact />} />
         </Routes>
         <Footer />
       </div>
