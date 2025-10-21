@@ -1,0 +1,253 @@
+.printemps-container {
+  background-color: #fffdf8;
+  font-family: "Montserrat", sans-serif;
+  color: #3b2a1b;
+}
+
+/* --- Bannière --- */
+.printemps-banner {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(120deg, #fff8ef, #e9fce9);
+  padding: 5rem 8%;
+  border-bottom: 3px solid #e6d5b7;
+}
+
+.banner-left {
+  flex: 1;
+  min-width: 300px;
+}
+
+.titre-printemps {
+  font-family: "Playfair Display", serif;
+  font-size: 2.8rem;
+  color: #3b2a1b;
+  margin-bottom: 1.2rem;
+}
+
+.texte-banner {
+  font-size: 1.1rem;
+  color: #5a4633;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  max-width: 520px;
+}
+
+.btn-printemps {
+  background-color: #c87a1a;
+  color: #fff;
+  padding: 0.8rem 1.6rem;
+  border-radius: 30px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.btn-printemps:hover {
+  background-color: #3b2a1b;
+  transform: scale(1.05);
+}
+
+.banner-right {
+  flex: 1;
+  text-align: center;
+}
+
+.img-banner {
+  width: 90%;
+  max-width: 480px;
+  border-radius: 1rem;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* --- Produits de saison --- */
+.produits-printemps {
+  padding: 4rem 8%;
+  background-color: #fffaf3;
+  text-align: center;
+}
+
+.produits-printemps h2 {
+  font-size: 2rem;
+  color: #3b2a1b;
+  margin-bottom: 2.5rem;
+}
+
+.grille-produits {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 2.5rem;
+}
+
+.carte-produit {
+  background-color: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+  padding: 1.5rem 1.8rem;
+  width: 280px;
+  transition: transform 0.3s ease;
+}
+
+.carte-produit:hover {
+  transform: translateY(-8px);
+}
+
+.carte-produit img {
+  width: 100%;
+  height: 180px;
+  border-radius: 0.8rem;
+  object-fit: cover;
+  margin-bottom: 1rem;
+}
+
+.carte-produit h3 {
+  color: #c87a1a;
+  margin-bottom: 1rem;
+}
+
+.carte-produit ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  color: #5c4630;
+  text-align: left;
+}
+
+.carte-produit li {
+  margin-bottom: 0.4rem;
+  font-size: 1rem;
+}
+
+/* --- Recettes --- */
+.recettes-printemps {
+  padding: 4rem 8%;
+  background-color: #fff;
+  text-align: center;
+}
+
+.recettes-printemps h2 {
+  font-size: 2.2rem;
+  color: #3b2a1b;
+  margin-bottom: 1rem;
+}
+
+.intro-recettes {
+  color: #6a5d48;
+  font-size: 1.05rem;
+  margin-bottom: 2.5rem;
+}
+
+.grille-recettes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2.5rem;
+}
+
+.carte-recette {
+  background-color: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.carte-recette:hover {
+  transform: translateY(-8px);
+}
+
+.carte-recette img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+}
+
+.info-recette {
+  padding: 1.5rem;
+  text-align: left;
+}
+
+.info-recette h3 {
+  font-size: 1.3rem;
+  color: #3b2a1b;
+  margin-bottom: 0.5rem;
+}
+
+.info-recette p {
+  font-size: 0.95rem;
+  color: #5c4630;
+  margin-bottom: 1rem;
+}
+
+.btn-voir {
+  background-color: #c87a1a;
+  color: #fff;
+  padding: 0.6rem 1.2rem;
+  border-radius: 25px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.btn-voir:hover {
+  background-color: #3b2a1b;
+}
+
+/* --- Astuce --- */
+.astuce-printemps {
+  background: linear-gradient(90deg, #fffaf1, #f6ffe9);
+  text-align: center;
+  padding: 4rem 8%;
+  margin-top: 4rem;
+  border-radius: 1rem;
+}
+
+.astuce-printemps h2 {
+  color: #c87a1a;
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+}
+
+.astuce-printemps p {
+  color: #3b2a1b;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  max-width: 800px;
+  margin: auto;
+}
+
+/* --- Cartes Accueil --- */
+.cartes-printemps {
+  background-color: var(--primary-color);
+  padding: 4rem 8%;
+  text-align: center;
+}
+
+.cartes-printemps h2 {
+  color: var(--titre-white);
+  margin-bottom: 2rem;
+}
+
+/* --- Responsive --- */
+@media (max-width: 992px) {
+  .printemps-banner {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .banner-left {
+    margin-bottom: 2rem;
+  }
+
+  .img-banner {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .grille-produits {
+    flex-direction: column;
+    align-items: center;
+  }
+}

@@ -19,6 +19,9 @@ import Sauces from "./components/Pages/Sauces/Sauces.jsx";
 import SnackA from "./components/Pages/SnackApero/SnackA.jsx";
 import Desserts from "./components/Pages/Desserts/Desserts.jsx";
 
+// Import Saisons pages
+import Printemps from "./components/Pages/Saisons/Printemps/Printemps.jsx";
+
 //Import Widgets
 import Footer from "../src/components/Widgets/Footer/Footer.jsx";
 import Navbar from "./components/Widgets/Navbar/Navbar.jsx";
@@ -47,6 +50,8 @@ function App() {
             path="Politique_confidentialité"
             element={<Confidentialite />}
           />
+
+          <Route path="Printemps" element={<Printemps />} />
         </Routes>
         <Footer />
       </div>
