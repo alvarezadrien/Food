@@ -25,16 +25,66 @@ function FicheRecettes() {
     portions: 4,
     note: 4.5,
     ingredients: [
-      { nom: "Feuilles de lasagnes", quantite: 12, unite: "feuilles" },
-      { nom: "Bœuf haché", quantite: 500, unite: "g" },
-      { nom: "Ricotta", quantite: 250, unite: "g" },
-      { nom: "Oignon jaune", quantite: 1, unite: "" },
-      { nom: "Gousses d’ail", quantite: 2, unite: "" },
-      { nom: "Tomates concassées", quantite: 400, unite: "g" },
-      { nom: "Concentré de tomates", quantite: 2, unite: "c. à soupe" },
-      { nom: "Parmesan râpé", quantite: 30, unite: "g" },
-      { nom: "Mozzarella", quantite: 150, unite: "g" },
-      { nom: "Huile d’olive, sel, poivre, basilic", quantite: "", unite: "" },
+      {
+        nom: "Feuilles de lasagnes",
+        quantite: 12,
+        unite: "feuilles",
+        image: "https://picsum.photos/60?random=1",
+      },
+      {
+        nom: "Bœuf haché",
+        quantite: 500,
+        unite: "g",
+        image: "https://picsum.photos/60?random=2",
+      },
+      {
+        nom: "Ricotta",
+        quantite: 250,
+        unite: "g",
+        image: "https://picsum.photos/60?random=3",
+      },
+      {
+        nom: "Oignon jaune",
+        quantite: 1,
+        unite: "",
+        image: "https://picsum.photos/60?random=4",
+      },
+      {
+        nom: "Gousses d’ail",
+        quantite: 2,
+        unite: "",
+        image: "https://picsum.photos/60?random=5",
+      },
+      {
+        nom: "Tomates concassées",
+        quantite: 400,
+        unite: "g",
+        image: "https://picsum.photos/60?random=6",
+      },
+      {
+        nom: "Concentré de tomates",
+        quantite: 2,
+        unite: "c. à soupe",
+        image: "https://picsum.photos/60?random=7",
+      },
+      {
+        nom: "Parmesan râpé",
+        quantite: 30,
+        unite: "g",
+        image: "https://picsum.photos/60?random=8",
+      },
+      {
+        nom: "Mozzarella",
+        quantite: 150,
+        unite: "g",
+        image: "https://picsum.photos/60?random=9",
+      },
+      {
+        nom: "Huile d’olive, sel, poivre, basilic",
+        quantite: "",
+        unite: "",
+        image: "https://picsum.photos/60?random=10",
+      },
     ],
     etapes: [
       "Préchauffez le four à 180°C.",
@@ -64,10 +114,9 @@ function FicheRecettes() {
     );
   };
 
-  // --- Téléchargement PDF amélioré et complet ---
+  // --- Téléchargement PDF ---
   const telechargerPDF = async () => {
     const element = recetteRef.current;
-
     const clone = element.cloneNode(true);
     clone.querySelectorAll("button, .check-icon").forEach((el) => el.remove());
     clone.style.maxWidth = "900px";
@@ -96,23 +145,19 @@ function FicheRecettes() {
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
       let position = 0;
 
-      // Si le contenu dépasse une page
       if (imgHeight < pageHeight) {
         pdf.addImage(imgData, "PNG", 10, 10, imgWidth, imgHeight);
       } else {
         let heightLeft = imgHeight;
         let y = 0;
-
         while (heightLeft > 0) {
           pdf.addImage(imgData, "PNG", 10, y - position, imgWidth, imgHeight);
           heightLeft -= pageHeight;
           position += pageHeight;
-
           if (heightLeft > 0) pdf.addPage();
         }
       }
 
-      // Ajout d’un pied de page
       const totalPages = pdf.getNumberOfPages();
       for (let i = 1; i <= totalPages; i++) {
         pdf.setPage(i);
@@ -185,6 +230,11 @@ function FicheRecettes() {
                 onClick={() => toggleIngredient(item.nom)}
                 className={checked.includes(item.nom) ? "checked" : ""}
               >
+                <img
+                  src={item.image}
+                  alt={item.nom}
+                  className="ingredient-image"
+                />
                 <FaCheckCircle
                   className={`check-icon ${
                     checked.includes(item.nom) ? "active" : ""
