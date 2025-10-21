@@ -1,0 +1,75 @@
+.conf-container {
+  max-width: 900px;
+  margin: 5rem auto;
+  padding: 2rem;
+  background: #fffaf1;
+  border-radius: 12px;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.08);
+  font-family: "Montserrat", sans-serif;
+  color: #3b2a1b;
+}
+
+.conf-container h1 {
+  font-family: "Playfair Display", serif;
+  font-size: 2.4rem;
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #3b2a1b;
+}
+
+.conf-container section {
+  margin-bottom: 2rem;
+}
+
+.conf-container h2 {
+  color: #c87a1a;
+  font-size: 1.4rem;
+  margin-bottom: 0.8rem;
+}
+
+.conf-container p,
+.conf-container li {
+  line-height: 1.7;
+  font-size: 1.05rem;
+}
+
+.conf-container ul {
+  list-style: disc;
+  margin-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.conf-container a {
+  color: #c87a1a;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.conf-container a:hover {
+  text-decoration: underline;
+}
+
+.conf-container footer {
+  text-align: center;
+  margin-top: 3rem;
+  border-top: 1px solid #f1dfc8;
+  padding-top: 1rem;
+  font-size: 0.95rem;
+  color: #6c5644;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .conf-container {
+    margin: 3rem 1rem;
+    padding: 1.5rem;
+  }
+
+  .conf-container h1 {
+    font-size: 2rem;
+  }
+
+  .conf-container h2 {
+    font-size: 1.2rem;
+  }
+}

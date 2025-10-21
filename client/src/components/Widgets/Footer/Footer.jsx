@@ -58,10 +58,12 @@ function Footer() {
               <FaEnvelope /> <a href="/contact">Contact</a>
             </li>
             <li>
-              <a href="/mentions-legales">Mentions légales</a>
+              <a href="/Mentions_légales">Mentions légales</a>
             </li>
             <li>
-              <a href="/confidentialite">Politique de confidentialité</a>
+              <a href="/Politique_confidentialité">
+                Politique de confidentialité
+              </a>
             </li>
           </ul>
         </div>

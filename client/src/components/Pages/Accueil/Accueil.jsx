@@ -1,5 +1,6 @@
 import React from "react";
 import "./Accueil.css";
+import { Link } from "react-router-dom";
 
 // Import widgets
 import CartesAccueil from "../../Cartes/CarteAccueil/CartesA";
@@ -32,17 +33,38 @@ const HeroBanner = () => (
 
 function Accueil() {
   const categories = [
-    { nom: "Petit-déjeuner", image: "/Images/Img_choix/Petit_dejeuner.png" },
-    { nom: "Entrées", image: "/Images/Img_choix/Entree.png" },
-    { nom: "Plats principaux", image: "/Images/Img_choix/Plat_principaux.png" },
-    { nom: "Soupes & Potages", image: "/Images/Img_choix/Soupe_potage.png" },
-    { nom: "Salades", image: "/Images/Img_choix/Salades.png" },
     {
-      nom: "Sauces",
-      image: "/Images/Img_choix/Sauces.png",
+      nom: "Petit-déjeuner",
+      lien: "/Petit_déjeuner",
+      image: "/Images/Img_choix/Petit_dejeuner.png",
     },
-    { nom: "Snacks & Apéros", image: "/Images/Img_choix/Snack_apero.png" },
-    { nom: "Desserts", image: "/Images/Img_choix/Desserts.png" },
+    { nom: "Entrées", lien: "/Entrées", image: "/Images/Img_choix/Entree.png" },
+    {
+      nom: "Plats principaux",
+      lien: "/Plats_Principaux",
+      image: "/Images/Img_choix/Plat_principaux.png",
+    },
+    {
+      nom: "Soupes & Potages",
+      lien: "/Soupes_Potages",
+      image: "/Images/Img_choix/Soupe_potage.png",
+    },
+    {
+      nom: "Salades",
+      lien: "/Salades",
+      image: "/Images/Img_choix/Salades.png",
+    },
+    { nom: "Sauces", lien: "/Sauces", image: "/Images/Img_choix/Sauces.png" },
+    {
+      nom: "Snacks & Apéros",
+      lien: "/Snack_Apéro",
+      image: "/Images/Img_choix/Snack_apero.png",
+    },
+    {
+      nom: "Desserts",
+      lien: "/Desserts",
+      image: "/Images/Img_choix/Desserts.png",
+    },
   ];
 
   return (
@@ -55,12 +77,12 @@ function Accueil() {
         <ul className="liste_choix1">
           {categories.map((cat, index) => (
             <li key={index} className="categorie-item">
-              <a href={`#${cat.nom.replace(/\s+/g, "-").toLowerCase()}`}>
+              <Link to={cat.lien}>
                 <div className="icone-container">
                   <img src={cat.image} alt={cat.nom} />
                 </div>
                 <span className="nom-categorie">{cat.nom}</span>
-              </a>
+              </Link>
             </li>
           ))}
         </ul>
