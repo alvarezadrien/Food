@@ -6,6 +6,8 @@ import Accueil from "./components/Pages/Accueil/Accueil.jsx";
 import FicheRecettes from "./components/Pages/FichesRecettes/FichesR.jsx";
 import Contact from "./components/Pages/Contact/Contact.jsx";
 import BackOffice from "./components/BackOffice/BackOffice.jsx";
+import MentionsLegales from "./components/Pages/MentionsLegales/MentionsL.jsx";
+import Confidentialite from "./components/Pages/PolitiquesConfitialite/Politiques.jsx";
 
 // Import pages recettes
 import PlatPrincipaux from "./components/Pages/PlatPrincipaux/Principaux.jsx";
@@ -39,6 +41,11 @@ function App() {
           <Route path="/" element={<Accueil />} />
           <Route path="Contact" element={<Contact />} />
           <Route path="BackOffice" element={<BackOffice />} />
+          <Route path="Mentions_légales" element={<MentionsLegales />} />
+          <Route
+            path="Politique_confidentialité"
+            element={<Confidentialite />}
+          />
         </Routes>
         <Footer />
       </div>
