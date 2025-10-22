@@ -10,28 +10,39 @@ function CarteFood() {
   const [totalPages, setTotalPages] = useState(1);
   const cartesParPage = 20;
 
+  // 🔹 Vérification de la variable d'environnement
+  const apiBase = process.env.REACT_APP_API_URL;
+  console.log("🌍 API utilisée :", apiBase);
+
   // 🔹 Charger les recettes depuis l’API
   useEffect(() => {
     const fetchRecettes = async () => {
       try {
+        if (!apiBase) {
+          throw new Error(
+            "REACT_APP_API_URL n’est pas défini. Vérifie ton fichier client/.env"
+          );
+        }
+
         const res = await fetch(
-          `${process.env.REACT_APP_API_URL}/api/recettes?page=${currentPage}&limit=${cartesParPage}`
+          `${apiBase}/api/recettes?page=${currentPage}&limit=${cartesParPage}`
         );
 
-        if (!res.ok) throw new Error("Erreur lors du chargement des recettes");
+        if (!res.ok)
+          throw new Error(`Erreur API (${res.status}) lors du chargement.`);
 
         const data = await res.json();
         setRecettes(data.recettes || []);
         setTotalPages(data.totalPages || 1);
       } catch (err) {
-        console.error("Erreur API :", err);
+        console.error("❌ Erreur API :", err);
         setMessage("Impossible de charger les recettes ❌");
         setTimeout(() => setMessage(null), 3000);
       }
     };
 
     fetchRecettes();
-  }, [currentPage]);
+  }, [apiBase, currentPage]);
 
   // ❤️ Gestion des favoris
   const toggleFavori = (id) => {
@@ -42,25 +53,26 @@ function CarteFood() {
 
   // 📤 Partage de recette
   const partagerRecette = async (titre) => {
-    const url = `${process.env.REACT_APP_API_URL}/recette/${encodeURIComponent(
-      titre
-    )}`;
+    // Mieux vaut partager l’URL du front, pas celle de l’API
+    const siteFront = window.location.origin;
+    const url = `${siteFront}/recettes/${encodeURIComponent(titre)}`;
+
     const shareData = {
       title: titre,
       text: `Découvrez cette recette délicieuse : ${titre} 🍽️`,
       url: url,
     };
 
-    if (navigator.share) {
-      try {
+    try {
+      if (navigator.share) {
         await navigator.share(shareData);
         setMessage(`Recette partagée avec succès !`);
-      } catch (err) {
-        setMessage("Partage annulé.");
+      } else {
+        await navigator.clipboard.writeText(url);
+        setMessage("Lien copié dans le presse-papier !");
       }
-    } else {
-      navigator.clipboard.writeText(url);
-      setMessage("Lien copié dans le presse-papier !");
+    } catch {
+      setMessage("Partage annulé.");
     }
 
     setTimeout(() => setMessage(null), 2000);

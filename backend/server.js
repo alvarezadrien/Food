@@ -12,17 +12,27 @@ const app = express();
 app.use(express.json());
 
 // --- CORS ---
-// Autorise uniquement ton front déployé sur Render
-const allowedOrigin = "https://bubu-and-food.onrender.com";
+// Autorise ton front Render et ton front local
+const allowedOrigins = [
+    "https://bubu-and-food.onrender.com", // ton front Render
+    "http://localhost:5173" // ton front en développement
+];
 
 app.use(
     cors({
-        origin: allowedOrigin,
+        origin: (origin, callback) => {
+            if (!origin || allowedOrigins.includes(origin)) {
+                callback(null, true);
+            } else {
+                console.warn("❌ Origine non autorisée :", origin);
+                callback(new Error("CORS non autorisé"));
+            }
+        },
         credentials: true,
     })
 );
 
-// --- Routes principales ---
+// --- Route principale ---
 app.get("/", (req, res) => {
     res.json({
         status: "✅ API BubuFood opérationnelle",
@@ -31,11 +41,11 @@ app.get("/", (req, res) => {
     });
 });
 
-// Import des routes (sera créé juste après)
+// --- Import des routes ---
 const recetteRoutes = require("./routes/recetteRoutes");
 app.use("/api/recettes", recetteRoutes);
 
-// --- Gestion des fichiers statiques si besoin (images, uploads, etc.) ---
+// --- Gestion des fichiers statiques (images, uploads, etc.) ---
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // --- Middleware global d’erreur ---
@@ -51,13 +61,18 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI;
 
+if (!MONGO_URI) {
+    console.error("❌ MONGO_URI non défini dans le fichier .env");
+    process.exit(1);
+}
+
 mongoose
     .connect(MONGO_URI)
     .then(() => {
         console.log("🍃 Connecté à MongoDB Atlas avec succès !");
         app.listen(PORT, () => {
             console.log(`🚀 Serveur BubuFood lancé sur le port ${PORT}`);
-            console.log(`🌐 Front autorisé : ${allowedOrigin}`);
+            console.log(`🌐 Origines autorisées :`, allowedOrigins);
         });
     })
     .catch((err) => {
