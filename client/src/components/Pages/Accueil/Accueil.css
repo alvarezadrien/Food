@@ -1,107 +1,97 @@
-/* -------- HERO BANNER -------- */
+/* -------- HERO BANNER (Nouveau CONTAINER PRINCIPAL) -------- */
 .hero-banner {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: var(--primary-color, #3e2a1d);
-  height: 38rem;
+  background-color: var(
+    --primary-color,
+    #3e2a1d
+  ); /* Utilisation d'une variable ou fallback */
+  height: 38rem; /* Augmentation de la hauteur pour un effet plus "waw" */
   overflow: hidden;
   margin: 0;
   padding: 0;
 }
 
+.droite-hero img {
+  --mask: radial-gradient(34.26px at 46.75px 50%, #000 99%, #0000 101%) 0
+      calc(50% - 34px) / 100% 68px,
+    radial-gradient(34.26px at -29.75px 50%, #0000 99%, #000 101%) 17px 50%/100%
+      68px repeat-y;
+  -webkit-mask: var(--mask);
+  mask: var(--mask);
+}
+
+/* -------- PARTIE GAUCHE (TEXTE & CTA) -------- */
 .gauche-hero {
   flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 0 4rem 0 8rem;
+  padding: 0 4rem 0 8rem; /* Espacement intérieur */
   height: 100%;
 }
 
 .hero-title {
-  color: #ffb347;
-  font-size: 3.5rem;
+  color: var(--titre-white, #ffb347);
+  font-size: 3.8rem;
   margin-bottom: 1rem;
   line-height: 1.1;
 }
 
 .hero-subtitle {
-  color: #fff;
-  font-size: 1.25rem;
-  margin-bottom: 2rem;
+  color: var(--text-white, #fff);
+  font-size: 1.35rem;
+  margin-bottom: 2.5rem;
   line-height: 1.5;
 }
 
-/* -------- BARRE DE RECHERCHE -------- */
-.hero-search-bar {
+.hero-cta-buttons {
   display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 2rem;
+  gap: 1.5rem;
 }
 
-.hero-input {
-  flex: 1;
-  padding: 0.9rem 1.2rem;
-  border-radius: 30px;
+.cta-button {
   border: none;
-  outline: none;
-  font-size: 1.1rem;
-  background-color: #fff8ee;
-  color: #3e2a1d;
-}
-
-.hero-input::placeholder {
-  color: #a38c78;
-}
-
-.hero-search-btn {
-  background-color: #ffb347;
-  border: none;
-  padding: 0.9rem 2rem;
-  border-radius: 30px;
-  color: #3e2a1d;
+  padding: 1rem 2.5rem;
+  font-size: 1.2rem;
   font-weight: bold;
-  font-size: 1.1rem;
   cursor: pointer;
-  transition: 0.3s ease;
+  border-radius: 5px;
+  transition: all 0.3s ease;
 }
 
-.hero-search-btn:hover {
-  background-color: #ffd685;
-  transform: translateY(-2px);
-}
-
-/* -------- CTA SECONDAIRE -------- */
-.hero-cta-alt {
-  display: flex;
-  gap: 1rem;
-}
-
-.cta-alt {
-  background-color: transparent;
-  border: 2px solid #fff;
-  color: #fff;
-  padding: 0.8rem 1.8rem;
-  border-radius: 30px;
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: 600;
-  transition: 0.3s ease;
-}
-
-.cta-alt:hover {
-  background-color: #fff;
-  color: #3e2a1d;
-}
-
-.cta-alt a {
+.cta-button a {
   text-decoration: none;
   color: inherit;
 }
 
-/* -------- IMAGE HERO -------- */
+.primary-cta {
+  background-color: var(--btn-1-color, #ffb347);
+  color: var(--text-black, #3e2a1d);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.primary-cta:hover {
+  background-color: #ffd685;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+.secondary-cta {
+  background-color: transparent;
+  color: var(--text-white, #fff);
+  border: 2px solid var(--text-white, #fff);
+}
+
+.secondary-cta:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-3px);
+  border-color: var(--btn-1-color, #ffb347);
+  color: var(--btn-1-color, #ffb347);
+}
+
+/* -------- PARTIE DROITE (IMAGE) -------- */
 .droite-hero {
   flex: 2;
   display: flex;
@@ -116,9 +106,8 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  /* Retrait du masque complexe pour un effet plus net et simple */
 }
-
-/* --------- (Le reste inchangé) --------- */
 
 /* -------- BANNIÈRE DE CHOIX -------- */
 .banniere_choix {
@@ -187,6 +176,7 @@
   width: 9rem;
 }
 
+/* Effet au survol */
 .categorie-item:hover .icone-container {
   border-color: #ffb347;
   transform: translateY(-6px);
@@ -270,4 +260,296 @@
   margin-bottom: 2rem;
 }
 
-/* (reste identique à ta version précédente) */
+.container_saison1 img {
+  display: block;
+  margin: 0 auto 3rem auto;
+  width: 80%;
+  height: 22rem;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 1rem;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+
+.div_saison1 {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: 3rem;
+  position: relative;
+  margin-bottom: 3rem;
+}
+
+.saison-divider {
+  width: 2px;
+  background-color: #cfa25f;
+  height: auto;
+}
+
+/* Partie gauche */
+.div_saison2 {
+  flex: 1;
+}
+
+.div_saison2 h3 {
+  font-size: 1.7rem;
+  margin-bottom: 1rem;
+  color: var(--color-orange, #ffb347);
+}
+
+.div_saison2 p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  text-align: justify;
+}
+
+/* Partie droite */
+.div_saison3 {
+  flex: 1;
+  background-color: #f7e8d3;
+  padding: 2rem;
+  border-radius: 1rem;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.div_saison3 h3 {
+  color: #c87a1a;
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.div_saison3 span {
+  display: block;
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.div_saison3 button {
+  background-color: var(--color-orange, #ffb347);
+  color: var(--text-white, #fff);
+  border: none;
+  padding: 0.8rem 1.8rem;
+  font-size: 1.1rem;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.div_saison3 button:hover {
+  transform: scale(1.05);
+}
+
+/* -------- CADRES FRUITS ET LÉGUMES -------- */
+.saison-produits {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 3rem;
+  margin-top: 3rem;
+}
+
+.product-card {
+  background-color: #fffdf9;
+  border-radius: 1.2rem;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  width: 48%;
+  min-width: 320px;
+  padding: 2rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+.product-card h2 {
+  font-size: 1.9rem;
+  margin-bottom: 1.2rem;
+  color: #a85b1f;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+#legumes h2 {
+  color: #2d8659;
+}
+
+.product-list {
+  list-style: none;
+  padding: 0;
+  columns: 2;
+  column-gap: 2rem;
+}
+
+.product-list li {
+  font-size: 1.05rem;
+  padding: 6px 0;
+  position: relative;
+  padding-left: 20px;
+}
+
+.product-list li::before {
+  content: "•";
+  color: #a85b1f;
+  font-size: 1.4rem;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+#legumes .product-list li::before {
+  color: #27ae60;
+}
+
+/* Styles pour les cartes */
+.div_cartes_h2 {
+  background-color: var(--primary-color, #3e2a1d);
+  color: var(--text-white, #fff);
+  padding: 15px;
+  font-size: 1.5rem;
+  width: fit-content;
+  justify-self: center;
+  margin-top: 1rem;
+}
+
+/* -------- RESPONSIVE (Mise à jour pour la Hero Banner) -------- */
+@media (max-width: 1200px) {
+  /* Ajustement de la taille de la Hero Banner sur les grands écrans */
+  .gauche-hero {
+    padding: 0 2rem 0 6rem;
+  }
+  .hero-title {
+    font-size: 3rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  /* Anciens styles de container-accueil retirés */
+  .hero-banner {
+    flex-direction: column;
+    height: auto;
+    padding-bottom: 3rem; /* Espace en bas pour la version mobile */
+  }
+
+  .gauche-hero {
+    padding: 3rem 4rem 2rem 4rem;
+    text-align: center;
+  }
+
+  .hero-title {
+    font-size: 2.5rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1.1rem;
+  }
+
+  .hero-cta-buttons {
+    justify-content: center;
+  }
+
+  .droite-hero {
+    width: 100%;
+    height: 18rem; /* Hauteur fixe pour l'image en mobile */
+  }
+
+  .droite-hero img {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Reste des styles Responsive inchangés */
+  .div_saison1 {
+    flex-direction: column;
+  }
+
+  .saison-divider {
+    display: none;
+  }
+
+  .div_saison3 {
+    width: 100%;
+  }
+
+  .saison-produits {
+    flex-direction: column;
+  }
+
+  .product-card {
+    width: 100%;
+  }
+
+  .product-list {
+    columns: 1;
+  }
+
+  .liste_choix1 {
+    gap: 1.5rem;
+  }
+
+  .icone-container {
+    width: 6.5rem;
+    height: 6.5rem;
+  }
+
+  .nom-categorie {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .gauche-hero {
+    padding: 2rem;
+  }
+
+  .hero-title {
+    font-size: 2rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+
+  .hero-cta-buttons {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .cta-button {
+    padding: 0.8rem 1.5rem;
+    font-size: 1.1rem;
+  }
+
+  .Container_populaires,
+  .container_saison1 {
+    padding: 1rem 2rem;
+  }
+
+  .h2_populaires1 {
+    margin-left: 0;
+    text-align: center;
+  }
+
+  .div_populaires1 {
+    flex-direction: column-reverse; /* Image en bas, texte en haut */
+  }
+
+  .para_populaires1 {
+    width: 100%;
+  }
+
+  .img_populaires1 {
+    width: 20rem;
+    height: 20rem;
+  }
+
+  .Btn_populaires1 {
+    margin-top: 2rem;
+    justify-content: center;
+    flex-direction: column;
+  }
+}
