@@ -10,17 +10,27 @@ import AvisPages from "../../Widgets/Avis/Avis";
 const HeroBanner = () => (
   <div className="hero-banner">
     <div className="gauche-hero">
-      <h1 className="hero-title">L'Inspiration Culinaire à Portée de Main</h1>
+      <h1 className="hero-title">Trouvez la recette parfaite en un clic 🍽️</h1>
       <p className="hero-subtitle">
-        Des recettes saines, gourmandes et de saison pour égayer votre
-        quotidien. Trouvez votre prochain plat signature !
+        Tapez un ingrédient, un plat ou une envie du moment. Laissez-vous
+        inspirer par nos idées savoureuses et faciles à cuisiner.
       </p>
-      <div className="hero-cta-buttons">
-        <button className="cta-button primary-cta">
-          <a href="#recettes-populaires">Explorer les Recettes</a>
+
+      <div className="hero-search-bar">
+        <input
+          type="text"
+          placeholder="Ex : pâtes, chocolat, soupe..."
+          className="hero-input"
+        />
+        <button className="hero-search-btn">Rechercher</button>
+      </div>
+
+      <div className="hero-cta-alt">
+        <button className="cta-alt">
+          <a href="#recettes-populaires">Recettes Populaires ⭐</a>
         </button>
-        <button className="cta-button secondary-cta">
-          <a href="#saison">Saison Actuelle 🍂</a>
+        <button className="cta-alt">
+          <a href="#saison">Inspiration de Saison 🍂</a>
         </button>
       </div>
     </div>
@@ -69,7 +79,6 @@ function Accueil() {
 
   return (
     <>
-      {/* SECTION PRINCIPALE MODIFIÉE */}
       <HeroBanner />
 
       {/* BANNIÈRE DE CHOIX */}
@@ -123,7 +132,7 @@ function Accueil() {
         </div>
       </div>
 
-      {/* SECTION SAISON enrichie */}
+      {/* SECTION SAISON */}
       <section className="container_saison1" id="saison">
         <h2 className="h2_saison1">
           🍂 La Fête des Saveurs d'Automne : Cuisinez selon la Saison
@@ -132,7 +141,6 @@ function Accueil() {
         <img src="/Images/Image_saison1.jpg" alt="Image automne" />
 
         <div className="div_saison1">
-          {/* Colonne gauche */}
           <div className="div_saison2">
             <h3>
               Cuisinez au rythme des saisons pour une saveur incomparable !
@@ -146,10 +154,8 @@ function Accueil() {
             </p>
           </div>
 
-          {/* Ligne verticale */}
           <div className="saison-divider"></div>
 
-          {/* Colonne droite */}
           <div className="div_saison3">
             <h3>Ce Mois-ci : Octobre 🍁</h3>
             <span>L'abondance de l'automne à son apogée !</span>
@@ -159,9 +165,7 @@ function Accueil() {
           </div>
         </div>
 
-        {/* --- Nouveaux cadres fruits et légumes --- */}
         <div className="saison-produits">
-          {/* Légumes */}
           <div className="product-card" id="legumes">
             <h2>🥦 Légumes d’Automne</h2>
             <ul className="product-list">
@@ -183,7 +187,6 @@ function Accueil() {
             </ul>
           </div>
 
-          {/* Fruits */}
           <div className="product-card" id="fruits">
             <h2>🍎 Fruits d’Automne</h2>
             <ul className="product-list">
