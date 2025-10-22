@@ -10,20 +10,21 @@ function CarteFood() {
   const [totalPages, setTotalPages] = useState(1);
   const cartesParPage = 20;
 
-  // 🔹 Vérification de la variable d'environnement
-  const apiBase = process.env.REACT_APP_API_URL;
-  console.log("🌍 API utilisée :", apiBase);
-
-  // 🔹 Charger les recettes depuis l’API
   useEffect(() => {
     const fetchRecettes = async () => {
-      try {
-        if (!apiBase) {
-          throw new Error(
-            "REACT_APP_API_URL n’est pas défini. Vérifie ton fichier client/.env"
-          );
-        }
+      const apiBase = import.meta.env.VITE_API_URL;
 
+      if (!apiBase) {
+        console.error(
+          "❌ Variable VITE_API_URL non définie. Vérifie ton fichier client/.env"
+        );
+        setMessage("Erreur de configuration API ❌");
+        return;
+      }
+
+      console.log("🌍 API utilisée :", apiBase);
+
+      try {
         const res = await fetch(
           `${apiBase}/api/recettes?page=${currentPage}&limit=${cartesParPage}`
         );
@@ -42,25 +43,22 @@ function CarteFood() {
     };
 
     fetchRecettes();
-  }, [apiBase, currentPage]);
+  }, [currentPage]);
 
-  // ❤️ Gestion des favoris
   const toggleFavori = (id) => {
     setFavoris((prev) =>
       prev.includes(id) ? prev.filter((f) => f !== id) : [...prev, id]
     );
   };
 
-  // 📤 Partage de recette
   const partagerRecette = async (titre) => {
-    // Mieux vaut partager l’URL du front, pas celle de l’API
     const siteFront = window.location.origin;
     const url = `${siteFront}/recettes/${encodeURIComponent(titre)}`;
 
     const shareData = {
       title: titre,
       text: `Découvrez cette recette délicieuse : ${titre} 🍽️`,
-      url: url,
+      url,
     };
 
     try {
@@ -78,7 +76,6 @@ function CarteFood() {
     setTimeout(() => setMessage(null), 2000);
   };
 
-  // ⏭️ Changement de page
   const handlePageChange = (pageNum) => {
     if (pageNum >= 1 && pageNum <= totalPages) {
       setCurrentPage(pageNum);
@@ -187,7 +184,6 @@ function CarteFood() {
         )}
       </section>
 
-      {/* Pagination */}
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
