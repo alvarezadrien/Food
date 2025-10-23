@@ -16,20 +16,20 @@ const HeroBanner = () => (
         inspirer par nos idées savoureuses et faciles à cuisiner.
       </p>
 
-      <div className="hero-search-bar">
+      <div className="hero-search-group">
         <input
           type="text"
           placeholder="Ex : pâtes, chocolat, soupe..."
-          className="hero-input"
+          className="hero-search-input"
         />
-        <button className="hero-search-btn">Rechercher</button>
+        <button className="hero-search-primary-btn">Rechercher</button>
       </div>
 
-      <div className="hero-cta-alt">
-        <button className="cta-alt">
+      <div className="hero-cta-alt-group">
+        <button className="cta-alt-button">
           <a href="#recettes-populaires">Recettes Populaires ⭐</a>
         </button>
-        <button className="cta-alt">
+        <button className="cta-alt-button">
           <a href="#saison">Inspiration de Saison 🍂</a>
         </button>
       </div>
