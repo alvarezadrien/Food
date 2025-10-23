@@ -32,15 +32,18 @@ exports.getAllRecettes = async (req, res, next) => {
     }
 };
 
-// ✅ 2. Recherche de recettes (titre ou description)
+// ✅ 2. Recherche de recettes (par nom ou description)
 exports.searchRecettes = async (req, res, next) => {
     try {
         const { q } = req.query;
-        if (!q) return res.status(400).json({ message: "Paramètre de recherche manquant." });
+        if (!q)
+            return res
+                .status(400)
+                .json({ message: "Paramètre de recherche manquant." });
 
         const results = await Recette.find({
             $or: [
-                { titre: { $regex: q, $options: "i" } },
+                { nom: { $regex: q, $options: "i" } },
                 { description: { $regex: q, $options: "i" } },
             ],
         });
@@ -67,21 +70,40 @@ exports.getRecetteById = async (req, res, next) => {
 // ✅ 4. Créer une nouvelle recette
 exports.createRecette = async (req, res, next) => {
     try {
-        const { titre, description, image, categorie, ingredients } = req.body;
+        const {
+            nom,
+            description,
+            image,
+            categorie,
+            ingredients,
+            allergenes,
+            duree,
+            difficulte,
+            portions,
+            preparation,
+        } = req.body;
 
-        if (!titre || !description) {
-            return res.status(400).json({ message: "Titre et description requis." });
+        if (!nom || !description) {
+            return res
+                .status(400)
+                .json({ message: "Le nom et la description sont requis." });
         }
 
         const nouvelleRecette = new Recette({
-            titre,
+            nom,
             description,
             image: image || "/Images/default.png",
             categorie: categorie || "Autre",
             ingredients: ingredients || [],
+            allergenes: allergenes || [],
+            duree: duree || "Non précisée",
+            difficulte: difficulte || "Facile",
+            portions: portions || 2,
+            preparation: preparation || [],
         });
 
         const recetteSauvee = await nouvelleRecette.save();
+
         res.status(201).json({
             message: "Recette ajoutée avec succès 🍽️",
             recette: recetteSauvee,
@@ -95,7 +117,9 @@ exports.createRecette = async (req, res, next) => {
 exports.updateRecette = async (req, res, next) => {
     try {
         const { id } = req.params;
-        const recetteMaj = await Recette.findByIdAndUpdate(id, req.body, { new: true });
+        const recetteMaj = await Recette.findByIdAndUpdate(id, req.body, {
+            new: true,
+        });
 
         if (!recetteMaj) {
             return res.status(404).json({ message: "Recette non trouvée" });
