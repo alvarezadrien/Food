@@ -5,22 +5,20 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const path = require("path");
 
-// --- Initialisation ---
 const app = express();
-
-// --- Middlewares ---
 app.use(express.json());
 
 // --- CORS ---
-// Autorise ton front Render et ton front local
+// 🔹 Autorise ton front Render + ton front local
 const allowedOrigins = [
-    "https://bubu-and-food.onrender.com", // ton front Render
-    "http://localhost:5173" // ton front en développement
+    "https://bubu-and-food.onrender.com", // front déployé sur Render
+    "http://localhost:5173", // front local Vite
 ];
 
 app.use(
     cors({
         origin: (origin, callback) => {
+            // Autorise les requêtes sans origine (ex: Postman) ou provenant d'une origine connue
             if (!origin || allowedOrigins.includes(origin)) {
                 callback(null, true);
             } else {
@@ -45,7 +43,7 @@ app.get("/", (req, res) => {
 const recetteRoutes = require("./routes/recetteRoutes");
 app.use("/api/recettes", recetteRoutes);
 
-// --- Gestion des fichiers statiques (images, uploads, etc.) ---
+// --- Fichiers statiques ---
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // --- Middleware global d’erreur ---
