@@ -96,7 +96,7 @@ function CarteFood() {
               />
 
               <div className="carteAccueil-header">
-                <h3>{recette.titre}</h3>
+                <h3>{recette.nom}</h3>
 
                 <div className="carteAccueil-actions">
                   {/* Icône cœur */}
