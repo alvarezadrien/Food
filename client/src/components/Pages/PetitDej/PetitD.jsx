@@ -1,20 +1,19 @@
 import React from "react";
 import "./PetitD.css";
-
-// Import Widgets
 import CarteFood from "../../Cartes/CarteFood/CarteF";
 
 function PetitDej() {
   return (
     <>
       <div className="container_dej1">
-        <img src="/Images/Image_soupe1.jpg" alt="" />
+        <img src="/Images/Image_soupe1.jpg" alt="Petit-déjeuner" />
         <h1>Petit-déjeuner</h1>
       </div>
 
       <h2 className="h2_dej1">Nos différentes recettes</h2>
 
-      <CarteFood />
+      {/* 🔹 Affiche uniquement la catégorie "Petit_dejeuner" */}
+      <CarteFood categorie="Petit_dejeuner" />
     </>
   );
 }

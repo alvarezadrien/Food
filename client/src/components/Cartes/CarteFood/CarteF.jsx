@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./CartesF.css";
 import Pagination from "../../Widgets/Pagination/Pagination";
 
-function CarteFood() {
+function CarteFood({ categorie }) {
   const [recettes, setRecettes] = useState([]);
   const [favoris, setFavoris] = useState([]);
   const [message, setMessage] = useState(null);
@@ -22,12 +22,15 @@ function CarteFood() {
         return;
       }
 
-      console.log("🌍 API utilisée :", apiBase);
-
       try {
-        const res = await fetch(
-          `${apiBase}/api/recettes?page=${currentPage}&limit=${cartesParPage}`
-        );
+        // ✅ Ajoute la catégorie dans la requête si elle est fournie
+        const url = categorie
+          ? `${apiBase}/api/recettes?categorie=${encodeURIComponent(
+              categorie
+            )}&page=${currentPage}&limit=${cartesParPage}`
+          : `${apiBase}/api/recettes?page=${currentPage}&limit=${cartesParPage}`;
+
+        const res = await fetch(url);
 
         if (!res.ok)
           throw new Error(`Erreur API (${res.status}) lors du chargement.`);
@@ -43,7 +46,7 @@ function CarteFood() {
     };
 
     fetchRecettes();
-  }, [currentPage]);
+  }, [currentPage, categorie]);
 
   const toggleFavori = (id) => {
     setFavoris((prev) =>
@@ -91,7 +94,7 @@ function CarteFood() {
             <div className="carteAccueil" key={recette.id}>
               <img
                 src={recette.image}
-                alt={recette.titre}
+                alt={recette.nom}
                 className="carteAccueil-img"
               />
 
@@ -99,7 +102,6 @@ function CarteFood() {
                 <h3>{recette.nom}</h3>
 
                 <div className="carteAccueil-actions">
-                  {/* Icône cœur */}
                   <button
                     className="carteAccueil-iconBtn"
                     onClick={() => toggleFavori(recette.id)}
@@ -143,7 +145,6 @@ function CarteFood() {
                     )}
                   </button>
 
-                  {/* Icône partage */}
                   <button
                     className="carteAccueil-iconBtn"
                     onClick={() => partagerRecette(recette.titre)}
