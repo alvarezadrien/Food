@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./CartesF.css";
 import Pagination from "../../Widgets/Pagination/Pagination";
+import { useNavigate } from "react-router-dom";
 
 function CarteFood({ categorie, searchQuery }) {
   const [recettes, setRecettes] = useState([]);
@@ -9,15 +10,14 @@ function CarteFood({ categorie, searchQuery }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const cartesParPage = 20;
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchRecettes = async () => {
       const apiBase = import.meta.env.VITE_API_URL;
 
       if (!apiBase) {
-        console.error(
-          "❌ Variable VITE_API_URL non définie. Vérifie ton fichier client/.env"
-        );
+        console.error("❌ Variable VITE_API_URL non définie dans .env");
         setMessage("Erreur de configuration API ❌");
         return;
       }
@@ -25,31 +25,23 @@ function CarteFood({ categorie, searchQuery }) {
       try {
         let url = "";
 
-        // ✅ Priorité 1 : si une recherche est en cours
         if (searchQuery) {
           url = `${apiBase}/api/recettes/search?q=${encodeURIComponent(
             searchQuery
           )}`;
-        }
-        // ✅ Priorité 2 : si une catégorie spécifique est demandée
-        else if (categorie) {
+        } else if (categorie) {
           url = `${apiBase}/api/recettes?categorie=${encodeURIComponent(
             categorie
           )}&page=${currentPage}&limit=${cartesParPage}`;
-        }
-        // ✅ Sinon, affiche toutes les recettes
-        else {
+        } else {
           url = `${apiBase}/api/recettes?page=${currentPage}&limit=${cartesParPage}`;
         }
 
         const res = await fetch(url);
-
         if (!res.ok)
           throw new Error(`Erreur API (${res.status}) lors du chargement.`);
 
         const data = await res.json();
-
-        // 🔹 Si la recherche retourne "results", on s’adapte
         const recettesData = data.recettes || data.results || [];
         setRecettes(recettesData);
         setTotalPages(data.totalPages || 1);
@@ -63,17 +55,15 @@ function CarteFood({ categorie, searchQuery }) {
     fetchRecettes();
   }, [currentPage, categorie, searchQuery]);
 
-  // ❤️ Gestion des favoris
   const toggleFavori = (id) => {
     setFavoris((prev) =>
       prev.includes(id) ? prev.filter((f) => f !== id) : [...prev, id]
     );
   };
 
-  // 📤 Partage d'une recette
   const partagerRecette = async (titre) => {
     const siteFront = window.location.origin;
-    const url = `${siteFront}/recettes/${encodeURIComponent(titre)}`;
+    const url = `${siteFront}/Fiches_Recettes/${encodeURIComponent(titre)}`;
 
     const shareData = {
       title: titre,
@@ -96,7 +86,6 @@ function CarteFood({ categorie, searchQuery }) {
     setTimeout(() => setMessage(null), 2000);
   };
 
-  // ⏭️ Changement de page
   const handlePageChange = (pageNum) => {
     if (pageNum >= 1 && pageNum <= totalPages) {
       setCurrentPage(pageNum);
@@ -109,9 +98,15 @@ function CarteFood({ categorie, searchQuery }) {
       <section className="cartesAccueil-container">
         {recettes.length > 0 ? (
           recettes.map((recette) => (
-            <div className="carteAccueil" key={recette._id || recette.id}>
+            <div
+              className="carteAccueil"
+              key={recette._id || recette.id}
+              onClick={() =>
+                navigate(`/Fiches_Recettes/${recette._id || recette.id}`)
+              }
+            >
               <img
-                src={recette.image}
+                src={recette.image || "/Images/default.png"}
                 alt={recette.nom || recette.titre}
                 className="carteAccueil-img"
                 onError={(e) => (e.target.src = "/Images/default.png")}
@@ -121,10 +116,12 @@ function CarteFood({ categorie, searchQuery }) {
                 <h3>{recette.nom || recette.titre}</h3>
 
                 <div className="carteAccueil-actions">
-                  {/* ❤️ Bouton favoris */}
                   <button
                     className="carteAccueil-iconBtn"
-                    onClick={() => toggleFavori(recette._id || recette.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleFavori(recette._id || recette.id);
+                    }}
                     title="Ajouter aux favoris"
                   >
                     {favoris.includes(recette._id || recette.id) ? (
@@ -165,12 +162,12 @@ function CarteFood({ categorie, searchQuery }) {
                     )}
                   </button>
 
-                  {/* 🔗 Bouton partage */}
                   <button
                     className="carteAccueil-iconBtn"
-                    onClick={() =>
-                      partagerRecette(recette.nom || recette.titre)
-                    }
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      partagerRecette(recette.nom || recette.titre);
+                    }}
                     title="Partager cette recette"
                   >
                     <svg
@@ -198,7 +195,15 @@ function CarteFood({ categorie, searchQuery }) {
                 {recette.description?.slice(0, 120)}...
               </p>
 
-              <button className="carteAccueil-btn">Voir la recette</button>
+              <button
+                className="carteAccueil-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/Fiches_Recettes/${recette._id || recette.id}`);
+                }}
+              >
+                Voir la recette
+              </button>
 
               {message && (
                 <span className="carteAccueil-message">{message}</span>
@@ -210,7 +215,6 @@ function CarteFood({ categorie, searchQuery }) {
         )}
       </section>
 
-      {/* ✅ Pagination (sauf quand c’est une recherche) */}
       {!searchQuery && (
         <Pagination
           currentPage={currentPage}
