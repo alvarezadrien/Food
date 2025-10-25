@@ -32,7 +32,23 @@ function FicheRecettes() {
         const res = await fetch(`${apiBase}/api/recettes/${id}`);
         if (!res.ok) throw new Error("Erreur lors du chargement de la recette");
         const data = await res.json();
-        setRecette(data);
+
+        // ✅ Transforme les ingrédients simples en objets si nécessaire
+        const ingredientsFormates = data.ingredients.map((ing) => {
+          if (typeof ing === "string") {
+            // Exemple : "200 g de farine"
+            const regex = /^(\d+\.?\d*)?\s*([a-zA-Zéèêàùµ]*)?\s*(.*)$/;
+            const match = ing.match(regex);
+            return {
+              quantite: match && match[1] ? parseFloat(match[1]) : null,
+              unite: match && match[2] ? match[2] : "",
+              nom: match && match[3] ? match[3] : ing,
+            };
+          }
+          return ing; // si déjà objet
+        });
+
+        setRecette({ ...data, ingredients: ingredientsFormates });
         setPersonnes(data.portions || 1);
       } catch (err) {
         console.error("❌ Erreur API :", err);
@@ -47,6 +63,16 @@ function FicheRecettes() {
 
   const increment = () => setPersonnes((prev) => prev + 1);
   const decrement = () => setPersonnes((prev) => (prev > 1 ? prev - 1 : 1));
+
+  // ✅ Calcule la quantité ajustée en fonction du nombre de personnes
+  const ajusterQuantite = (quantite) => {
+    if (!quantite || !recette?.portions) return quantite || "";
+    const ratio = personnes / recette.portions;
+    const newQuantite = (quantite * ratio).toFixed(1);
+    return parseFloat(newQuantite) % 1 === 0
+      ? parseInt(newQuantite)
+      : parseFloat(newQuantite);
+  };
 
   const toggleIngredient = (nom) => {
     setChecked((prev) =>
@@ -105,7 +131,7 @@ function FicheRecettes() {
     }
   };
 
-  if (loading) return <p>Chargement...</p>;
+  if (loading) return <p className="ficheRecette-loading">Chargement...</p>;
   if (error) return <p>{error}</p>;
   if (!recette) return null;
 
@@ -159,18 +185,23 @@ function FicheRecettes() {
           <h2>🛒 Ingrédients</h2>
           <ul>
             {recette.ingredients.length > 0 ? (
-              recette.ingredients.map((nom, index) => (
+              recette.ingredients.map((item, index) => (
                 <li
                   key={index}
-                  onClick={() => toggleIngredient(nom)}
-                  className={checked.includes(nom) ? "checked" : ""}
+                  onClick={() => toggleIngredient(item.nom)}
+                  className={checked.includes(item.nom) ? "checked" : ""}
                 >
                   <FaCheckCircle
                     className={`check-icon ${
-                      checked.includes(nom) ? "active" : ""
+                      checked.includes(item.nom) ? "active" : ""
                     }`}
                   />
-                  <span className="ingredient-nom">{nom}</span>
+                  <span className="ingredient-nom">
+                    {item.quantite
+                      ? `${ajusterQuantite(item.quantite)} ${item.unite} `
+                      : ""}
+                    {item.nom}
+                  </span>
                 </li>
               ))
             ) : (
