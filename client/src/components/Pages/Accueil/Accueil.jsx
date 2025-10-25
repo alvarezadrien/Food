@@ -1,45 +1,105 @@
-import React from "react";
+import React, { useState } from "react";
 import "./Accueil.css";
-import { Link } from "react-router-dom";
+// Ajout de useNavigate pour la redirection conditionnelle
+import { Link, useNavigate } from "react-router-dom";
 
 // Import widgets
 import CartesAccueil from "../../Cartes/CarteAccueil/CartesA";
 import AvisPages from "../../Widgets/Avis/Avis";
 
-// Nouveau composant de la bannière principale
-const HeroBanner = () => (
-  <div className="hero-banner">
-    <div className="gauche-hero">
-      <h1 className="hero-title">Trouvez la recette parfaite en un clic 🍽️</h1>
-      <p className="hero-subtitle">
-        Tapez un ingrédient, un plat ou une envie du moment. Laissez-vous
-        inspirer par nos idées savoureuses et faciles à cuisiner.
-      </p>
+const HeroBanner = () => {
+  const [query, setQuery] = useState("");
+  // États restaurés pour la logique de recherche API
+  const [recettes, setRecettes] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const apiBase = import.meta.env.VITE_API_URL;
 
-      <div className="hero-search-group">
-        <input
-          type="text"
-          placeholder="Ex : pâtes, chocolat, soupe..."
-          className="hero-search-input"
-        />
-        <button className="hero-search-primary-btn">Rechercher</button>
+  // Utilisation de useNavigate pour la redirection
+  const navigate = useNavigate();
+
+  // 🔍 Fonction de recherche modifiée pour API + Redirection
+  const handleSearch = async () => {
+    if (!query.trim()) {
+      setMessage("Tapez un ingrédient ou un nom de plat pour commencer !");
+      setRecettes([]); // Nettoie les résultats précédents
+      return;
+    }
+
+    setLoading(true);
+    setMessage("");
+    setRecettes([]);
+
+    try {
+      const res = await fetch(
+        `${apiBase}/api/recettes/search?q=${encodeURIComponent(query)}`
+      );
+      if (!res.ok) throw new Error("Erreur de recherche");
+      const data = await res.json();
+
+      if (data.results.length === 0) {
+        // Cas 1 : Aucune recette trouvée -> Affiche un message local
+        setMessage("Aucune recette trouvée 🍽️");
+      } else {
+        // Cas 2 : Recettes trouvées -> Redirige vers la page de recherche complète
+        navigate(`/recherche?q=${encodeURIComponent(query.trim())}`);
+        // Note : setRecettes n'est plus strictement nécessaire car on quitte la page.
+      }
+    } catch (error) {
+      console.error("❌ Erreur API :", error);
+      setMessage("Erreur lors de la recherche ❌");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="hero-banner">
+      <div className="gauche-hero">
+        <h1 className="hero-title">
+          Trouvez la recette parfaite en un clic 🍽️
+        </h1>
+        <p className="hero-subtitle">
+          Tapez un ingrédient, un plat ou une envie du moment. Laissez-vous
+          inspirer par nos idées savoureuses et faciles à cuisiner.
+        </p>
+
+        <div className="hero-search-group">
+          <input
+            type="text"
+            placeholder="Ex : pâtes, chocolat, soupe..."
+            className="hero-search-input"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+          />
+          <button className="hero-search-primary-btn" onClick={handleSearch}>
+            {loading ? "Recherche..." : "Rechercher"}
+          </button>
+        </div>
+
+        {/* Résultats de la recherche - Sert principalement à afficher le message d'erreur/absence de résultat */}
+        <div className="search-results">
+          {message && <p className="search-message">{message}</p>}
+          {/* Note : L'affichage des recettes (recettes.length > 0) est supprimé car on redirige dans ce cas. */}
+        </div>
+
+        <div className="hero-cta-alt-group">
+          <button className="cta-alt-button">
+            <a href="#recettes-populaires">Recettes Populaires ⭐</a>
+          </button>
+          <button className="cta-alt-button">
+            <a href="#saison">Inspiration de Saison 🍂</a>
+          </button>
+        </div>
       </div>
 
-      <div className="hero-cta-alt-group">
-        <button className="cta-alt-button">
-          <a href="#recettes-populaires">Recettes Populaires ⭐</a>
-        </button>
-        <button className="cta-alt-button">
-          <a href="#saison">Inspiration de Saison 🍂</a>
-        </button>
+      <div className="droite-hero">
+        <img src="/Images/Img_banniere1.jpg" alt="Bannière aliments" />
       </div>
     </div>
-
-    <div className="droite-hero">
-      <img src="/Images/Img_banniere1.jpg" alt="Bannière aliments" />
-    </div>
-  </div>
-);
+  );
+};
 
 function Accueil() {
   const categories = [

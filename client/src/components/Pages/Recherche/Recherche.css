@@ -1,0 +1,174 @@
+/* 🌿 CONTENEUR GÉNÉRAL DE LA PAGE DE RECHERCHE */
+.recherche-container {
+  padding: 4rem 2rem;
+  min-height: 80vh;
+  background-color: #fffdf8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+/* 🏷️ TITRE PRINCIPAL */
+.recherche-titre {
+  font-size: 2.4rem;
+  color: #4b473e;
+  text-align: center;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.recherche-titre span {
+  color: #8c7a50;
+  font-style: italic;
+}
+
+/* 💬 MESSAGE D’INFORMATION OU D’ERREUR */
+.recherche-message {
+  background: #f8f4ec;
+  color: #6a6454;
+  padding: 1rem 1.5rem;
+  border-radius: 1rem;
+  border: 1px solid #e4ddc9;
+  margin-top: 1rem;
+  font-size: 1.1rem;
+  max-width: 600px;
+  text-align: center;
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+/* 🕓 MESSAGE DE CHARGEMENT */
+.recherche-loading {
+  color: #8c7a50;
+  font-size: 1.2rem;
+  margin-top: 3rem;
+  text-align: center;
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+/* 🧩 CONTENEUR DES CARTES DE RÉSULTATS */
+.recherche-cartes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 2rem;
+  width: 100%;
+  max-width: 1200px;
+  margin-top: 2rem;
+  justify-items: center;
+}
+
+/* 🗂️ CARTE INDIVIDUELLE (héritée de CarteF) */
+.carteAccueil {
+  background: #ffffff;
+  border-radius: 1rem;
+  width: 100%;
+  max-width: 300px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  text-align: left;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.carteAccueil:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12);
+}
+
+/* IMAGE DES RECETTES */
+.carteAccueil-img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+/* HEADER DE CARTE */
+.carteAccueil-header {
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.carteAccueil-header h3 {
+  font-size: 1.1rem;
+  color: #333;
+  margin: 0;
+  text-align: left;
+}
+
+/* DESCRIPTION */
+.carteAccueil-description {
+  padding: 0 1rem 1rem 1rem;
+  color: #555;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  text-align: justify;
+}
+
+/* BOUTON “VOIR LA RECETTE” */
+.carteAccueil-btn {
+  background-color: #8c7a50;
+  color: #fff;
+  border: none;
+  border-radius: 0.6rem;
+  padding: 0.7rem 1.2rem;
+  margin: 0 1rem 1.2rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+  width: calc(100% - 2rem);
+}
+
+.carteAccueil-btn:hover {
+  background-color: #a49165;
+  transform: scale(1.03);
+}
+
+/* ANIMATION D’APPARITION */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 📱 RESPONSIVE DESIGN */
+
+/* Petits écrans */
+@media (max-width: 600px) {
+  .recherche-container {
+    padding: 2rem 1rem;
+  }
+
+  .recherche-titre {
+    font-size: 1.9rem;
+  }
+
+  .recherche-cartes {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .carteAccueil {
+    max-width: 100%;
+  }
+
+  .carteAccueil-description {
+    font-size: 0.9rem;
+  }
+}
+
+/* Tablettes */
+@media (min-width: 601px) and (max-width: 1024px) {
+  .recherche-cartes {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .recherche-titre {
+    font-size: 2.1rem;
+  }
+}

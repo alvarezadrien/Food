@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./CartesF.css";
 import Pagination from "../../Widgets/Pagination/Pagination";
 
-function CarteFood({ categorie }) {
+function CarteFood({ categorie, searchQuery }) {
   const [recettes, setRecettes] = useState([]);
   const [favoris, setFavoris] = useState([]);
   const [message, setMessage] = useState(null);
@@ -23,12 +23,24 @@ function CarteFood({ categorie }) {
       }
 
       try {
-        // ✅ Ajoute la catégorie dans la requête si elle est fournie
-        const url = categorie
-          ? `${apiBase}/api/recettes?categorie=${encodeURIComponent(
-              categorie
-            )}&page=${currentPage}&limit=${cartesParPage}`
-          : `${apiBase}/api/recettes?page=${currentPage}&limit=${cartesParPage}`;
+        let url = "";
+
+        // ✅ Priorité 1 : si une recherche est en cours
+        if (searchQuery) {
+          url = `${apiBase}/api/recettes/search?q=${encodeURIComponent(
+            searchQuery
+          )}`;
+        }
+        // ✅ Priorité 2 : si une catégorie spécifique est demandée
+        else if (categorie) {
+          url = `${apiBase}/api/recettes?categorie=${encodeURIComponent(
+            categorie
+          )}&page=${currentPage}&limit=${cartesParPage}`;
+        }
+        // ✅ Sinon, affiche toutes les recettes
+        else {
+          url = `${apiBase}/api/recettes?page=${currentPage}&limit=${cartesParPage}`;
+        }
 
         const res = await fetch(url);
 
@@ -36,7 +48,10 @@ function CarteFood({ categorie }) {
           throw new Error(`Erreur API (${res.status}) lors du chargement.`);
 
         const data = await res.json();
-        setRecettes(data.recettes || []);
+
+        // 🔹 Si la recherche retourne "results", on s’adapte
+        const recettesData = data.recettes || data.results || [];
+        setRecettes(recettesData);
         setTotalPages(data.totalPages || 1);
       } catch (err) {
         console.error("❌ Erreur API :", err);
@@ -46,14 +61,16 @@ function CarteFood({ categorie }) {
     };
 
     fetchRecettes();
-  }, [currentPage, categorie]);
+  }, [currentPage, categorie, searchQuery]);
 
+  // ❤️ Gestion des favoris
   const toggleFavori = (id) => {
     setFavoris((prev) =>
       prev.includes(id) ? prev.filter((f) => f !== id) : [...prev, id]
     );
   };
 
+  // 📤 Partage d'une recette
   const partagerRecette = async (titre) => {
     const siteFront = window.location.origin;
     const url = `${siteFront}/recettes/${encodeURIComponent(titre)}`;
@@ -79,6 +96,7 @@ function CarteFood({ categorie }) {
     setTimeout(() => setMessage(null), 2000);
   };
 
+  // ⏭️ Changement de page
   const handlePageChange = (pageNum) => {
     if (pageNum >= 1 && pageNum <= totalPages) {
       setCurrentPage(pageNum);
@@ -91,23 +109,25 @@ function CarteFood({ categorie }) {
       <section className="cartesAccueil-container">
         {recettes.length > 0 ? (
           recettes.map((recette) => (
-            <div className="carteAccueil" key={recette.id}>
+            <div className="carteAccueil" key={recette._id || recette.id}>
               <img
                 src={recette.image}
-                alt={recette.nom}
+                alt={recette.nom || recette.titre}
                 className="carteAccueil-img"
+                onError={(e) => (e.target.src = "/Images/default.png")}
               />
 
               <div className="carteAccueil-header">
-                <h3>{recette.nom}</h3>
+                <h3>{recette.nom || recette.titre}</h3>
 
                 <div className="carteAccueil-actions">
+                  {/* ❤️ Bouton favoris */}
                   <button
                     className="carteAccueil-iconBtn"
-                    onClick={() => toggleFavori(recette.id)}
+                    onClick={() => toggleFavori(recette._id || recette.id)}
                     title="Ajouter aux favoris"
                   >
-                    {favoris.includes(recette.id) ? (
+                    {favoris.includes(recette._id || recette.id) ? (
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         fill="#e63946"
@@ -145,9 +165,12 @@ function CarteFood({ categorie }) {
                     )}
                   </button>
 
+                  {/* 🔗 Bouton partage */}
                   <button
                     className="carteAccueil-iconBtn"
-                    onClick={() => partagerRecette(recette.titre)}
+                    onClick={() =>
+                      partagerRecette(recette.nom || recette.titre)
+                    }
                     title="Partager cette recette"
                   >
                     <svg
@@ -171,7 +194,9 @@ function CarteFood({ categorie }) {
                 </div>
               </div>
 
-              <p className="carteAccueil-description">{recette.description}</p>
+              <p className="carteAccueil-description">
+                {recette.description?.slice(0, 120)}...
+              </p>
 
               <button className="carteAccueil-btn">Voir la recette</button>
 
@@ -185,11 +210,14 @@ function CarteFood({ categorie }) {
         )}
       </section>
 
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
-      />
+      {/* ✅ Pagination (sauf quand c’est une recherche) */}
+      {!searchQuery && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      )}
     </>
   );
 }
