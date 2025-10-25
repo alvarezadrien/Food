@@ -26,14 +26,17 @@ function CarteFood({ categorie, searchQuery }) {
         let url = "";
 
         if (searchQuery) {
+          // 🔍 Recherche
           url = `${apiBase}/api/recettes/search?q=${encodeURIComponent(
             searchQuery
           )}`;
         } else if (categorie) {
+          // 📂 Filtre par catégorie
           url = `${apiBase}/api/recettes?categorie=${encodeURIComponent(
             categorie
           )}&page=${currentPage}&limit=${cartesParPage}`;
         } else {
+          // 📜 Toutes les recettes
           url = `${apiBase}/api/recettes?page=${currentPage}&limit=${cartesParPage}`;
         }
 
@@ -55,26 +58,28 @@ function CarteFood({ categorie, searchQuery }) {
     fetchRecettes();
   }, [currentPage, categorie, searchQuery]);
 
+  // ❤️ Ajout / retrait favoris
   const toggleFavori = (id) => {
     setFavoris((prev) =>
       prev.includes(id) ? prev.filter((f) => f !== id) : [...prev, id]
     );
   };
 
-  const partagerRecette = async (titre) => {
+  // 🔗 Partage de la recette
+  const partagerRecette = async (recette) => {
     const siteFront = window.location.origin;
-    const url = `${siteFront}/Fiches_Recettes/${encodeURIComponent(titre)}`;
+    const url = `${siteFront}/Fiches_Recettes/${recette._id || recette.id}`;
 
     const shareData = {
-      title: titre,
-      text: `Découvrez cette recette délicieuse : ${titre} 🍽️`,
+      title: recette.nom || "Recette",
+      text: `Découvrez cette recette délicieuse : ${recette.nom} 🍽️`,
       url,
     };
 
     try {
       if (navigator.share) {
         await navigator.share(shareData);
-        setMessage(`Recette partagée avec succès !`);
+        setMessage("Recette partagée avec succès !");
       } else {
         await navigator.clipboard.writeText(url);
         setMessage("Lien copié dans le presse-papier !");
@@ -86,6 +91,7 @@ function CarteFood({ categorie, searchQuery }) {
     setTimeout(() => setMessage(null), 2000);
   };
 
+  // 📖 Pagination
   const handlePageChange = (pageNum) => {
     if (pageNum >= 1 && pageNum <= totalPages) {
       setCurrentPage(pageNum);
@@ -107,15 +113,16 @@ function CarteFood({ categorie, searchQuery }) {
             >
               <img
                 src={recette.image || "/Images/default.png"}
-                alt={recette.nom || recette.titre}
+                alt={recette.nom || "Recette"}
                 className="carteAccueil-img"
                 onError={(e) => (e.target.src = "/Images/default.png")}
               />
 
               <div className="carteAccueil-header">
-                <h3>{recette.nom || recette.titre}</h3>
+                <h3>{recette.nom}</h3>
 
                 <div className="carteAccueil-actions">
+                  {/* ❤️ Bouton favoris */}
                   <button
                     className="carteAccueil-iconBtn"
                     onClick={(e) => {
@@ -162,11 +169,12 @@ function CarteFood({ categorie, searchQuery }) {
                     )}
                   </button>
 
+                  {/* 🔗 Bouton partage */}
                   <button
                     className="carteAccueil-iconBtn"
                     onClick={(e) => {
                       e.stopPropagation();
-                      partagerRecette(recette.nom || recette.titre);
+                      partagerRecette(recette);
                     }}
                     title="Partager cette recette"
                   >

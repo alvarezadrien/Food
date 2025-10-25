@@ -1,15 +1,16 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
 
-// Import Pages principales
+// Import Pages
 import Accueil from "./components/Pages/Accueil/Accueil.jsx";
 import FicheRecettes from "./components/Pages/FichesRecettes/FichesR.jsx";
 import Contact from "./components/Pages/Contact/Contact.jsx";
 import BackOffice from "./components/BackOffice/BackOffice.jsx";
 import MentionsLegales from "./components/Pages/MentionsLegales/MentionsL.jsx";
 import Confidentialite from "./components/Pages/PolitiquesConfitialite/Politiques.jsx";
+import Recherche from "./components/Pages/Recherche/Recherche.jsx";
 
-// Import Pages Recettes
+// Import pages recettes
 import PlatPrincipaux from "./components/Pages/PlatPrincipaux/Principaux.jsx";
 import PetitDej from "./components/Pages/PetitDej/PetitD.jsx";
 import Entrees from "./components/Pages/Entrees/Entrees.jsx";
@@ -19,14 +20,11 @@ import Sauces from "./components/Pages/Sauces/Sauces.jsx";
 import SnackA from "./components/Pages/SnackApero/SnackA.jsx";
 import Desserts from "./components/Pages/Desserts/Desserts.jsx";
 
-// Import Page Recherche 🔍
-import Recherche from "./components/Pages/Recherche/Recherche.jsx";
-
-// Import Pages Saisons
+// Import Saisons pages
 import Printemps from "./components/Pages/Saisons/Printemps/Printemps.jsx";
 
 // Import Widgets
-import Footer from "./components/Widgets/Footer/Footer.jsx";
+import Footer from "../src/components/Widgets/Footer/Footer.jsx";
 import Navbar from "./components/Widgets/Navbar/Navbar.jsx";
 
 function App() {
@@ -35,18 +33,15 @@ function App() {
       <div className="App">
         <Navbar />
         <Routes>
-          {/* --- Pages principales --- */}
+          {/* --- Accueil --- */}
           <Route path="/" element={<Accueil />} />
-          <Route path="/Fiches_Recettes" element={<FicheRecettes />} />
-          <Route path="/Contact" element={<Contact />} />
-          <Route path="/BackOffice" element={<BackOffice />} />
-          <Route path="/Mentions_légales" element={<MentionsLegales />} />
-          <Route
-            path="/Politique_confidentialité"
-            element={<Confidentialite />}
-          />
 
-          {/* --- Pages recettes --- */}
+          {/* --- Fiches recettes --- */}
+          <Route path="/Fiches_Recettes" element={<FicheRecettes />} />
+          {/* ✅ Route dynamique pour les fiches individuelles */}
+          <Route path="/Fiches_Recettes/:id" element={<FicheRecettes />} />
+
+          {/* --- Catégories --- */}
           <Route path="/Plats_Principaux" element={<PlatPrincipaux />} />
           <Route path="/Petit_déjeuner" element={<PetitDej />} />
           <Route path="/Entrées" element={<Entrees />} />
@@ -56,10 +51,17 @@ function App() {
           <Route path="/Snack_Apéro" element={<SnackA />} />
           <Route path="/Desserts" element={<Desserts />} />
 
-          {/* --- Page recherche --- */}
+          {/* --- Recherche --- */}
           <Route path="/recherche" element={<Recherche />} />
 
-          {/* --- Pages saisons --- */}
+          {/* --- Autres pages --- */}
+          <Route path="/Contact" element={<Contact />} />
+          <Route path="/BackOffice" element={<BackOffice />} />
+          <Route path="/Mentions_légales" element={<MentionsLegales />} />
+          <Route
+            path="/Politique_confidentialité"
+            element={<Confidentialite />}
+          />
           <Route path="/Printemps" element={<Printemps />} />
         </Routes>
         <Footer />
