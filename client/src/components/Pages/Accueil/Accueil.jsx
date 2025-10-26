@@ -6,40 +6,8 @@ import { Link, useNavigate } from "react-router-dom";
 import CartesAccueil from "../../Cartes/CarteAccueil/CartesA";
 import AvisPages from "../../Widgets/Avis/Avis";
 
-// 🔹 Nouveau composant pour afficher les cartes de produits de saison
+// 🔹 Composant pour afficher les cartes de produits de saison
 const ProductCardDisplay = ({ title, products, type }) => {
-  const iconMap = {
-    // Légumes
-    Potimarron: "🎃",
-    Potiron: "🟠",
-    Butternut: "🥣",
-    Betterave: "🍠",
-    "Céleri-rave": "🥔",
-    Brocoli: "🥦",
-    "Chou-fleur": " florets",
-    "Chou de Bruxelles": "🥬",
-    Panais: "🥕",
-    Mâche: "🌿",
-    Épinard: "🍃",
-    Poireau: "🧅",
-    Carotte: "🥕",
-    Navet: "🤍",
-    "Radis Noir": "⚫",
-    // Fruits
-    Pomme: "🍏",
-    Poire: "🍐",
-    Raisin: "🍇",
-    Coing: "🟡",
-    Kaki: "🟠",
-    Châtaigne: "🌰",
-    Noix: "🥜",
-    Figue: "🟣",
-    Grenade: "🔴",
-    Noisette: "🤎",
-    Amande: "⚪",
-    Canneberge: "🍒",
-  };
-
   return (
     <div className={`product-card-new ${type}`}>
       <h2 className="product-card-title">
@@ -48,8 +16,8 @@ const ProductCardDisplay = ({ title, products, type }) => {
       <ul className="product-list-new">
         {products.map((product, index) => (
           <li key={index}>
-            <span className="product-icon">{iconMap[product] || "✨"}</span>
-            {product}
+            <span className="product-icon">{product.emoji || "✨"}</span>
+            {product.nom}
           </li>
         ))}
       </ul>
@@ -144,8 +112,10 @@ const HeroBanner = () => {
 function Accueil() {
   const apiBase = import.meta.env.VITE_API_URL;
   const [recetteDuJour, setRecetteDuJour] = useState(null);
+  const [saison, setSaison] = useState(null);
   const navigate = useNavigate();
 
+  // Charger la recette du jour
   useEffect(() => {
     const fetchRecettes = async () => {
       try {
@@ -155,7 +125,6 @@ function Accueil() {
         const recettes = data.recettes || data.results || [];
 
         if (recettes.length > 0) {
-          // Sélectionne une recette différente chaque jour
           const dayIndex = new Date().getDate() % recettes.length;
           setRecetteDuJour(recettes[dayIndex]);
         }
@@ -165,6 +134,22 @@ function Accueil() {
     };
 
     fetchRecettes();
+  }, [apiBase]);
+
+  // Charger la saison actuelle
+  useEffect(() => {
+    const fetchSaison = async () => {
+      try {
+        const res = await fetch(`${apiBase}/api/saisons/actuelle`);
+        if (!res.ok) throw new Error("Erreur lors du chargement de la saison");
+        const data = await res.json();
+        setSaison(data);
+      } catch (error) {
+        console.error("❌ Erreur API Saison :", error);
+      }
+    };
+
+    fetchSaison();
   }, [apiBase]);
 
   const categories = [
@@ -200,39 +185,6 @@ function Accueil() {
       lien: "/Desserts",
       image: "/Images/Img_choix/Desserts.png",
     },
-  ];
-
-  const autumnVegetables = [
-    "Potimarron",
-    "Potiron",
-    "Butternut",
-    "Betterave",
-    "Céleri-rave",
-    "Brocoli",
-    "Chou-fleur",
-    "Chou de Bruxelles",
-    "Panais",
-    "Mâche",
-    "Épinard",
-    "Poireau",
-    "Carotte",
-    "Navet",
-    "Radis Noir",
-  ];
-
-  const autumnFruits = [
-    "Pomme",
-    "Poire",
-    "Raisin",
-    "Coing",
-    "Kaki",
-    "Châtaigne",
-    "Noix",
-    "Figue",
-    "Grenade",
-    "Noisette",
-    "Amande",
-    "Canneberge",
   ];
 
   return (
@@ -298,52 +250,62 @@ function Accueil() {
         </div>
       </div>
 
-      {/* SECTION SAISON */}
+      {/* SECTION SAISON — connectée à l'API */}
       <section className="container_saison1" id="saison">
         <h2 className="h2_saison1">
-          🍂 La Fête des Saveurs d'Automne : Cuisinez selon la Saison
+          {saison
+            ? `🍀 Saveurs de ${saison.saison} : Cuisinez selon la Saison`
+            : "🍂 Cuisinez selon la Saison"}
         </h2>
 
-        <img src="/Images/Image_saison1.jpg" alt="Image automne" />
+        <img
+          src={`/Images/Image_saison1.jpg`}
+          alt={`Image ${saison?.saison || "de saison"}`}
+        />
 
         <div className="div_saison1">
           <div className="div_saison2">
             <h3>
               Cuisinez au rythme des saisons pour une saveur incomparable !
             </h3>
-            <p>
-              À chaque saison sa magie, et l'automne ne fait pas exception !
-              Plongez dans un univers de saveurs riches et de couleurs chaudes
-              avec nos sélections de fruits et légumes frais. Cuisiner avec des
-              produits de saison, c'est l'assurance de repas savoureux,
-              nutritifs et respectueux de l'environnement.
-            </p>
+            <p>{saison ? saison.description : "Chargement des produits..."}</p>
           </div>
 
           <div className="saison-divider"></div>
 
           <div className="div_saison3">
-            <h3>Ce Mois-ci : Octobre 🍁</h3>
-            <span>L'abondance de l'automne à son apogée !</span>
+            <h3>
+              {saison
+                ? `Ce Mois-ci : ${new Date().toLocaleString("fr-FR", {
+                    month: "long",
+                  })}`
+                : "Ce Mois-ci"}
+            </h3>
+            <span>
+              {saison
+                ? `Les meilleures saveurs de ${saison.saison.toLowerCase()} sont là !`
+                : "Chargement..."}
+            </span>
             <button>
               <a href="#produits-saisonniers">Découvrez les stars du mois</a>
             </button>
           </div>
         </div>
 
-        {/* SECTION PRODUITS DE SAISON */}
-        <div className="saison-produits-new" id="produits-saisonniers">
-          <ProductCardDisplay
-            title="Légumes d’Automne"
-            products={autumnVegetables}
-            type="legumes"
-          />
-          <ProductCardDisplay
-            title="Fruits d’Automne"
-            products={autumnFruits}
-            type="fruits"
-          />
-        </div>
+        {saison && (
+          <div className="saison-produits-new" id="produits-saisonniers">
+            <ProductCardDisplay
+              title={`Légumes de ${saison.saison}`}
+              products={saison.produits.legumes}
+              type="legumes"
+            />
+            <ProductCardDisplay
+              title={`Fruits de ${saison.saison}`}
+              products={saison.produits.fruits}
+              type="fruits"
+            />
+          </div>
+        )}
       </section>
 
       <div className="container_cartes1">
