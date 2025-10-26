@@ -216,6 +216,7 @@
 .Container_populaires {
   background-color: var(--primary-color, #3e2a1d);
   padding: 1rem 8rem;
+  padding-bottom: 3rem;
 }
 
 .h2_populaires1 {
@@ -359,70 +360,103 @@
   transform: scale(1.05);
 }
 
-/* -------- CADRES FRUITS ET LÉGUMES -------- */
-.saison-produits {
+/* NOUVEAUX STYLES POUR LES CARTES DE PRODUITS DE SAISON */
+.saison-produits-new {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 3rem;
+  gap: 3rem; /* Espacement entre les cartes */
   margin-top: 3rem;
 }
 
-.product-card {
+.product-card-new {
   background-color: #fffdf9;
   border-radius: 1.2rem;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-  width: 48%;
-  min-width: 320px;
-  padding: 2rem;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 45%; /* Ajusté pour laisser un peu plus d'espace */
+  min-width: 350px; /* Taille minimale pour une meilleure lisibilité */
+  padding: 2.5rem; /* Augmenté le padding pour plus d'air */
+  transition: transform 0.3s ease, box-shadow 0.3s ease,
+    background-color 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centrer le contenu */
+  text-align: center;
+  border: 1px solid #f0e0c9; /* Bordure légère */
 }
 
-.product-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+.product-card-new.legumes {
+  background: linear-gradient(
+    135deg,
+    #e6ffe6,
+    #d4ffd4
+  ); /* Fond plus vert pour les légumes */
+  border-color: #a7d9b7;
 }
 
-.product-card h2 {
-  font-size: 1.9rem;
-  margin-bottom: 1.2rem;
-  color: #a85b1f;
+.product-card-new.fruits {
+  background: linear-gradient(
+    135deg,
+    #fff2e6,
+    #ffe0cc
+  ); /* Fond plus orangé pour les fruits */
+  border-color: #ffb347;
+}
+
+.product-card-new:hover {
+  transform: translateY(-12px); /* Effet de soulèvement plus prononcé */
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.2); /* Ombre plus intense */
+}
+
+.product-card-title {
+  font-size: 2.2rem; /* Taille de titre plus grande */
+  margin-bottom: 1.5rem;
+  color: #5c3b1e; /* Couleur de texte plus foncée pour le contraste */
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  justify-content: center; /* Centrer l'icône et le texte */
+  gap: 1rem;
+  font-weight: 700; /* Plus gras */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.05); /* Petite ombre pour le titre */
 }
 
-#legumes h2 {
-  color: #2d8659;
+.product-card-new.legumes .product-card-title {
+  color: #27ae60; /* Vert pour les légumes */
 }
 
-.product-list {
+.product-card-new.fruits .product-card-title {
+  color: #e67e22; /* Orange pour les fruits */
+}
+
+.product-list-new {
   list-style: none;
   padding: 0;
-  columns: 2;
-  column-gap: 2rem;
+  columns: 2; /* Deux colonnes pour une meilleure organisation */
+  column-gap: 2.5rem; /* Espacement entre les colonnes */
+  max-width: 500px; /* Limiter la largeur de la liste */
+  margin: 0 auto; /* Centrer la liste */
 }
 
-.product-list li {
-  font-size: 1.05rem;
-  padding: 6px 0;
+.product-list-new li {
+  font-size: 1.15rem; /* Taille de texte légèrement plus grande */
+  padding: 8px 0;
   position: relative;
-  padding-left: 20px;
+  text-align: left; /* Texte aligné à gauche dans les colonnes */
+  color: #4a4a4a;
+  font-weight: 500;
+  display: flex; /* Permet d'aligner l'icône et le texte */
+  align-items: center;
+  gap: 0.8rem; /* Espacement entre l'icône et le texte */
 }
 
-.product-list li::before {
-  content: "•";
-  color: #a85b1f;
-  font-size: 1.4rem;
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
+.product-icon {
+  font-size: 1.5rem; /* Taille des icônes d'emoji */
+  line-height: 1; /* Assure que l'icône est bien alignée */
 }
 
-#legumes .product-list li::before {
-  color: #27ae60;
-}
+/* Anciens styles (commentés ou supprimés si remplacés) */
+/* .product-card h2 { ... } */
+/* .product-list li::before { ... } */
 
 .div_cartes_h2 {
   background-color: var(--primary-color, #3e2a1d);
@@ -500,16 +534,21 @@
     width: 100%;
   }
 
-  .saison-produits {
+  /* Nouveaux styles responsive pour les cartes de produits */
+  .saison-produits-new {
     flex-direction: column;
+    align-items: center;
   }
 
-  .product-card {
-    width: 100%;
+  .product-card-new {
+    width: 90%; /* Prend plus de largeur sur les petits écrans */
+    min-width: unset; /* Retire la contrainte de min-width */
+    padding: 2rem;
   }
 
-  .product-list {
-    columns: 1;
+  .product-list-new {
+    columns: 1; /* Une seule colonne sur les petits écrans */
+    max-width: 100%;
   }
 
   .liste_choix1 {
@@ -597,5 +636,19 @@
     margin-top: 2rem;
     justify-content: center;
     flex-direction: column;
+  }
+
+  /* Ajustements pour les cartes de produits sur très petits écrans */
+  .product-card-new {
+    width: 100%;
+    padding: 1.5rem;
+  }
+
+  .product-card-title {
+    font-size: 1.8rem;
+  }
+
+  .product-list-new li {
+    font-size: 1.05rem;
   }
 }

@@ -1,34 +1,78 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Accueil.css";
-// Ajout de useNavigate pour la redirection conditionnelle
 import { Link, useNavigate } from "react-router-dom";
 
 // Import widgets
 import CartesAccueil from "../../Cartes/CarteAccueil/CartesA";
 import AvisPages from "../../Widgets/Avis/Avis";
 
+// 🔹 Nouveau composant pour afficher les cartes de produits de saison
+const ProductCardDisplay = ({ title, products, type }) => {
+  const iconMap = {
+    // Légumes
+    Potimarron: "🎃",
+    Potiron: "🟠",
+    Butternut: "🥣",
+    Betterave: "🍠",
+    "Céleri-rave": "🥔",
+    Brocoli: "🥦",
+    "Chou-fleur": " florets",
+    "Chou de Bruxelles": "🥬",
+    Panais: "🥕",
+    Mâche: "🌿",
+    Épinard: "🍃",
+    Poireau: "🧅",
+    Carotte: "🥕",
+    Navet: "🤍",
+    "Radis Noir": "⚫",
+    // Fruits
+    Pomme: "🍏",
+    Poire: "🍐",
+    Raisin: "🍇",
+    Coing: "🟡",
+    Kaki: "🟠",
+    Châtaigne: "🌰",
+    Noix: "🥜",
+    Figue: "🟣",
+    Grenade: "🔴",
+    Noisette: "🤎",
+    Amande: "⚪",
+    Canneberge: "🍒",
+  };
+
+  return (
+    <div className={`product-card-new ${type}`}>
+      <h2 className="product-card-title">
+        {type === "legumes" ? "🥦" : "🍎"} {title}
+      </h2>
+      <ul className="product-list-new">
+        {products.map((product, index) => (
+          <li key={index}>
+            <span className="product-icon">{iconMap[product] || "✨"}</span>
+            {product}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+// 🔹 Bannière principale
 const HeroBanner = () => {
   const [query, setQuery] = useState("");
-  // États restaurés pour la logique de recherche API
-  const [recettes, setRecettes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const apiBase = import.meta.env.VITE_API_URL;
-
-  // Utilisation de useNavigate pour la redirection
   const navigate = useNavigate();
 
-  // 🔍 Fonction de recherche modifiée pour API + Redirection
   const handleSearch = async () => {
     if (!query.trim()) {
       setMessage("Tapez un ingrédient ou un nom de plat pour commencer !");
-      setRecettes([]); // Nettoie les résultats précédents
       return;
     }
 
     setLoading(true);
     setMessage("");
-    setRecettes([]);
 
     try {
       const res = await fetch(
@@ -38,12 +82,9 @@ const HeroBanner = () => {
       const data = await res.json();
 
       if (data.results.length === 0) {
-        // Cas 1 : Aucune recette trouvée -> Affiche un message local
         setMessage("Aucune recette trouvée 🍽️");
       } else {
-        // Cas 2 : Recettes trouvées -> Redirige vers la page de recherche complète
         navigate(`/recherche?q=${encodeURIComponent(query.trim())}`);
-        // Note : setRecettes n'est plus strictement nécessaire car on quitte la page.
       }
     } catch (error) {
       console.error("❌ Erreur API :", error);
@@ -78,10 +119,8 @@ const HeroBanner = () => {
           </button>
         </div>
 
-        {/* Résultats de la recherche - Sert principalement à afficher le message d'erreur/absence de résultat */}
         <div className="search-results">
           {message && <p className="search-message">{message}</p>}
-          {/* Note : L'affichage des recettes (recettes.length > 0) est supprimé car on redirige dans ce cas. */}
         </div>
 
         <div className="hero-cta-alt-group">
@@ -101,7 +140,33 @@ const HeroBanner = () => {
   );
 };
 
+// 🔹 Page principale
 function Accueil() {
+  const apiBase = import.meta.env.VITE_API_URL;
+  const [recetteDuJour, setRecetteDuJour] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchRecettes = async () => {
+      try {
+        const res = await fetch(`${apiBase}/api/recettes`);
+        if (!res.ok) throw new Error("Erreur lors du chargement des recettes");
+        const data = await res.json();
+        const recettes = data.recettes || data.results || [];
+
+        if (recettes.length > 0) {
+          // Sélectionne une recette différente chaque jour
+          const dayIndex = new Date().getDate() % recettes.length;
+          setRecetteDuJour(recettes[dayIndex]);
+        }
+      } catch (error) {
+        console.error("❌ Erreur API :", error);
+      }
+    };
+
+    fetchRecettes();
+  }, [apiBase]);
+
   const categories = [
     {
       nom: "Petit-déjeuner",
@@ -137,6 +202,39 @@ function Accueil() {
     },
   ];
 
+  const autumnVegetables = [
+    "Potimarron",
+    "Potiron",
+    "Butternut",
+    "Betterave",
+    "Céleri-rave",
+    "Brocoli",
+    "Chou-fleur",
+    "Chou de Bruxelles",
+    "Panais",
+    "Mâche",
+    "Épinard",
+    "Poireau",
+    "Carotte",
+    "Navet",
+    "Radis Noir",
+  ];
+
+  const autumnFruits = [
+    "Pomme",
+    "Poire",
+    "Raisin",
+    "Coing",
+    "Kaki",
+    "Châtaigne",
+    "Noix",
+    "Figue",
+    "Grenade",
+    "Noisette",
+    "Amande",
+    "Canneberge",
+  ];
+
   return (
     <>
       <HeroBanner />
@@ -157,37 +255,45 @@ function Accueil() {
         </ul>
       </div>
 
-      {/* SECTION POPULAIRES */}
+      {/* SECTION POPULAIRES — Recette du jour */}
       <div className="Container_populaires" id="recettes-populaires">
-        <h2 className="h2_populaires1">Les recettes populaires</h2>
+        <h2 className="h2_populaires1">
+          {recetteDuJour
+            ? `La recette du jour : ${recetteDuJour.nom}`
+            : "Les recettes populaires"}
+        </h2>
 
         <div className="div_populaires1">
           <p className="para_populaires1">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Sit quasi
-            necessitatibus corrupti fuga accusantium explicabo iste ex mollitia
-            facilis hic commodi, placeat rem autem ut esse saepe dignissimos.
-            Cupiditate, maiores, tempore ut repellendus nostrum cumque
-            voluptatum sequi eius facere porro praesentium repellat illo
-            quisquam voluptates voluptatibus. Quibusdam ad, corrupti recusandae
-            magni laborum velit tempora magnam, voluptatem officiis minus omnis
-            in iste voluptates? Ab dolorum recusandae fugit aliquid? Aperiam
-            eveniet tempore quibusdam voluptas ex mollitia. Placeat ipsam
-            nostrum dolorum quia quibusdam.
+            {recetteDuJour
+              ? recetteDuJour.description
+              : "Découvrez chaque jour une nouvelle idée gourmande !"}
           </p>
 
           <img
-            src="/Images/Assiette_1.png"
-            alt="Recette populaire"
+            src={
+              recetteDuJour?.image
+                ? recetteDuJour.image
+                : "/Images/Assiette_1.png"
+            }
+            alt={recetteDuJour?.nom || "Recette populaire"}
             className="img_populaires1"
           />
         </div>
 
         <div className="Btn_populaires1">
-          <button>
+          <button
+            onClick={() =>
+              recetteDuJour &&
+              navigate(
+                `/Fiches_Recettes/${recetteDuJour._id || recetteDuJour.id}`
+              )
+            }
+          >
             <a href="#">Voir la recette</a>
           </button>
           <button>
-            <a href="#">Voir plus de recettes</a>
+            <a href="/Plats_Principaux">Voir plus de recettes</a>
           </button>
         </div>
       </div>
@@ -220,50 +326,23 @@ function Accueil() {
             <h3>Ce Mois-ci : Octobre 🍁</h3>
             <span>L'abondance de l'automne à son apogée !</span>
             <button>
-              <a href="#legumes">Découvrez les stars du mois</a>
+              <a href="#produits-saisonniers">Découvrez les stars du mois</a>
             </button>
           </div>
         </div>
 
-        <div className="saison-produits">
-          <div className="product-card" id="legumes">
-            <h2>🥦 Légumes d’Automne</h2>
-            <ul className="product-list">
-              <li>Potimarron 🎃</li>
-              <li>Potiron</li>
-              <li>Butternut</li>
-              <li>Betterave</li>
-              <li>Céleri-rave</li>
-              <li>Brocoli</li>
-              <li>Chou-fleur</li>
-              <li>Chou de Bruxelles</li>
-              <li>Panais</li>
-              <li>Mâche</li>
-              <li>Épinard</li>
-              <li>Poireau</li>
-              <li>Carotte</li>
-              <li>Navet</li>
-              <li>Radis Noir</li>
-            </ul>
-          </div>
-
-          <div className="product-card" id="fruits">
-            <h2>🍎 Fruits d’Automne</h2>
-            <ul className="product-list">
-              <li>Pomme 🍏</li>
-              <li>Poire</li>
-              <li>Raisin 🍇</li>
-              <li>Coing</li>
-              <li>Kaki</li>
-              <li>Châtaigne</li>
-              <li>Noix</li>
-              <li>Figue (dernières)</li>
-              <li>Grenade</li>
-              <li>Noisette</li>
-              <li>Amande</li>
-              <li>Canneberge</li>
-            </ul>
-          </div>
+        {/* SECTION PRODUITS DE SAISON */}
+        <div className="saison-produits-new" id="produits-saisonniers">
+          <ProductCardDisplay
+            title="Légumes d’Automne"
+            products={autumnVegetables}
+            type="legumes"
+          />
+          <ProductCardDisplay
+            title="Fruits d’Automne"
+            products={autumnFruits}
+            type="fruits"
+          />
         </div>
       </section>
 
