@@ -16,7 +16,8 @@ exports.getBySaisonName = async (req, res) => {
     try {
         const { nom } = req.params;
         const saison = await Saison.findOne({ saison: nom });
-        if (!saison) return res.status(404).json({ message: "Saison non trouvée" });
+        if (!saison)
+            return res.status(404).json({ message: "Saison non trouvée" });
         res.json(saison);
     } catch (error) {
         console.error("❌ Erreur getBySaisonName :", error);
@@ -28,8 +29,17 @@ exports.getBySaisonName = async (req, res) => {
 exports.getByMonth = async (req, res) => {
     try {
         const mois = parseInt(req.params.mois);
-        const saison = await Saison.findOne({ mois: mois });
-        if (!saison) return res.status(404).json({ message: "Aucune saison trouvée pour ce mois" });
+        if (isNaN(mois) || mois < 1 || mois > 12) {
+            return res.status(400).json({ message: "Mois invalide" });
+        }
+
+        // ✅ Recherche si le mois est contenu dans le tableau
+        const saison = await Saison.findOne({ mois: { $in: [mois] } });
+        if (!saison)
+            return res
+                .status(404)
+                .json({ message: "Aucune saison trouvée pour ce mois" });
+
         res.json(saison);
     } catch (error) {
         console.error("❌ Erreur getByMonth :", error);
@@ -40,9 +50,14 @@ exports.getByMonth = async (req, res) => {
 // 📍 GET la saison actuelle selon la date du jour
 exports.getCurrentSaison = async (req, res) => {
     try {
-        const currentMonth = new Date().getMonth() + 1; // JS → 0=janvier
-        const saison = await Saison.findOne({ mois: currentMonth });
-        if (!saison) return res.status(404).json({ message: "Aucune saison actuelle trouvée" });
+        const currentMonth = new Date().getMonth() + 1; // JS → 0 = janvier
+        const saison = await Saison.findOne({ mois: { $in: [currentMonth] } }); // ✅ Recherche dans tableau
+
+        if (!saison)
+            return res
+                .status(404)
+                .json({ message: "Aucune saison actuelle trouvée" });
+
         res.json(saison);
     } catch (error) {
         console.error("❌ Erreur getCurrentSaison :", error);
@@ -53,7 +68,21 @@ exports.getCurrentSaison = async (req, res) => {
 // 📍 POST créer une saison (admin)
 exports.createSaison = async (req, res) => {
     try {
-        const nouvelleSaison = new Saison(req.body);
+        const { saison, mois, produits, description } = req.body;
+
+        if (!saison || !mois) {
+            return res
+                .status(400)
+                .json({ message: "Les champs 'saison' et 'mois' sont requis" });
+        }
+
+        const nouvelleSaison = new Saison({
+            saison,
+            mois,
+            produits: produits || { fruits: [], legumes: [] },
+            description: description || "",
+        });
+
         await nouvelleSaison.save();
         res.status(201).json(nouvelleSaison);
     } catch (error) {
@@ -65,8 +94,14 @@ exports.createSaison = async (req, res) => {
 // 📍 PUT mise à jour d'une saison (admin)
 exports.updateSaison = async (req, res) => {
     try {
-        const saison = await Saison.findByIdAndUpdate(req.params.id, req.body, { new: true });
-        if (!saison) return res.status(404).json({ message: "Saison non trouvée" });
+        const saison = await Saison.findByIdAndUpdate(req.params.id, req.body, {
+            new: true,
+            runValidators: true,
+        });
+
+        if (!saison)
+            return res.status(404).json({ message: "Saison non trouvée" });
+
         res.json(saison);
     } catch (error) {
         console.error("❌ Erreur updateSaison :", error);
@@ -78,7 +113,8 @@ exports.updateSaison = async (req, res) => {
 exports.deleteSaison = async (req, res) => {
     try {
         const saison = await Saison.findByIdAndDelete(req.params.id);
-        if (!saison) return res.status(404).json({ message: "Saison non trouvée" });
+        if (!saison)
+            return res.status(404).json({ message: "Saison non trouvée" });
         res.json({ message: "Saison supprimée avec succès" });
     } catch (error) {
         console.error("❌ Erreur deleteSaison :", error);
