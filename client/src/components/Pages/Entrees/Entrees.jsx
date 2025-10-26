@@ -13,7 +13,7 @@ function Entrees() {
       <h2 className="h2_entrees1">Nos différentes recettes</h2>
 
       {/* 🔹 Affiche uniquement la catégorie "Entrées" */}
-      <CarteFood categorie="Entrées" />
+      <CarteFood categorie="Entrees" />
     </>
   );
 }
