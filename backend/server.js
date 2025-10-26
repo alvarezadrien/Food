@@ -35,13 +35,16 @@ app.get("/", (req, res) => {
     res.json({
         status: "✅ API BubuFood opérationnelle",
         message: "Bienvenue sur l’API officielle de BubuFood",
-        endpoints: ["/api/recettes"],
+        endpoints: ["/api/recettes", "/api/saisons"],
     });
 });
 
 // --- Import des routes ---
 const recetteRoutes = require("./routes/recetteRoutes");
+const saisonRoutes = require("./routes/saisonRoutes"); // ✅ nouvelle importation
+
 app.use("/api/recettes", recetteRoutes);
+app.use("/api/saisons", saisonRoutes); // ✅ nouvelle route connectée
 
 // --- Fichiers statiques ---
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
