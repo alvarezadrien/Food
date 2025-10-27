@@ -95,7 +95,7 @@ function BackOffice() {
   const fetchRecettes = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`${apiBase}/api/recettes`);
+      const res = await fetch(`${apiBase}/api/recettes?limit=10000`);
       if (!res.ok) throw new Error("Erreur de chargement");
       const data = await res.json();
       setRecettes(data.recettes || data.results || []);
