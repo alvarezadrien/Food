@@ -48,6 +48,7 @@ app.use("/api/saisons", saisonRoutes); // ✅ nouvelle route connectée
 
 // --- Fichiers statiques ---
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/assets/ImagesDb", express.static(path.join(__dirname, "uploads/ImagesDb")));
 
 // --- Middleware global d’erreur ---
 app.use((err, req, res, next) => {

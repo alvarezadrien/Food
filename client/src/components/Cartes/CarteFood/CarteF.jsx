@@ -112,10 +112,20 @@ function CarteFood({ categorie, searchQuery }) {
               }
             >
               <img
-                src={recette.image || "/Images/default.png"}
+                src={
+                  recette.image?.startsWith("http")
+                    ? recette.image
+                    : `${import.meta.env.VITE_API_URL}/assets/ImagesDb/${
+                        recette.image
+                      }`
+                }
                 alt={recette.nom || "Recette"}
                 className="carteAccueil-img"
-                onError={(e) => (e.target.src = "/Images/default.png")}
+                onError={(e) =>
+                  (e.target.src = `${
+                    import.meta.env.VITE_API_URL
+                  }/assets/ImagesDb/default.png`)
+                }
               />
 
               <div className="carteAccueil-header">
