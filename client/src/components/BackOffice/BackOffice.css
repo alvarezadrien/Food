@@ -1,153 +1,421 @@
-.backoffice-container {
-  display: flex;
-  min-height: 100vh;
-  background-color: #fdfaf5;
-  font-family: "Montserrat", sans-serif;
+/* ================================
+   BackOffice.css — BubuFood Admin
+   Design moderne + responsive
+===================================*/
+
+:root {
+  --bg: #0f172a; /* slate-900 */
+  --panel: #111827; /* gray-900 */
+  --muted: #1f2937; /* gray-800 */
+  --border: #2d3748; /* gray-700 */
+  --text: #e5e7eb; /* gray-200 */
+  --subtext: #9ca3af; /* gray-400 */
+  --primary: #7c3aed; /* violet-600 */
+  --primary-700: #6d28d9;
+  --primary-800: #5b21b6;
+  --success: #10b981; /* emerald-500 */
+  --danger: #ef4444; /* red-500 */
+  --warning: #f59e0b; /* amber-500 */
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --radius-xs: 8px;
 }
 
-/* --- SIDEBAR --- */
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f8fafc; /* slate-50 */
+    --panel: #ffffff;
+    --muted: #f1f5f9; /* slate-100 */
+    --border: #e5e7eb; /* gray-200 */
+    --text: #0f172a; /* slate-900 */
+    --subtext: #475569; /* slate-600 */
+    --shadow: 0 10px 30px rgba(2, 6, 23, 0.07);
+  }
+}
+
+/* ===== Layout général ===== */
+
+.backoffice-container {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  min-height: 100vh;
+  background: linear-gradient(180deg, var(--bg), #0b1022);
+  color: var(--text);
+}
+
+/* ===== Sidebar ===== */
+
 .bo-sidebar {
-  width: 250px;
-  background: linear-gradient(180deg, #c87a1a, #a75a0b);
-  color: #fff;
-  padding: 2rem 1rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  padding: 28px 22px;
+  background: radial-gradient(
+      1200px 600px at -200px -200px,
+      rgba(124, 58, 237, 0.14),
+      transparent 60%
+    ),
+    var(--panel);
+  border-right: 1px solid var(--border);
+  box-shadow: inset -1px 0 0 rgba(0, 0, 0, 0.05);
 }
 
 .bo-sidebar h2 {
-  font-size: 1.6rem;
-  text-align: center;
-  margin-bottom: 2rem;
-  font-family: "Playfair Display", serif;
+  margin: 0 0 18px;
+  font-weight: 800;
+  font-size: 1.4rem;
+  letter-spacing: 0.4px;
 }
 
 .bo-sidebar ul {
   list-style: none;
-  padding: 0;
+  margin: 0;
+  padding: 8px 0 0;
+  display: grid;
+  gap: 8px;
 }
 
 .bo-sidebar li {
   display: flex;
   align-items: center;
-  gap: 0.8rem;
-  padding: 0.8rem 1rem;
-  border-radius: 8px;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: var(--radius-xs);
+  color: var(--subtext);
   cursor: pointer;
-  transition: background 0.3s;
+  transition: all 0.18s ease;
+  border: 1px solid transparent;
 }
 
-.bo-sidebar li:hover,
+.bo-sidebar li:hover {
+  color: var(--text);
+  background: linear-gradient(
+    180deg,
+    rgba(124, 58, 237, 0.08),
+    rgba(124, 58, 237, 0.03)
+  );
+  border-color: rgba(124, 58, 237, 0.25);
+  transform: translateX(2px);
+}
+
 .bo-sidebar li.active {
-  background-color: rgba(255, 255, 255, 0.15);
-}
-
-/* --- CONTENU PRINCIPAL --- */
-.bo-content {
-  flex: 1;
-  padding: 2rem 3rem;
-  color: #3b2a1b;
-}
-
-.bo-content h2 {
-  font-size: 1.8rem;
-  color: #a75a0b;
-  margin-bottom: 1rem;
-}
-
-/* --- TABLEAU --- */
-.bo-table table {
-  width: 100%;
-  border-collapse: collapse;
-  background-color: #fff;
-  border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-  overflow: hidden;
-}
-
-.bo-table th,
-.bo-table td {
-  padding: 1rem;
-  border-bottom: 1px solid #f0e0cc;
-  text-align: left;
-}
-
-.bo-table th {
-  background-color: #fff7eb;
-  color: #3b2a1b;
-  font-weight: 700;
-}
-
-.bo-table tbody tr:hover {
-  background-color: #fff4e1;
-}
-
-/* --- BOUTONS --- */
-.btn-ajout {
-  background-color: #c87a1a;
   color: #fff;
-  border: none;
-  padding: 0.7rem 1.4rem;
-  border-radius: 25px;
-  cursor: pointer;
-  font-weight: 600;
+  border-color: rgba(124, 58, 237, 0.5);
+  background: linear-gradient(
+      180deg,
+      rgba(124, 58, 237, 0.18),
+      rgba(124, 58, 237, 0.08)
+    ),
+    linear-gradient(180deg, var(--panel), var(--muted));
+  box-shadow: 0 4px 16px rgba(124, 58, 237, 0.25);
+}
+
+/* ===== Contenu ===== */
+
+.bo-content {
+  padding: 34px 36px 44px;
+  display: grid;
+  gap: 24px;
+}
+
+/* ===== Messages / loader ===== */
+
+.bo-header {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-  transition: all 0.3s ease;
+  justify-content: space-between;
+  margin-bottom: -6px;
 }
 
-.btn-ajout:hover {
-  background-color: #a85b0a;
-  transform: scale(1.05);
+.bo-header h2 {
+  margin: 0;
 }
 
+.bo-msg {
+  font-size: 0.95rem;
+  color: var(--success);
+}
+
+.bo-loading {
+  color: var(--warning);
+  font-weight: 600;
+}
+
+/* ===== Panneaux (form + table) ===== */
+
+.bo-form,
+.bo-table {
+  background: linear-gradient(180deg, var(--panel), rgba(17, 24, 39, 0.92));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px;
+}
+
+.bo-form {
+  display: grid;
+  gap: 18px;
+}
+
+/* ===== Grids ===== */
+
+.bo-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.bo-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+@media (max-width: 980px) {
+  .backoffice-container {
+    grid-template-columns: 1fr;
+  }
+  .bo-sidebar {
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+  .bo-grid-3,
+  .bo-grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===== Form ===== */
+
+.bo-form-row {
+  display: grid;
+  gap: 8px;
+}
+
+.bo-form-row label {
+  font-weight: 700;
+  color: var(--subtext);
+}
+
+.bo-form-row input[type="text"],
+.bo-form-row input[type="number"],
+.bo-form-row select,
+.bo-form-row textarea {
+  width: 100%;
+  background: linear-gradient(180deg, var(--muted), rgba(0, 0, 0, 0.05));
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 12px;
+  padding: 12px 14px;
+  outline: none;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease,
+    transform 0.06s ease;
+}
+
+.bo-form-row textarea {
+  resize: vertical;
+}
+
+.bo-form-row input:focus,
+.bo-form-row select:focus,
+.bo-form-row textarea:focus {
+  border-color: rgba(124, 58, 237, 0.65);
+  box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.15);
+}
+
+/* ===== Upload image ===== */
+
+.bo-upload {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.bo-upload input[type="file"] {
+  display: none;
+}
+
+.btn-upload {
+  background: linear-gradient(180deg, var(--primary), var(--primary-700));
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 14px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 22px rgba(124, 58, 237, 0.35);
+  transition: transform 0.08s ease, filter 0.18s ease, box-shadow 0.18s ease;
+}
+
+.btn-upload:hover {
+  filter: brightness(1.05);
+  box-shadow: 0 8px 28px rgba(124, 58, 237, 0.45);
+}
+.btn-upload:active {
+  transform: translateY(1px);
+}
+
+.bo-filename {
+  color: var(--subtext);
+  font-size: 0.95rem;
+}
+
+.bo-preview {
+  margin-top: 10px;
+  width: 210px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+}
+
+/* ===== Actions formulaire ===== */
+
+.bo-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-primary,
+.btn-secondary,
 .btn-edit,
 .btn-delete {
-  background: none;
-  border: none;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-weight: 800;
   cursor: pointer;
-  font-size: 1.1rem;
-  margin: 0 0.3rem;
-  transition: transform 0.2s ease;
+  transition: transform 0.06s ease, box-shadow 0.18s ease, background 0.18s ease,
+    color 0.18s ease;
+}
+
+.btn-primary {
+  background: linear-gradient(180deg, var(--primary), var(--primary-800));
+  color: #fff;
+  box-shadow: 0 10px 24px rgba(124, 58, 237, 0.35);
+}
+.btn-primary:hover {
+  box-shadow: 0 10px 30px rgba(124, 58, 237, 0.5);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: linear-gradient(180deg, #334155, #1f2937);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+.btn-secondary:hover {
+  background: linear-gradient(180deg, #3b485b, #263142);
 }
 
 .btn-edit {
-  color: #2d8659;
+  background: linear-gradient(180deg, #2563eb, #1d4ed8);
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35);
 }
+.btn-edit:hover {
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.45);
+  transform: translateY(-1px);
+}
+
 .btn-delete {
-  color: #d84b4b;
+  background: linear-gradient(180deg, #ef4444, #dc2626);
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(239, 68, 68, 0.35);
 }
-
-.btn-edit:hover,
 .btn-delete:hover {
-  transform: scale(1.2);
+  box-shadow: 0 8px 24px rgba(239, 68, 68, 0.45);
+  transform: translateY(-1px);
 }
 
-/* --- RESPONSIVE --- */
-@media (max-width: 992px) {
-  .backoffice-container {
-    flex-direction: column;
-  }
+/* ===== Tableau ===== */
 
-  .bo-sidebar {
-    width: 100%;
-    flex-direction: row;
-    justify-content: space-around;
-  }
+.bo-table-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
 
-  .bo-sidebar ul {
-    display: flex;
-    gap: 1rem;
-  }
+.bo-table table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 10px; /* lignes flottantes */
+}
 
+.bo-table thead th {
+  text-align: left;
+  padding: 12px 14px;
+  color: var(--subtext);
+  font-weight: 700;
+  border-bottom: 1px solid var(--border);
+}
+
+.bo-table tbody tr {
+  background: linear-gradient(180deg, var(--muted), rgba(0, 0, 0, 0.08));
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.08s ease, box-shadow 0.18s ease;
+}
+
+.bo-table tbody tr:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.25);
+}
+
+.bo-table tbody td {
+  padding: 12px 14px;
+  vertical-align: middle;
+  border-bottom: 1px solid transparent;
+}
+
+.bo-thumb {
+  width: 72px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+/* ===== Utilitaires ===== */
+
+h2,
+h3 {
+  letter-spacing: 0.2px;
+}
+
+button a {
+  color: inherit;
+  text-decoration: none;
+}
+
+@media (max-width: 720px) {
   .bo-content {
-    padding: 1rem;
+    padding: 22px 18px 34px;
   }
-
-  .bo-table table {
-    font-size: 0.9rem;
+  .bo-preview {
+    width: 100%;
+    height: auto;
+  }
+  .bo-table thead {
+    display: none;
+  }
+  .bo-table tbody tr {
+    display: grid;
+    gap: 10px;
+    padding: 12px;
+  }
+  .bo-table tbody td {
+    padding: 6px 8px;
+  }
+  .bo-thumb {
+    width: 100%;
+    height: 160px;
   }
 }
