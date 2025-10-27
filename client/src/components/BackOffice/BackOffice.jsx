@@ -30,7 +30,13 @@ const DIFFICULTES = ["Facile", "Moyenne", "Difficile"];
 
 function BackOffice() {
   const [activeTab, setActiveTab] = useState("recettes");
-  const apiBase = import.meta.env.VITE_API_URL; // ex: https://bubufood.onrender.com
+  const apiBase = import.meta.env.VITE_API_URL;
+
+  // Vérifie que la variable d’environnement existe
+  if (!apiBase) {
+    console.error("❌ Erreur : VITE_API_URL non défini dans le .env du front.");
+  }
+
   const uploadEndpoint = `${apiBase}/api/upload-image`;
 
   // === États ===
@@ -114,8 +120,7 @@ function BackOffice() {
   };
 
   useEffect(() => {
-    if (!apiBase) return;
-    fetchRecettes();
+    if (apiBase) fetchRecettes();
   }, [apiBase]);
 
   // === Upload image ===
@@ -126,13 +131,16 @@ function BackOffice() {
 
     try {
       const res = await fetch(uploadEndpoint, { method: "POST", body: fd });
-      if (!res.ok) throw new Error("Erreur upload");
+      if (!res.ok) {
+        const txt = await res.text();
+        throw new Error(txt || "Erreur d’upload");
+      }
       const data = await res.json();
       setForm((f) => ({ ...f, image: data.filename }));
       showTempMsg("✅ Image uploadée !");
     } catch (err) {
-      console.error(err);
-      showTempMsg("❌ Upload échoué");
+      console.error("❌ Erreur upload :", err);
+      showTempMsg("❌ Upload échoué : " + err.message);
     } finally {
       setUploading(false);
     }
@@ -218,7 +226,7 @@ function BackOffice() {
     );
   }, [recettes, q]);
 
-  // === Vue principale ===
+  // === Vue Recettes ===
   const RecettesView = () => (
     <div className="bo-recettes">
       <div className="bo-header">
