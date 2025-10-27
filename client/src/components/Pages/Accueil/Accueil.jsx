@@ -187,6 +187,13 @@ function Accueil() {
     },
   ];
 
+  // ✅ Construction du chemin d’image pour la recette du jour
+  const imageRecetteDuJour = recetteDuJour?.image?.startsWith("http")
+    ? recetteDuJour.image
+    : recetteDuJour?.image
+    ? `${apiBase}/assets/ImagesDb/${recetteDuJour.image}`
+    : `${apiBase}/assets/ImagesDb/default.png`;
+
   return (
     <>
       <HeroBanner />
@@ -223,13 +230,12 @@ function Accueil() {
           </p>
 
           <img
-            src={
-              recetteDuJour?.image
-                ? recetteDuJour.image
-                : "/Images/Assiette_1.png"
-            }
+            src={imageRecetteDuJour}
             alt={recetteDuJour?.nom || "Recette populaire"}
             className="img_populaires1"
+            onError={(e) =>
+              (e.target.src = `${apiBase}/assets/ImagesDb/default.png`)
+            }
           />
         </div>
 
