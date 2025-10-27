@@ -11,6 +11,7 @@ import {
   FaUpload,
   FaSave,
   FaTimes,
+  FaSearch,
 } from "react-icons/fa";
 
 const CATEGORIES = [
@@ -29,12 +30,16 @@ const DIFFICULTES = ["Facile", "Moyenne", "Difficile"];
 
 function BackOffice() {
   const [activeTab, setActiveTab] = useState("recettes");
-  const apiBase = import.meta.env.VITE_API_URL;
+  const apiBase = import.meta.env.VITE_API_URL; // ex: https://food-jllh.onrender.com
+  const uploadEndpoint = `${apiBase}/api/upload-image`;
 
-  // ====== Recettes (Réel via API) ======
+  // ====== Recettes (API) ======
   const [recettes, setRecettes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState("");
+
+  // Recherche (prompt)
+  const [q, setQ] = useState("");
 
   // Formulaire recette
   const emptyForm = useMemo(
@@ -42,14 +47,14 @@ function BackOffice() {
       _id: null,
       nom: "",
       description: "",
-      image: "", // contiendra juste le nom de fichier renvoyé par l'upload
+      image: "", // contiendra le nom de fichier renvoyé par l'upload
       categorie: "Autre",
-      ingredients: "", // texte multi-lignes -> sera transformé en array
-      allergenes: "", // idem
+      ingredients: "", // multilignes -> array
+      allergenes: "", // multilignes -> array
       duree: "",
       difficulte: "Facile",
       portions: 2,
-      preparation: "", // texte multi-lignes -> array
+      preparation: "", // multilignes -> array
     }),
     []
   );
@@ -58,7 +63,7 @@ function BackOffice() {
   const [isEditing, setIsEditing] = useState(false);
   const [uploading, setUploading] = useState(false);
 
-  // ====== Fake données pour autres onglets (non protégés pour le moment) ======
+  // ====== Fake data pour autres onglets (public pour l’instant) ======
   const fakeUtilisateurs = [
     { id: 1, nom: "Adrien", email: "adrien@mail.com", role: "Admin" },
     { id: 2, nom: "Ange", email: "Ange@mail.com", role: "Utilisateur" },
@@ -96,7 +101,7 @@ function BackOffice() {
     try {
       setLoading(true);
       const res = await fetch(`${apiBase}/api/recettes?limit=10000`);
-      if (!res.ok) throw new Error("Erreur de chargement");
+      if (!res.ok) throw new Error(`Erreur de chargement (${res.status})`);
       const data = await res.json();
       setRecettes(data.recettes || data.results || []);
     } catch (e) {
@@ -120,13 +125,18 @@ function BackOffice() {
     fd.append("image", file);
     setUploading(true);
     try {
-      const res = await fetch(`${apiBase}/api/upload-image`, {
-        method: "POST",
-        body: fd,
-      });
-      if (!res.ok) throw new Error("Upload échoué");
-      const data = await res.json();
-      // data = { filename, url }
+      const res = await fetch(uploadEndpoint, { method: "POST", body: fd });
+      if (!res.ok) {
+        // Message d’erreur plus parlant
+        if (res.status === 404) {
+          throw new Error(
+            "Upload échoué (404). La route /api/upload-image n'existe pas sur le backend. Ajoute-la dans server.js."
+          );
+        }
+        const txt = await res.text().catch(() => "");
+        throw new Error(`Upload échoué (${res.status}) ${txt}`);
+      }
+      const data = await res.json(); // { filename, url }
       setForm((f) => ({ ...f, image: data.filename }));
       showTempMsg("✅ Image uploadée");
     } catch (e) {
@@ -141,14 +151,14 @@ function BackOffice() {
     const payload = {
       nom: form.nom || "(Sans titre)",
       description: form.description || "",
-      image: form.image || "", // juste le nom de fichier
+      image: form.image || "",
       categorie: form.categorie || "Autre",
-      ingredients: toArrayFromText(form.ingredients), // array<string>
-      allergenes: toArrayFromText(form.allergenes), // array<string>
+      ingredients: toArrayFromText(form.ingredients),
+      allergenes: toArrayFromText(form.allergenes),
       duree: form.duree || "Non précisée",
       difficulte: form.difficulte || "Facile",
       portions: Number(form.portions) || 2,
-      preparation: toArrayFromText(form.preparation), // array<string>
+      preparation: toArrayFromText(form.preparation),
     };
 
     try {
@@ -157,7 +167,7 @@ function BackOffice() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      if (!res.ok) throw new Error("Création échouée");
+      if (!res.ok) throw new Error(`Création échouée (${res.status})`);
       await fetchRecettes();
       setForm(emptyForm);
       showTempMsg("✅ Recette créée");
@@ -170,6 +180,7 @@ function BackOffice() {
   const updateRecette = async () => {
     const id = form._id;
     if (!id) return;
+
     const payload = {
       nom: form.nom || "(Sans titre)",
       description: form.description || "",
@@ -189,7 +200,7 @@ function BackOffice() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      if (!res.ok) throw new Error("Mise à jour échouée");
+      if (!res.ok) throw new Error(`Mise à jour échouée (${res.status})`);
       await fetchRecettes();
       setIsEditing(false);
       setForm(emptyForm);
@@ -206,7 +217,7 @@ function BackOffice() {
       const res = await fetch(`${apiBase}/api/recettes/${id}`, {
         method: "DELETE",
       });
-      if (!res.ok) throw new Error("Suppression échouée");
+      if (!res.ok) throw new Error(`Suppression échouée (${res.status})`);
       setRecettes((prev) => prev.filter((r) => (r._id || r.id) !== id));
       showTempMsg("🗑️ Recette supprimée");
     } catch (e) {
@@ -230,6 +241,7 @@ function BackOffice() {
       portions: r.portions || 2,
       preparation: Array.isArray(r.preparation) ? r.preparation.join("\n") : "",
     });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const cancelEdit = () => {
@@ -237,12 +249,48 @@ function BackOffice() {
     setForm(emptyForm);
   };
 
+  // ====== Filtrage local via "prompt de recherche" ======
+  const recettesFiltrees = useMemo(() => {
+    if (!q.trim()) return recettes;
+    const needle = q.toLowerCase();
+    return recettes.filter(
+      (r) =>
+        (r.nom || "").toLowerCase().includes(needle) ||
+        (r.description || "").toLowerCase().includes(needle)
+    );
+  }, [recettes, q]);
+
   // ====== Vues onglets ======
   const RecettesView = () => (
     <div className="bo-recettes">
       <div className="bo-header">
         <h2>📖 Gestion des Recettes</h2>
         <span className="bo-msg">{msg}</span>
+      </div>
+
+      {/* Barre de recherche (prompt) */}
+      <div className="bo-searchbar">
+        <div className="bo-searchwrap">
+          <FaSearch />
+          <input
+            type="text"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Rechercher une recette (nom, description)..."
+          />
+          {q && (
+            <button
+              className="bo-clear"
+              onClick={() => setQ("")}
+              title="Effacer"
+            >
+              <FaTimes />
+            </button>
+          )}
+        </div>
+        <div className="bo-count">
+          {loading ? "Chargement..." : `${recettesFiltrees.length} résultat(s)`}
+        </div>
       </div>
 
       {/* Formulaire création / édition */}
@@ -409,7 +457,7 @@ function BackOffice() {
       {/* Tableau des recettes */}
       <div className="bo-table">
         <div className="bo-table-head">
-          <h3>Liste des recettes</h3>
+          <h3>Liste des recettes {q ? `(filtrées)` : ""}</h3>
           {loading && <span className="bo-loading">Chargement...</span>}
         </div>
         <table>
@@ -425,7 +473,7 @@ function BackOffice() {
             </tr>
           </thead>
           <tbody>
-            {recettes.map((r) => {
+            {(q ? recettesFiltrees : recettes).map((r) => {
               const id = r._id || r.id;
               const imgSrc = r.image?.startsWith("http")
                 ? r.image
@@ -461,10 +509,10 @@ function BackOffice() {
                 </tr>
               );
             })}
-            {recettes.length === 0 && !loading && (
+            {(q ? recettesFiltrees : recettes).length === 0 && !loading && (
               <tr>
                 <td colSpan={7} style={{ textAlign: "center" }}>
-                  Aucune recette pour l’instant.
+                  Aucun résultat.
                 </td>
               </tr>
             )}
