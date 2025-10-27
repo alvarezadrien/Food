@@ -6,7 +6,7 @@ function Desserts() {
   return (
     <>
       <div className="container_desserts1">
-        <img src="/Images/Image_soupe1.jpg" alt="Desserts" />
+        <img src="/Images/Desserts-banniere.jpg" alt="Desserts" />
         <h1>Desserts</h1>
       </div>
 

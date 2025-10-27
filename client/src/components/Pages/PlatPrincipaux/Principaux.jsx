@@ -6,7 +6,7 @@ function PlatPrincipaux() {
   return (
     <>
       <div className="container_principaux1">
-        <img src="/Images/Image_soupe1.jpg" alt="Plats principaux" />
+        <img src="/Images/Plat-banniere.jpg" alt="Plats principaux" />
         <h1>Plats principaux</h1>
       </div>
 

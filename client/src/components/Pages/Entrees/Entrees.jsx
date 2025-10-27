@@ -6,7 +6,7 @@ function Entrees() {
   return (
     <>
       <div className="container_entrees1">
-        <img src="/Images/Image_soupe1.jpg" alt="Entrées" />
+        <img src="/Images/entrees-banniere.jpg" alt="Entrées" />
         <h1>Entrées</h1>
       </div>
 

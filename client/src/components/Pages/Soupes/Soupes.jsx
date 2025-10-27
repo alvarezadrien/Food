@@ -6,7 +6,7 @@ function Soupes() {
   return (
     <>
       <div className="container_soupes1">
-        <img src="/Images/Image_soupe1.jpg" alt="Soupes & Potages" />
+        <img src="/Images/Soupes-banniere.jpg" alt="Soupes & Potages" />
         <h1>Soupes & Potages</h1>
       </div>
 

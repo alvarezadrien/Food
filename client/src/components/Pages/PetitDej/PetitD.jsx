@@ -6,7 +6,7 @@ function PetitDej() {
   return (
     <>
       <div className="container_dej1">
-        <img src="/Images/Image_soupe1.jpg" alt="Petit-déjeuner" />
+        <img src="/Images/PetitD-banniere.jpg" alt="Petit-déjeuner" />
         <h1>Petit-déjeuner</h1>
       </div>
 

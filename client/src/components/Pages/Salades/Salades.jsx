@@ -6,7 +6,7 @@ function Salades() {
   return (
     <>
       <div className="container_salades1">
-        <img src="/Images/Image_soupe1.jpg" alt="Salades" />
+        <img src="/Images/Salades-banniere.jpg" alt="Salades" />
         <h1>Salades</h1>
       </div>
 
