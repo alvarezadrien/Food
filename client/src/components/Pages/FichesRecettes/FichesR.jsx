@@ -36,7 +36,6 @@ function FicheRecettes() {
         // ✅ Transforme les ingrédients simples en objets si nécessaire
         const ingredientsFormates = data.ingredients.map((ing) => {
           if (typeof ing === "string") {
-            // Exemple : "200 g de farine"
             const regex = /^(\d+\.?\d*)?\s*([a-zA-Zéèêàùµ]*)?\s*(.*)$/;
             const match = ing.match(regex);
             return {
@@ -45,7 +44,7 @@ function FicheRecettes() {
               nom: match && match[3] ? match[3] : ing,
             };
           }
-          return ing; // si déjà objet
+          return ing;
         });
 
         setRecette({ ...data, ingredients: ingredientsFormates });
@@ -135,6 +134,11 @@ function FicheRecettes() {
   if (error) return <p>{error}</p>;
   if (!recette) return null;
 
+  // ✅ Gestion correcte des images venant du backend
+  const imageSrc = recette.image?.startsWith("http")
+    ? recette.image
+    : `${apiBase}/assets/ImagesDb/${recette.image || "default.png"}`;
+
   return (
     <div className="ficheRecette-container" ref={recetteRef}>
       <button className="ficheRecette-back" onClick={() => navigate(-1)}>
@@ -142,7 +146,13 @@ function FicheRecettes() {
       </button>
 
       <div className="ficheRecette-header">
-        <img src={recette.image || "/Images/default.png"} alt={recette.nom} />
+        <img
+          src={imageSrc}
+          alt={recette.nom}
+          onError={(e) =>
+            (e.target.src = `${apiBase}/assets/ImagesDb/default.png`)
+          }
+        />
         <div className="ficheRecette-info">
           <h1>{recette.nom}</h1>
           <p className="ficheRecette-description">{recette.description}</p>
