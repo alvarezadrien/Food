@@ -61,7 +61,7 @@ function BackOffice() {
   // ====== Fake données pour autres onglets (non protégés pour le moment) ======
   const fakeUtilisateurs = [
     { id: 1, nom: "Adrien", email: "adrien@mail.com", role: "Admin" },
-    { id: 2, nom: "Marie", email: "marie@mail.com", role: "Utilisateur" },
+    { id: 2, nom: "Ange", email: "Ange@mail.com", role: "Utilisateur" },
   ];
   const fakeCommentaires = [
     { id: 1, auteur: "Sophie", texte: "Super recette 😍", recette: "Lasagnes" },
@@ -95,7 +95,7 @@ function BackOffice() {
   const fetchRecettes = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`${apiBase}/api/recettes?limit=200`);
+      const res = await fetch(`${apiBase}/api/recettes`);
       if (!res.ok) throw new Error("Erreur de chargement");
       const data = await res.json();
       setRecettes(data.recettes || data.results || []);
