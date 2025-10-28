@@ -9,7 +9,7 @@ const categories = [
   { nom: "Soupes & Potages", image: "/Images/Img_choix/Soupe_potage.png" },
   { nom: "Salades", image: "/Images/Img_choix/Salades.png" },
   { nom: "Sauces", image: "/Images/Img_choix/Sauces.png" },
-  { nom: "Snacks & Apéros", image: "/Images/Img_choix/Snack_apero.png" },
+  { nom: "Accompagnements", image: "/Images/Img_choix/Accompagnements.png" },
   { nom: "Desserts", image: "/Images/Img_choix/Desserts.png" },
 ];
 

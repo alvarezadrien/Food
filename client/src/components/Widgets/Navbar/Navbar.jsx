@@ -84,8 +84,8 @@ function Navbar() {
                   </a>
                 </li>
                 <li>
-                  <a href="/snacks-apero" onClick={closeMenu}>
-                    🍤 Snacks & Apéros
+                  <a href="/Accompagnements" onClick={closeMenu}>
+                    🍤 Accompagnements
                   </a>
                 </li>
                 <li>
