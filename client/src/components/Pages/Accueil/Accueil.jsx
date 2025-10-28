@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 // Import widgets
 import CartesAccueil from "../../Cartes/CarteAccueil/CartesA";
 import AvisPages from "../../Widgets/Avis/Avis";
+import BetaWidget from "../../../../../BetaWidget";
 
 // 🔹 Composant pour afficher les cartes de produits de saison
 const ProductCardDisplay = ({ title, products, type }) => {
@@ -64,6 +65,7 @@ const HeroBanner = () => {
 
   return (
     <div className="hero-banner">
+      <BetaWidget />
       <div className="gauche-hero">
         <h1 className="hero-title">
           Trouvez la recette parfaite en un clic 🍽️
