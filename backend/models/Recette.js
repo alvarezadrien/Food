@@ -36,7 +36,7 @@ const recetteSchema = new mongoose.Schema(
                 "Soupes",
                 "Salades",
                 "Sauces",
-                "Snacks_apero",
+                "Accompagnements",
                 "Desserts",
                 "Autre",
             ],

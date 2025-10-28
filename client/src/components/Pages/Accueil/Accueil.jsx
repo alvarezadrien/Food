@@ -178,9 +178,9 @@ function Accueil() {
     },
     { nom: "Sauces", lien: "/Sauces", image: "/Images/Img_choix/Sauces.png" },
     {
-      nom: "Snacks & Apéros",
-      lien: "/Snack_Apéro",
-      image: "/Images/Img_choix/Snack_apero.png",
+      nom: "Accompagnements",
+      lien: "/Accompagnements",
+      image: "/Images/Img_choix/Accompagnements.png",
     },
     {
       nom: "Desserts",

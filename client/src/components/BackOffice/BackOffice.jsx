@@ -21,7 +21,7 @@ const CATEGORIES = [
   "Soupes",
   "Salades",
   "Sauces",
-  "Snacks_apero",
+  "Accompagnements",
   "Desserts",
   "Autre",
 ];
