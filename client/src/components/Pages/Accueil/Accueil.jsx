@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 // Import widgets
 import CartesAccueil from "../../Cartes/CarteAccueil/CartesA";
 import AvisPages from "../../Widgets/Avis/Avis";
-import BetaWidget from "../../../../../BetaWidget";
+import BetaWidget from "../../Widgets/Beta/BetaWidget";
 
 // 🔹 Composant pour afficher les cartes de produits de saison
 const ProductCardDisplay = ({ title, products, type }) => {
