@@ -1,6 +1,7 @@
 import React from "react";
 import "./Footer.css";
 import { FaHome, FaUtensils, FaUserAlt, FaEnvelope } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const categories = [
   { nom: "Petit-déjeuner", image: "/Images/Img_choix/Petit_dejeuner.png" },
@@ -14,6 +15,13 @@ const categories = [
 ];
 
 function Footer() {
+  const navigate = useNavigate();
+
+  const handleCategoryClick = (nomCategorie) => {
+    // redirige vers /categorie/<nom> (ex: /categorie/Petit-déjeuner)
+    navigate(`/categorie/${encodeURIComponent(nomCategorie)}`);
+  };
+
   return (
     <footer className="footer">
       <div className="footer-top">
@@ -33,7 +41,12 @@ function Footer() {
           <h4>Catégories</h4>
           <ul>
             {categories.map((cat, index) => (
-              <li key={index}>
+              <li
+                key={index}
+                className="footer-category-item"
+                onClick={() => handleCategoryClick(cat.nom)}
+                style={{ cursor: "pointer" }}
+              >
                 <img src={cat.image} alt={cat.nom} />
                 <span>{cat.nom}</span>
               </li>
@@ -46,22 +59,31 @@ function Footer() {
           <h4>Liens utiles</h4>
           <ul>
             <li>
-              <FaHome /> <a href="/">Accueil</a>
+              <FaHome />{" "}
+              <a href="/" className="footer-link">
+                Accueil
+              </a>
+            </li>
+
+            <li>
+              <FaUserAlt />{" "}
+              <a href="/profil" className="footer-link">
+                Profil
+              </a>
             </li>
             <li>
-              <FaUtensils /> <a href="/recettes">Recettes</a>
+              <FaEnvelope />{" "}
+              <a href="/contact" className="footer-link">
+                Contact
+              </a>
             </li>
             <li>
-              <FaUserAlt /> <a href="/profil">Profil</a>
+              <a href="/Mentions_légales" className="footer-link">
+                Mentions légales
+              </a>
             </li>
             <li>
-              <FaEnvelope /> <a href="/contact">Contact</a>
-            </li>
-            <li>
-              <a href="/Mentions_légales">Mentions légales</a>
-            </li>
-            <li>
-              <a href="/Politique_confidentialité">
+              <a href="/Politique_confidentialité" className="footer-link">
                 Politique de confidentialité
               </a>
             </li>
@@ -75,11 +97,18 @@ function Footer() {
             Abonnez-vous pour recevoir chaque semaine nos nouvelles idées de
             plats !
           </p>
-          <form className="newsletter-form">
+          <form
+            className="newsletter-form"
+            onSubmit={(e) => {
+              e.preventDefault();
+              alert("Merci pour votre inscription !");
+            }}
+          >
             <input
               type="email"
               placeholder="Votre adresse e-mail"
               aria-label="Email"
+              required
             />
             <button type="submit">S’abonner</button>
           </form>

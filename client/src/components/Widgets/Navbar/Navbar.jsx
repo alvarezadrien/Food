@@ -54,12 +54,12 @@ function Navbar() {
             {recetteOpen && (
               <ul className="submenu-list">
                 <li>
-                  <a href="/petit-dejeuner" onClick={closeMenu}>
+                  <a href="/petit-déjeuner" onClick={closeMenu}>
                     🥐 Petit-déjeuner
                   </a>
                 </li>
                 <li>
-                  <a href="/entrees" onClick={closeMenu}>
+                  <a href="/Entrées" onClick={closeMenu}>
                     🥗 Entrées
                   </a>
                 </li>
@@ -69,17 +69,17 @@ function Navbar() {
                   </a>
                 </li>
                 <li>
-                  <a href="/soupes-potages" onClick={closeMenu}>
+                  <a href="/Soupes_Potages" onClick={closeMenu}>
                     🍲 Soupes & Potages
                   </a>
                 </li>
                 <li>
-                  <a href="/salades" onClick={closeMenu}>
+                  <a href="/Salades" onClick={closeMenu}>
                     🥬 Salades
                   </a>
                 </li>
                 <li>
-                  <a href="/sauces" onClick={closeMenu}>
+                  <a href="/Sauces" onClick={closeMenu}>
                     🍯 Sauces
                   </a>
                 </li>
@@ -89,7 +89,7 @@ function Navbar() {
                   </a>
                 </li>
                 <li>
-                  <a href="/desserts" onClick={closeMenu}>
+                  <a href="/Desserts" onClick={closeMenu}>
                     🍰 Desserts
                   </a>
                 </li>
