@@ -4,22 +4,41 @@ import { FaHome, FaUtensils, FaUserAlt, FaEnvelope } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const categories = [
-  { nom: "Petit-déjeuner", image: "/Images/Img_choix/Petit_dejeuner.png" },
-  { nom: "Entrées", image: "/Images/Img_choix/Entree.png" },
-  { nom: "Plats principaux", image: "/Images/Img_choix/Plat_principaux.png" },
-  { nom: "Soupes & Potages", image: "/Images/Img_choix/Soupe_potage.png" },
-  { nom: "Salades", image: "/Images/Img_choix/Salades.png" },
-  { nom: "Sauces", image: "/Images/Img_choix/Sauces.png" },
-  { nom: "Accompagnements", image: "/Images/Img_choix/Accompagnements.png" },
-  { nom: "Desserts", image: "/Images/Img_choix/Desserts.png" },
+  {
+    nom: "Petit-déjeuner",
+    image: "/Images/Img_choix/Petit_dejeuner.png",
+    lien: "/petit-déjeuner",
+  },
+  { nom: "Entrées", image: "/Images/Img_choix/Entree.png", lien: "/Entrées" },
+  {
+    nom: "Plats principaux",
+    image: "/Images/Img_choix/Plat_principaux.png",
+    lien: "/Plats_Principaux",
+  },
+  {
+    nom: "Soupes & Potages",
+    image: "/Images/Img_choix/Soupe_potage.png",
+    lien: "/Soupes_Potages",
+  },
+  { nom: "Salades", image: "/Images/Img_choix/Salades.png", lien: "/Salades" },
+  { nom: "Sauces", image: "/Images/Img_choix/Sauces.png", lien: "/Sauces" },
+  {
+    nom: "Accompagnements",
+    image: "/Images/Img_choix/Accompagnements.png",
+    lien: "/Accompagnements",
+  },
+  {
+    nom: "Desserts",
+    image: "/Images/Img_choix/Desserts.png",
+    lien: "/Desserts",
+  },
 ];
 
 function Footer() {
   const navigate = useNavigate();
 
-  const handleCategoryClick = (nomCategorie) => {
-    // redirige vers /categorie/<nom> (ex: /categorie/Petit-déjeuner)
-    navigate(`/categorie/${encodeURIComponent(nomCategorie)}`);
+  const handleCategoryClick = (path) => {
+    navigate(path);
   };
 
   return (
@@ -44,17 +63,19 @@ function Footer() {
               <li
                 key={index}
                 className="footer-category-item"
-                onClick={() => handleCategoryClick(cat.nom)}
+                onClick={() => handleCategoryClick(cat.lien)}
                 style={{ cursor: "pointer" }}
               >
-                <img src={cat.image} alt={cat.nom} />
-                <span>{cat.nom}</span>
+                <div className="footer-category-link">
+                  <img src={cat.image} alt={cat.nom} />
+                  <span>{cat.nom}</span>
+                </div>
               </li>
             ))}
           </ul>
         </div>
 
-        {/* Bloc Liens */}
+        {/* Bloc Liens utiles */}
         <div className="footer-links">
           <h4>Liens utiles</h4>
           <ul>
@@ -64,7 +85,12 @@ function Footer() {
                 Accueil
               </a>
             </li>
-
+            <li>
+              <FaUtensils />{" "}
+              <a href="/recettes" className="footer-link">
+                Recettes
+              </a>
+            </li>
             <li>
               <FaUserAlt />{" "}
               <a href="/profil" className="footer-link">
