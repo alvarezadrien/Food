@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import CartesAccueil from "../../Cartes/CarteAccueil/CartesA";
 import AvisPages from "../../Widgets/Avis/Avis";
 import BetaWidget from "../../Widgets/Beta/BetaWidget";
+import Loader from "../../Widgets/Loader/Loader"; // 🔹 Import du Loader
 
 // 🔹 Composant pour afficher les cartes de produits de saison
 const ProductCardDisplay = ({ title, products, type }) => {
@@ -115,6 +116,8 @@ function Accueil() {
   const apiBase = import.meta.env.VITE_API_URL;
   const [recetteDuJour, setRecetteDuJour] = useState(null);
   const [saison, setSaison] = useState(null);
+  const [loadingRecette, setLoadingRecette] = useState(true);
+  const [loadingSaison, setLoadingSaison] = useState(true);
   const navigate = useNavigate();
 
   // Charger la recette du jour
@@ -132,6 +135,8 @@ function Accueil() {
         }
       } catch (error) {
         console.error("❌ Erreur API :", error);
+      } finally {
+        setLoadingRecette(false);
       }
     };
 
@@ -148,6 +153,8 @@ function Accueil() {
         setSaison(data);
       } catch (error) {
         console.error("❌ Erreur API Saison :", error);
+      } finally {
+        setLoadingSaison(false);
       }
     };
 
@@ -189,7 +196,6 @@ function Accueil() {
     },
   ];
 
-  // ✅ Construction du chemin d’image pour la recette du jour
   const imageRecetteDuJour = recetteDuJour?.image?.startsWith("http")
     ? recetteDuJour.image
     : recetteDuJour?.image
@@ -216,103 +222,119 @@ function Accueil() {
         </ul>
       </div>
 
-      {/* SECTION POPULAIRES — Recette du jour */}
+      {/* SECTION POPULAIRES */}
       <div className="Container_populaires" id="recettes-populaires">
-        <h2 className="h2_populaires1">
-          {recetteDuJour
-            ? `La recette du jour : ${recetteDuJour.nom}`
-            : "Les recettes populaires"}
-        </h2>
+        {loadingRecette ? (
+          <Loader />
+        ) : (
+          <>
+            <h2 className="h2_populaires1">
+              {recetteDuJour
+                ? `La recette du jour : ${recetteDuJour.nom}`
+                : "Les recettes populaires"}
+            </h2>
 
-        <div className="div_populaires1">
-          <p className="para_populaires1">
-            {recetteDuJour
-              ? recetteDuJour.description
-              : "Découvrez chaque jour une nouvelle idée gourmande !"}
-          </p>
+            <div className="div_populaires1">
+              <p className="para_populaires1">
+                {recetteDuJour
+                  ? recetteDuJour.description
+                  : "Découvrez chaque jour une nouvelle idée gourmande !"}
+              </p>
 
-          <img
-            src={imageRecetteDuJour}
-            alt={recetteDuJour?.nom || "Recette populaire"}
-            className="img_populaires1"
-            onError={(e) =>
-              (e.target.src = `${apiBase}/assets/ImagesDb/default.png`)
-            }
-          />
-        </div>
+              <img
+                src={imageRecetteDuJour}
+                alt={recetteDuJour?.nom || "Recette populaire"}
+                className="img_populaires1"
+                onError={(e) =>
+                  (e.target.src = `${apiBase}/assets/ImagesDb/default.png`)
+                }
+              />
+            </div>
 
-        <div className="Btn_populaires1">
-          <button
-            onClick={() =>
-              recetteDuJour &&
-              navigate(
-                `/Fiches_Recettes/${recetteDuJour._id || recetteDuJour.id}`
-              )
-            }
-          >
-            <a href="#">Voir la recette</a>
-          </button>
-          <button>
-            <a href="/Plats_Principaux">Voir plus de recettes</a>
-          </button>
-        </div>
+            <div className="Btn_populaires1">
+              <button
+                onClick={() =>
+                  recetteDuJour &&
+                  navigate(
+                    `/Fiches_Recettes/${recetteDuJour._id || recetteDuJour.id}`
+                  )
+                }
+              >
+                <a href="#">Voir la recette</a>
+              </button>
+              <button>
+                <a href="/Plats_Principaux">Voir plus de recettes</a>
+              </button>
+            </div>
+          </>
+        )}
       </div>
 
-      {/* SECTION SAISON — connectée à l'API */}
+      {/* SECTION SAISON */}
       <section className="container_saison1" id="saison">
-        <h2 className="h2_saison1">
-          {saison
-            ? `🍀 Saveurs de ${saison.saison} : Cuisinez selon la Saison`
-            : "🍂 Cuisinez selon la Saison"}
-        </h2>
-
-        <img
-          src={`/Images/Image_saison1.jpg`}
-          alt={`Image ${saison?.saison || "de saison"}`}
-        />
-
-        <div className="div_saison1">
-          <div className="div_saison2">
-            <h3>
-              Cuisinez au rythme des saisons pour une saveur incomparable !
-            </h3>
-            <p>{saison ? saison.description : "Chargement des produits..."}</p>
-          </div>
-
-          <div className="saison-divider"></div>
-
-          <div className="div_saison3">
-            <h3>
+        {loadingSaison ? (
+          <Loader />
+        ) : (
+          <>
+            <h2 className="h2_saison1">
               {saison
-                ? `Ce Mois-ci : ${new Date().toLocaleString("fr-FR", {
-                    month: "long",
-                  })}`
-                : "Ce Mois-ci"}
-            </h3>
-            <span>
-              {saison
-                ? `Les meilleures saveurs de ${saison.saison.toLowerCase()} sont là !`
-                : "Chargement..."}
-            </span>
-            <button>
-              <a href="#produits-saisonniers">Découvrez les stars du mois</a>
-            </button>
-          </div>
-        </div>
+                ? `🍀 Saveurs de ${saison.saison} : Cuisinez selon la Saison`
+                : "🍂 Cuisinez selon la Saison"}
+            </h2>
 
-        {saison && (
-          <div className="saison-produits-new" id="produits-saisonniers">
-            <ProductCardDisplay
-              title={`Légumes de ${saison.saison}`}
-              products={saison.produits.legumes}
-              type="legumes"
+            <img
+              src={`/Images/Image_saison1.jpg`}
+              alt={`Image ${saison?.saison || "de saison"}`}
             />
-            <ProductCardDisplay
-              title={`Fruits de ${saison.saison}`}
-              products={saison.produits.fruits}
-              type="fruits"
-            />
-          </div>
+
+            <div className="div_saison1">
+              <div className="div_saison2">
+                <h3>
+                  Cuisinez au rythme des saisons pour une saveur incomparable !
+                </h3>
+                <p>
+                  {saison ? saison.description : "Chargement des produits..."}
+                </p>
+              </div>
+
+              <div className="saison-divider"></div>
+
+              <div className="div_saison3">
+                <h3>
+                  {saison
+                    ? `Ce Mois-ci : ${new Date().toLocaleString("fr-FR", {
+                        month: "long",
+                      })}`
+                    : "Ce Mois-ci"}
+                </h3>
+                <span>
+                  {saison
+                    ? `Les meilleures saveurs de ${saison.saison.toLowerCase()} sont là !`
+                    : "Chargement..."}
+                </span>
+                <button>
+                  <a href="#produits-saisonniers">
+                    Découvrez les stars du mois
+                  </a>
+                </button>
+              </div>
+            </div>
+
+            {saison && (
+              <div className="saison-produits-new" id="produits-saisonniers">
+                <ProductCardDisplay
+                  title={`Légumes de ${saison.saison}`}
+                  products={saison.produits.legumes}
+                  type="legumes"
+                />
+                <ProductCardDisplay
+                  title={`Fruits de ${saison.saison}`}
+                  products={saison.produits.fruits}
+                  type="fruits"
+                />
+              </div>
+            )}
+          </>
         )}
       </section>
 
