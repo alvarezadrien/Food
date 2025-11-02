@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom"; // ✅ pour redirection
 import "./CartesA.css";
 
 function CartesAccueil() {
   const [recettes, setRecettes] = useState([]);
   const [favoris, setFavoris] = useState([]);
   const [message, setMessage] = useState(null);
+  const navigate = useNavigate();
 
-  const apiBase = import.meta.env.VITE_API_URL; // ton backend Render (ex: https://bubu-and-food-back.onrender.com)
+  const apiBase = import.meta.env.VITE_API_URL; // ex: https://bubu-and-food-back.onrender.com
 
   useEffect(() => {
     const fetchRecettes = async () => {
@@ -65,11 +67,15 @@ function CartesAccueil() {
     setTimeout(() => setMessage(null), 2000);
   };
 
+  // 🔗 Redirection vers la fiche recette
+  const voirRecette = (id) => {
+    navigate(`/Fiches_Recettes/${id}`);
+  };
+
   return (
     <section className="cartes-accueil">
       {recettes.length > 0 ? (
         recettes.map((recette) => {
-          // ✅ Génère le bon chemin d’image vers ton backend
           const imageSrc = recette.image?.startsWith("http")
             ? recette.image
             : `${apiBase}/assets/ImagesDb/${recette.image || "default.png"}`;
@@ -163,7 +169,12 @@ function CartesAccueil() {
               </div>
 
               <p>{recette.description}</p>
-              <button className="btn-recette">Voir la recette</button>
+              <button
+                className="btn-recette"
+                onClick={() => voirRecette(recette._id || recette.id)}
+              >
+                Voir la recette
+              </button>
 
               {message && <span className="copied-msg">{message}</span>}
             </div>
