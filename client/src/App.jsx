@@ -10,6 +10,7 @@ import MentionsLegales from "./components/Pages/MentionsLegales/MentionsL.jsx";
 import Confidentialite from "./components/Pages/PolitiquesConfitialite/Politiques.jsx";
 import Recherche from "./components/Pages/Recherche/Recherche.jsx";
 import Connection from "./components/Pages/Connection/Connection.jsx";
+import Compte from "./components/Pages/Compte/Compte.jsx";
 
 // Import pages recettes
 import PlatPrincipaux from "./components/Pages/PlatPrincipaux/Principaux.jsx";
@@ -65,6 +66,7 @@ function App() {
           />
           <Route path="/Printemps" element={<Printemps />} />
           <Route path="/Connection" element={<Connection />} />
+          <Route path="/Compte" element={<Compte />} />
         </Routes>
         <Footer />
       </div>

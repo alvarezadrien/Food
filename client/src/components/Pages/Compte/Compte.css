@@ -1,0 +1,261 @@
+.mon-compte-container {
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--secondary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 1rem;
+}
+
+/* === Structure principale === */
+.compte-background {
+  display: flex;
+  width: 90%;
+  max-width: 1100px;
+  background-color: white;
+  border-radius: 1rem;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+/* === Colonne gauche === */
+.compte-left {
+  background-color: var(--tertiary-color);
+  flex: 1;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  border-right: 2px solid #f1e1b8;
+}
+
+.user-fullname {
+  font-size: 1.5rem;
+  color: var(--primary-color);
+  font-weight: bold;
+}
+
+.intro-texte {
+  font-size: 1rem;
+  color: var(--quaternary-color);
+  margin: 2rem 0;
+  line-height: 1.5;
+}
+
+/* === Onglets verticaux === */
+.compte-tabs-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.tab-left-btn {
+  background-color: #fffaf0;
+  color: var(--primary-color);
+  border: 1px solid #e0d39f;
+  padding: 0.8rem 1rem;
+  border-radius: 0.8rem;
+  font-weight: 600;
+  text-align: left;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.tab-left-btn:hover {
+  background-color: #f4eaca;
+  transform: translateX(4px);
+}
+
+.tab-left-btn.active {
+  background-color: var(--primary-color);
+  color: white;
+  transform: translateX(5px);
+}
+
+/* === Bouton suppression === */
+.delete-account-btn {
+  background-color: #dc3545;
+  color: white;
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 0.8rem;
+  margin-top: auto;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.delete-account-btn:hover {
+  background-color: #b52b39;
+  transform: translateY(-2px);
+}
+
+/* === Colonne droite === */
+.compte-right {
+  flex: 2;
+  padding: 2.5rem;
+  background-color: #fffdf5;
+}
+
+.tab-section {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.tab-section h2 {
+  color: var(--primary-color);
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.tab-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.tab-section li {
+  font-size: 1.1rem;
+  color: #444;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f0e8cc;
+}
+
+.comment-button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 0.8rem 1.6rem;
+  border-radius: 0.8rem;
+  cursor: pointer;
+  font-weight: bold;
+  margin-top: 1rem;
+  transition: all 0.3s ease;
+}
+
+.comment-button:hover {
+  background-color: #bfa570;
+  transform: translateY(-2px);
+}
+
+/* === Modal suppression === */
+.delete-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 3000;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.delete-modal {
+  background-color: #fffdf5;
+  border: 2px solid #e7dba8;
+  border-radius: 1rem;
+  padding: 2rem 2.5rem;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  animation: slideIn 0.3s ease-out;
+}
+
+.delete-modal h3 {
+  color: var(--primary-color);
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+}
+
+.delete-modal p {
+  color: #444;
+  font-size: 1.1rem;
+  line-height: 1.5;
+  margin-bottom: 2rem;
+}
+
+.delete-modal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.cancel-delete-btn,
+.confirm-delete-btn {
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 0.8rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.cancel-delete-btn {
+  background-color: #e0d39f;
+  color: var(--primary-color);
+}
+
+.cancel-delete-btn:hover {
+  background-color: #cbb986;
+  transform: translateY(-2px);
+}
+
+.confirm-delete-btn {
+  background-color: #dc3545;
+  color: white;
+}
+
+.confirm-delete-btn:hover {
+  background-color: #c82333;
+  transform: translateY(-2px);
+}
+
+/* === Animations === */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* === Responsive === */
+@media (max-width: 768px) {
+  .compte-background {
+    flex-direction: column;
+  }
+
+  .compte-left {
+    border-right: none;
+    border-bottom: 2px solid #f1e1b8;
+  }
+
+  .tab-left-btn {
+    text-align: center;
+  }
+
+  .compte-right {
+    padding: 1.5rem;
+  }
+
+  .tab-section h2 {
+    font-size: 1.3rem;
+  }
+}

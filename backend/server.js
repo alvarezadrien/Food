@@ -14,7 +14,7 @@ app.use(express.json());
 // 🔹 Autorise ton front Render + ton front local
 const allowedOrigins = [
     "https://bubu-and-food.onrender.com", // ton front Render
-    "http://localhost:5173",              // ton front local
+    "http://localhost:5173", // ton front local
 ];
 
 app.use(
@@ -36,14 +36,22 @@ app.get("/", (req, res) => {
     res.json({
         status: "✅ API BubuFood opérationnelle",
         message: "Bienvenue sur l’API officielle de BubuFood",
-        endpoints: ["/api/recettes", "/api/saisons", "/api/upload-image"],
+        endpoints: [
+            "/api/auth",
+            "/api/recettes",
+            "/api/saisons",
+            "/api/upload-image",
+        ],
     });
 });
 
-// --- Import des routes existantes ---
+// --- Import des routes ---
+const authRoutes = require("./routes/authRoutes");
 const recetteRoutes = require("./routes/recetteRoutes");
 const saisonRoutes = require("./routes/saisonRoutes");
 
+// --- Utilisation des routes ---
+app.use("/api/auth", authRoutes); // ✅ Nouvelle route d'authentification
 app.use("/api/recettes", recetteRoutes);
 app.use("/api/saisons", saisonRoutes);
 
@@ -73,9 +81,21 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (req, file, cb) => {
-    const allowed = ["image/png", "image/jpeg", "image/jpg", "image/webp", "image/gif"];
+    const allowed = [
+        "image/png",
+        "image/jpeg",
+        "image/jpg",
+        "image/webp",
+        "image/gif",
+    ];
     if (allowed.includes(file.mimetype)) cb(null, true);
-    else cb(new Error("Format non supporté (seuls PNG, JPG, WEBP, GIF autorisés)"), false);
+    else
+        cb(
+            new Error(
+                "Format non supporté (seuls PNG, JPG, WEBP, GIF autorisés)"
+            ),
+            false
+        );
 };
 
 const upload = multer({
@@ -93,7 +113,9 @@ app.post("/api/upload-image", (req, res, next) => {
         }
 
         if (!req.file) {
-            return res.status(400).json({ error: true, message: "Aucun fichier reçu." });
+            return res
+                .status(400)
+                .json({ error: true, message: "Aucun fichier reçu." });
         }
 
         const filename = req.file.filename;
