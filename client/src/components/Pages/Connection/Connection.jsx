@@ -4,7 +4,8 @@ import "./Connection.css";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const Connection = () => {
-  const API_URL = "https://smoothymix-api.onrender.com/api/auth";
+  // 🔹 Remplace ici par ton backend Render exact si le nom diffère
+  const API_URL = "https://bubufood-backend.onrender.com/api/auth";
   const navigate = useNavigate();
 
   const [registerData, setRegisterData] = useState({
@@ -31,9 +32,11 @@ const Connection = () => {
   const handleRegisterChange = (e) => {
     setRegisterData({ ...registerData, [e.target.id]: e.target.value });
   };
+
   const handleLoginChange = (e) => {
     setLoginData({ ...loginData, [e.target.id]: e.target.value });
   };
+
   const handleBlur = (e) => {
     setTouched({ ...touched, [e.target.id]: true });
   };
@@ -65,6 +68,7 @@ const Connection = () => {
       : "",
   });
 
+  // --- Soumission inscription ---
   const handleRegisterSubmit = async (e) => {
     e.preventDefault();
     setSubmittedRegister(true);
@@ -86,8 +90,9 @@ const Connection = () => {
         if (res.ok) {
           setMessage("✅ Inscription réussie, vous pouvez vous connecter !");
           setRightPanelActive(false);
+          setRegisterData({ username: "", email: "", password: "" });
         } else {
-          setMessage(`❌ ${data.message || "Erreur lors de l'inscription"}`);
+          setMessage(`❌ ${data.message || "Erreur lors de l'inscription."}`);
         }
       } catch (err) {
         setMessage("❌ Erreur serveur : " + err.message);
@@ -95,6 +100,7 @@ const Connection = () => {
     }
   };
 
+  // --- Soumission connexion ---
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setSubmittedLogin(true);
@@ -110,11 +116,11 @@ const Connection = () => {
         });
         const data = await res.json();
         if (res.ok) {
-          setMessage("✅ Connexion réussie, bienvenue " + data.username);
+          setMessage("✅ Connexion réussie, bienvenue " + data.username + " !");
           localStorage.setItem("user", JSON.stringify(data));
-          navigate("/Compte");
+          setTimeout(() => navigate("/Compte"), 1200);
         } else {
-          setMessage(`❌ ${data.message || "Email ou mot de passe invalide"}`);
+          setMessage(`❌ ${data.message || "Email ou mot de passe invalide."}`);
         }
       } catch (err) {
         setMessage("❌ Erreur serveur : " + err.message);
@@ -245,7 +251,7 @@ const Connection = () => {
             </div>
             <div className="auth-overlay-panel auth-overlay-right">
               <h2>Nouveau ici ?</h2>
-              <p>Inscrivez-vous pour rejoindre la communauté SmoothyMix.</p>
+              <p>Inscrivez-vous pour rejoindre la communauté BubuFood.</p>
               <button
                 className="auth-btn ghost"
                 onClick={() => setRightPanelActive(true)}
