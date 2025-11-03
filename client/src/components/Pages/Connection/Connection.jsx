@@ -4,8 +4,7 @@ import "./Connection.css";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const Connection = () => {
-  // 🔹 Remplace ici par ton backend Render exact si le nom diffère
-  const API_URL = "https://bubufood-backend.onrender.com/api/auth";
+  const API_BASE = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
 
   const [registerData, setRegisterData] = useState({
@@ -29,21 +28,9 @@ const Connection = () => {
   const [showRegisterPassword, setShowRegisterPassword] = useState(false);
   const [showLoginPassword, setShowLoginPassword] = useState(false);
 
-  const handleRegisterChange = (e) => {
-    setRegisterData({ ...registerData, [e.target.id]: e.target.value });
-  };
-
-  const handleLoginChange = (e) => {
-    setLoginData({ ...loginData, [e.target.id]: e.target.value });
-  };
-
-  const handleBlur = (e) => {
-    setTouched({ ...touched, [e.target.id]: true });
-  };
-
+  // 🔹 Validation helpers
   const checkEmail = (email) =>
     /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(email);
-
   const checkLength = (value, min, max) =>
     value.length >= min && value.length <= max;
 
@@ -68,12 +55,28 @@ const Connection = () => {
       : "",
   });
 
-  // --- Soumission inscription ---
+  // 🔹 Gestion du changement
+  const handleRegisterChange = (e) => {
+    setRegisterData({ ...registerData, [e.target.id]: e.target.value });
+  };
+  const handleLoginChange = (e) => {
+    setLoginData({ ...loginData, [e.target.id]: e.target.value });
+  };
+  const handleBlur = (e) => {
+    setTouched({ ...touched, [e.target.id]: true });
+  };
+
+  // 🔹 Inscription
   const handleRegisterSubmit = async (e) => {
     e.preventDefault();
     setSubmittedRegister(true);
     const validationErrors = validateRegister();
     setErrors(validationErrors);
+
+    if (!API_BASE) {
+      setMessage("❌ Erreur de configuration API : VITE_API_URL manquant");
+      return;
+    }
 
     if (
       !validationErrors.username &&
@@ -81,53 +84,61 @@ const Connection = () => {
       !validationErrors.password
     ) {
       try {
-        const res = await fetch(`${API_URL}/register`, {
+        const res = await fetch(`${API_BASE}/api/auth/register`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(registerData),
         });
+
+        if (!res.ok)
+          throw new Error(`Erreur API (${res.status}) lors de l'inscription.`);
+
         const data = await res.json();
-        if (res.ok) {
-          setMessage("✅ Inscription réussie, vous pouvez vous connecter !");
-          setRightPanelActive(false);
-          setRegisterData({ username: "", email: "", password: "" });
-        } else {
-          setMessage(`❌ ${data.message || "Erreur lors de l'inscription."}`);
-        }
+        setMessage("✅ Inscription réussie ! Vous pouvez vous connecter.");
+        setRightPanelActive(false);
+        setRegisterData({ username: "", email: "", password: "" });
       } catch (err) {
-        setMessage("❌ Erreur serveur : " + err.message);
+        console.error("❌ Erreur API :", err);
+        setMessage(err.message || "Erreur lors de l'inscription ❌");
       }
     }
   };
 
-  // --- Soumission connexion ---
+  // 🔹 Connexion
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setSubmittedLogin(true);
     const validationErrors = validateLogin();
     setErrors(validationErrors);
 
+    if (!API_BASE) {
+      setMessage("❌ Erreur de configuration API : VITE_API_URL manquant");
+      return;
+    }
+
     if (!validationErrors.email && !validationErrors.password) {
       try {
-        const res = await fetch(`${API_URL}/login`, {
+        const res = await fetch(`${API_BASE}/api/auth/login`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(loginData),
         });
+
         const data = await res.json();
-        if (res.ok) {
-          setMessage("✅ Connexion réussie, bienvenue " + data.username + " !");
-          localStorage.setItem("user", JSON.stringify(data));
-          setTimeout(() => navigate("/Compte"), 1200);
-        } else {
-          setMessage(`❌ ${data.message || "Email ou mot de passe invalide."}`);
-        }
+        if (!res.ok)
+          throw new Error(data.message || "Email ou mot de passe invalide.");
+
+        localStorage.setItem("user", JSON.stringify(data));
+        setMessage(`✅ Bienvenue ${data.username || "utilisateur"} !`);
+        setTimeout(() => navigate("/Compte"), 1200);
       } catch (err) {
-        setMessage("❌ Erreur serveur : " + err.message);
+        console.error("❌ Erreur API :", err);
+        setMessage(err.message || "Erreur de connexion ❌");
       }
     }
   };
 
+  // 🔹 Gestion des erreurs à afficher
   const showError = (field) =>
     (touched[field] || submittedRegister || submittedLogin) && errors[field];
 
@@ -142,10 +153,11 @@ const Connection = () => {
           rightPanelActive ? "right-panel-active" : ""
         }`}
       >
-        {/* --- Inscription --- */}
+        {/* --- INSCRIPTION --- */}
         <div className="auth-form-container auth-register-container">
           <form className="auth-form" onSubmit={handleRegisterSubmit}>
             <h1>Créer un compte</h1>
+
             <input
               type="text"
               id="username"
@@ -193,10 +205,11 @@ const Connection = () => {
           </form>
         </div>
 
-        {/* --- Connexion --- */}
+        {/* --- CONNEXION --- */}
         <div className="auth-form-container auth-login-container">
           <form className="auth-form" onSubmit={handleLoginSubmit}>
             <h1>Se connecter</h1>
+
             <input
               type="email"
               id="email"
@@ -233,7 +246,7 @@ const Connection = () => {
           </form>
         </div>
 
-        {/* --- Overlay --- */}
+        {/* --- OVERLAY --- */}
         <div className="auth-overlay-container">
           <div
             className="auth-overlay"
@@ -249,6 +262,7 @@ const Connection = () => {
                 Se connecter
               </button>
             </div>
+
             <div className="auth-overlay-panel auth-overlay-right">
               <h2>Nouveau ici ?</h2>
               <p>Inscrivez-vous pour rejoindre la communauté BubuFood.</p>
