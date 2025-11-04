@@ -1,26 +1,70 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Compte.css";
 
 const Compte = () => {
   const [activeTab, setActiveTab] = useState("infos");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [user, setUser] = useState(null);
+  const [message, setMessage] = useState("");
 
-  const fakeUser = {
-    prenom: "Adrien",
-    nom: "Alvarez",
-    email: "adrien@example.com",
-    adresse: {
-      rue: "123 Rue des Fleurs",
-      ville: "Bruxelles",
-      codePostal: "1000",
-      pays: "Belgique",
-    },
+  const API_BASE = import.meta.env.VITE_API_URL;
+
+  // 🔹 Charger l'utilisateur depuis localStorage
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+
+  // 🔹 Déconnexion
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    setMessage("👋 Déconnexion réussie !");
+    setTimeout(() => {
+      window.location.href = "/";
+    }, 1000);
   };
 
-  const handleDeleteAccount = () => {
-    alert("Suppression fictive : votre compte serait supprimé.");
+  // 🔹 Suppression réelle du compte
+  const handleDeleteAccount = async () => {
+    if (!user || !user.id) {
+      setMessage("Utilisateur introuvable.");
+      return;
+    }
+
+    if (!window.confirm("Confirmer la suppression de votre compte ?")) return;
+
+    try {
+      const res = await fetch(`${API_BASE}/api/auth/${user.id}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (!res.ok) throw new Error("Erreur lors de la suppression du compte.");
+
+      localStorage.removeItem("user");
+      setMessage("✅ Compte supprimé avec succès !");
+      setTimeout(() => {
+        window.location.href = "/"; // retour à l'accueil
+      }, 1500);
+    } catch (err) {
+      console.error("❌ Erreur suppression :", err);
+      setMessage(err.message || "Erreur serveur ❌");
+    }
+
     setShowDeleteModal(false);
   };
+
+  if (!user) {
+    return (
+      <div className="mon-compte-container">
+        <p className="loading-text">
+          Chargement de votre profil... (connectez-vous si ce n’est pas fait)
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="mon-compte-container">
@@ -28,14 +72,12 @@ const Compte = () => {
         {/* === Colonne gauche === */}
         <div className="compte-left">
           <div className="user-names">
-            <span className="user-fullname">
-              {fakeUser.prenom} {fakeUser.nom}
-            </span>
+            <span className="user-fullname">{user.username}</span>
           </div>
 
           <div className="intro-texte">
-            Bienvenue sur votre espace personnel. Gérez vos informations et vos
-            paramètres ici.
+            Bienvenue sur votre espace personnel, {user.username}. Gérez vos
+            informations et vos paramètres ici.
           </div>
 
           {/* --- Onglets verticaux --- */}
@@ -72,13 +114,18 @@ const Compte = () => {
             </button>
           </div>
 
-          {/* --- Bouton supprimer compte --- */}
-          <button
-            className="delete-account-btn"
-            onClick={() => setShowDeleteModal(true)}
-          >
-            Supprimer mon compte
-          </button>
+          {/* --- Boutons bas --- */}
+          <div className="account-actions">
+            <button className="logout-account-btn" onClick={handleLogout}>
+              🚪 Se déconnecter
+            </button>
+            <button
+              className="delete-account-btn"
+              onClick={() => setShowDeleteModal(true)}
+            >
+              🗑️ Supprimer mon compte
+            </button>
+          </div>
         </div>
 
         {/* === Colonne droite (contenu dynamique) === */}
@@ -87,9 +134,10 @@ const Compte = () => {
             <div className="tab-section">
               <h2>Mes informations personnelles</h2>
               <ul>
-                <li>Nom : {fakeUser.nom}</li>
-                <li>Prénom : {fakeUser.prenom}</li>
-                <li>Email : {fakeUser.email}</li>
+                <li>Pseudo : {user.username}</li>
+                <li>Email : {user.email}</li>
+                {user.prenom && <li>Prénom : {user.prenom}</li>}
+                {user.nom && <li>Nom : {user.nom}</li>}
               </ul>
             </div>
           )}
@@ -97,12 +145,16 @@ const Compte = () => {
           {activeTab === "adresse" && (
             <div className="tab-section">
               <h2>Adresse de livraison</h2>
-              <ul>
-                <li>Rue : {fakeUser.adresse.rue}</li>
-                <li>Ville : {fakeUser.adresse.ville}</li>
-                <li>Code postal : {fakeUser.adresse.codePostal}</li>
-                <li>Pays : {fakeUser.adresse.pays}</li>
-              </ul>
+              {user.adresse ? (
+                <ul>
+                  <li>Rue : {user.adresse.rue}</li>
+                  <li>Ville : {user.adresse.ville}</li>
+                  <li>Code postal : {user.adresse.codePostal}</li>
+                  <li>Pays : {user.adresse.pays}</li>
+                </ul>
+              ) : (
+                <p>Aucune adresse enregistrée pour le moment.</p>
+              )}
             </div>
           )}
 
@@ -110,7 +162,7 @@ const Compte = () => {
             <div className="tab-section">
               <h2>Paramètres de sécurité</h2>
               <ul>
-                <li>Modifier votre mot de passe</li>
+                <li>Modifier votre mot de passe (à venir)</li>
                 <li>Activer la double authentification (prochainement)</li>
               </ul>
             </div>
@@ -155,6 +207,8 @@ const Compte = () => {
           </div>
         </div>
       )}
+
+      {message && <p className="auth-message">{message}</p>}
     </div>
   );
 };
