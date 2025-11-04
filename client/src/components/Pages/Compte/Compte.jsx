@@ -92,14 +92,6 @@ const Compte = () => {
             </button>
             <button
               className={`tab-left-btn ${
-                activeTab === "adresse" ? "active" : ""
-              }`}
-              onClick={() => setActiveTab("adresse")}
-            >
-              📦 Adresse de livraison
-            </button>
-            <button
-              className={`tab-left-btn ${
                 activeTab === "securite" ? "active" : ""
               }`}
               onClick={() => setActiveTab("securite")}
@@ -142,28 +134,11 @@ const Compte = () => {
             </div>
           )}
 
-          {activeTab === "adresse" && (
-            <div className="tab-section">
-              <h2>Adresse de livraison</h2>
-              {user.adresse ? (
-                <ul>
-                  <li>Rue : {user.adresse.rue}</li>
-                  <li>Ville : {user.adresse.ville}</li>
-                  <li>Code postal : {user.adresse.codePostal}</li>
-                  <li>Pays : {user.adresse.pays}</li>
-                </ul>
-              ) : (
-                <p>Aucune adresse enregistrée pour le moment.</p>
-              )}
-            </div>
-          )}
-
           {activeTab === "securite" && (
             <div className="tab-section">
               <h2>Paramètres de sécurité</h2>
               <ul>
                 <li>Modifier votre mot de passe (à venir)</li>
-                <li>Activer la double authentification (prochainement)</li>
               </ul>
             </div>
           )}
