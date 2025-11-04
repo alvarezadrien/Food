@@ -106,7 +106,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // ---------------------------
-// ✏️ PUT /profile — Mettre à jour le profil (version corrigée)
+// ✏️ PUT /profile — Mettre à jour le profil
 // ---------------------------
 router.put("/profile", async (req, res) => {
     try {
@@ -141,6 +141,44 @@ router.put("/profile", async (req, res) => {
         res
             .status(500)
             .json({ message: "Erreur serveur lors de la mise à jour du profil." });
+    }
+});
+
+// ---------------------------
+// 🔐 PUT /password — Modifier le mot de passe
+// ---------------------------
+router.put("/password", async (req, res) => {
+    try {
+        const authHeader = req.headers.authorization;
+        if (!authHeader || !authHeader.startsWith("Bearer ")) {
+            return res.status(401).json({ msg: "Non autorisé. Token manquant." });
+        }
+
+        const token = authHeader.split(" ")[1];
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+        const user = await User.findById(decoded.id).select("+password");
+        if (!user) {
+            return res.status(404).json({ msg: "Utilisateur non trouvé." });
+        }
+
+        const { currentPassword, newPassword } = req.body;
+        const isMatch = await bcrypt.compare(currentPassword, user.password);
+
+        if (!isMatch) {
+            return res.status(400).json({ msg: "Mot de passe actuel incorrect." });
+        }
+
+        const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+        user.password = hashedNewPassword;
+        await user.save();
+
+        console.log(`🔑 Mot de passe mis à jour pour : ${user.email}`);
+
+        res.status(200).json({ msg: "Mot de passe mis à jour avec succès !" });
+    } catch (error) {
+        console.error("❌ Erreur changement de mot de passe :", error);
+        res.status(500).json({ msg: "Erreur serveur lors du changement de mot de passe." });
     }
 });
 

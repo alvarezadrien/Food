@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from "react";
 import "./Compte.css";
 import DataFormPopup from "./Popup/DataFormPopup";
+import PasswordFormPopup from "./Popup/PasswordFormPopup";
 
 const Compte = () => {
   const [activeTab, setActiveTab] = useState("infos");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showEditPopup, setShowEditPopup] = useState(false);
+  const [showPasswordPopup, setShowPasswordPopup] = useState(false);
   const [user, setUser] = useState(null);
   const [message, setMessage] = useState("");
-  const [showEditPopup, setShowEditPopup] = useState(false);
 
   const API_BASE = import.meta.env.VITE_API_URL;
 
-  // 🔹 Charger l'utilisateur depuis localStorage
+  // 🔹 Charger l'utilisateur depuis le localStorage
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) setUser(JSON.parse(storedUser));
@@ -20,13 +22,14 @@ const Compte = () => {
   // 🔹 Déconnexion
   const handleLogout = () => {
     localStorage.removeItem("user");
+    localStorage.removeItem("token");
     setMessage("👋 Déconnexion réussie !");
     setTimeout(() => {
       window.location.href = "/";
     }, 1000);
   };
 
-  // 🔹 Suppression réelle du compte
+  // 🔹 Suppression du compte
   const handleDeleteAccount = async () => {
     if (!user || !user.id) {
       setMessage("Utilisateur introuvable.");
@@ -147,9 +150,13 @@ const Compte = () => {
           {activeTab === "securite" && (
             <div className="tab-section">
               <h2>Paramètres de sécurité</h2>
-              <ul>
-                <li>Modifier votre mot de passe (à venir)</li>
-              </ul>
+              <p>Modifiez votre mot de passe ici :</p>
+              <button
+                className="comment-button"
+                onClick={() => setShowPasswordPopup(true)}
+              >
+                🔑 Changer mon mot de passe
+              </button>
             </div>
           )}
 
@@ -200,6 +207,11 @@ const Compte = () => {
           onClose={() => setShowEditPopup(false)}
           onUpdateSuccess={handleUpdateSuccess}
         />
+      )}
+
+      {/* === Popup changement de mot de passe === */}
+      {showPasswordPopup && (
+        <PasswordFormPopup onClose={() => setShowPasswordPopup(false)} />
       )}
 
       {message && <p className="auth-message">{message}</p>}
