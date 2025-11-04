@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Navbar.css";
 import {
   FaBars,
@@ -13,6 +13,8 @@ function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [recetteOpen, setRecetteOpen] = useState(false);
   const [saisonOpen, setSaisonOpen] = useState(false);
+  const [userConnected, setUserConnected] = useState(false);
+  const [username, setUsername] = useState("");
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
   const closeMenu = () => {
@@ -20,6 +22,19 @@ function Navbar() {
     setRecetteOpen(false);
     setSaisonOpen(false);
   };
+
+  // ✅ Vérifie si un utilisateur est connecté
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      const userData = JSON.parse(storedUser);
+      setUserConnected(true);
+      setUsername(userData.username || "Utilisateur");
+    } else {
+      setUserConnected(false);
+      setUsername("");
+    }
+  }, []);
 
   return (
     <header className="navbar-minimal">
@@ -148,8 +163,18 @@ function Navbar() {
 
           {/* --- Profil --- */}
           <li className="profile-link">
-            <a href="/profil" onClick={closeMenu}>
-              <FaUserCircle className="profile-icon" /> Mon profil
+            <a
+              href={userConnected ? "/Compte" : "/Connection"}
+              onClick={closeMenu}
+              className="profile-container"
+            >
+              <FaUserCircle className="profile-icon" />
+              {userConnected ? `Mon compte (${username})` : "Connexion"}
+              <span
+                className={`status-dot ${
+                  userConnected ? "connected" : "disconnected"
+                }`}
+              ></span>
             </a>
           </li>
         </ul>

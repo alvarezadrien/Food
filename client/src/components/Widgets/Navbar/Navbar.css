@@ -200,3 +200,25 @@
     font-size: 1.05rem;
   }
 }
+
+/* --- Statut de connexion (bulle) --- */
+.profile-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.status-dot {
+  display: inline-block;
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 50%;
+}
+
+.status-dot.connected {
+  background-color: #4caf50; /* 🟢 vert connecté */
+}
+
+.status-dot.disconnected {
+  background-color: #b0b0b0; /* ⚪ gris déconnecté */
+}
