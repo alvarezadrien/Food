@@ -59,7 +59,7 @@ userSchema.methods.comparePassword = async function (plainPassword) {
     return bcrypt.compare(plainPassword, this.password);
 };
 
-// 🔹 Nettoyage de la sortie JSON
+// 🔹 Nettoyage JSON
 userSchema.methods.toJSON = function () {
     const obj = this.toObject();
     delete obj.password;
