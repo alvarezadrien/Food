@@ -104,10 +104,10 @@ const Connection = () => {
       try {
         await login(loginData.email, loginData.password);
         setMessage("✅ Connexion réussie !");
-        setTimeout(() => navigate("/Compte"), 1200);
+        setTimeout(() => navigate("/Compte"), 1000);
       } catch (err) {
         console.error("❌ Erreur connexion :", err);
-        setMessage(err.message || "Erreur lors de la connexion ❌");
+        setMessage(err.message || "Email ou mot de passe incorrect ❌");
       }
     }
   };
