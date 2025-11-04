@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; // ✅ pour redirection
+import { useNavigate } from "react-router-dom";
 import "./CartesA.css";
 
 function CartesAccueil() {
   const [recettes, setRecettes] = useState([]);
-  const [favoris, setFavoris] = useState([]);
-  const [message, setMessage] = useState(null);
+  const [favoris, setFavoris] = useState([]); // IDs des recettes aimées
+  const [messages, setMessages] = useState({}); // Messages individuels par carte
   const navigate = useNavigate();
 
-  const apiBase = import.meta.env.VITE_API_URL; // ex: https://bubu-and-food-back.onrender.com
+  const apiBase = import.meta.env.VITE_API_URL;
+  const isAuthenticated = !!localStorage.getItem("token");
 
   useEffect(() => {
     const fetchRecettes = async () => {
@@ -17,54 +18,74 @@ function CartesAccueil() {
         if (!res.ok) throw new Error("Erreur lors du chargement des recettes");
 
         const data = await res.json();
-
-        // 🔹 Sélectionne 4 recettes aléatoires
         const recettesMelangees = data.recettes.sort(() => 0.5 - Math.random());
         const quatreRecettes = recettesMelangees.slice(0, 4);
-
         setRecettes(quatreRecettes);
       } catch (err) {
         console.error("❌ Erreur API :", err);
-        setMessage("Impossible de charger les recettes ❌");
+        afficherMessage("global", "Impossible de charger les recettes ❌");
       }
     };
 
     fetchRecettes();
 
-    // 🔁 Rafraîchit les 4 recettes toutes les 6 heures (21600000 ms)
-    const interval = setInterval(fetchRecettes, 21600000);
+    const interval = setInterval(fetchRecettes, 21600000); // 6h
     return () => clearInterval(interval);
   }, [apiBase]);
 
-  // ❤️ Gestion des favoris
+  // ❤️ Gestion des favoris avec message individuel
   const toggleFavori = (id) => {
-    setFavoris((prev) =>
-      prev.includes(id) ? prev.filter((f) => f !== id) : [...prev, id]
-    );
+    if (!isAuthenticated) {
+      afficherMessage(id, "🔒 Connectez-vous pour aimer !");
+      return;
+    }
+
+    setFavoris((prev) => {
+      if (prev.includes(id)) {
+        afficherMessage(id, "💔 Retiré des favoris");
+        return prev.filter((f) => f !== id);
+      } else {
+        afficherMessage(id, "❤️ Ajouté aux favoris");
+        return [...prev, id];
+      }
+    });
   };
 
   // 📤 Partage de recette
-  const partagerRecette = async (titre, id) => {
-    const url = `${window.location.origin}/recettes/${encodeURIComponent(id)}`;
+  const partagerRecette = async (recette) => {
+    const id = recette._id || recette.id;
+    const url = `${window.location.origin}/Fiches_Recettes/${encodeURIComponent(
+      id
+    )}`;
     const shareData = {
-      title: titre,
-      text: `Découvrez cette recette délicieuse : ${titre} 🍽️`,
+      title: recette.nom,
+      text: `Découvrez cette recette délicieuse : ${recette.nom} 🍽️`,
       url,
     };
 
     try {
       if (navigator.share) {
         await navigator.share(shareData);
-        setMessage("Recette partagée avec succès !");
+        afficherMessage(id, "📤 Recette partagée !");
       } else {
         await navigator.clipboard.writeText(url);
-        setMessage("Lien copié dans le presse-papier !");
+        afficherMessage(id, "📋 Lien copié !");
       }
     } catch {
-      setMessage("Partage annulé.");
+      afficherMessage(id, "❌ Partage annulé");
     }
+  };
 
-    setTimeout(() => setMessage(null), 2000);
+  // 🧠 Fonction utilitaire pour gérer les messages temporaires par carte
+  const afficherMessage = (id, texte) => {
+    setMessages((prev) => ({ ...prev, [id]: texte }));
+    setTimeout(() => {
+      setMessages((prev) => {
+        const updated = { ...prev };
+        delete updated[id];
+        return updated;
+      });
+    }, 1500);
   };
 
   // 🔗 Redirection vers la fiche recette
@@ -76,12 +97,19 @@ function CartesAccueil() {
     <section className="cartes-accueil">
       {recettes.length > 0 ? (
         recettes.map((recette) => {
+          const recetteId = recette._id || recette.id;
+          const isLiked = favoris.includes(recetteId);
+
           const imageSrc = recette.image?.startsWith("http")
             ? recette.image
             : `${apiBase}/assets/ImagesDb/${recette.image || "default.png"}`;
 
           return (
-            <div className="carte" key={recette._id || recette.id}>
+            <div
+              className="carte"
+              key={recetteId}
+              onClick={() => voirRecette(recetteId)}
+            >
               <img
                 src={imageSrc}
                 alt={recette.nom}
@@ -98,10 +126,13 @@ function CartesAccueil() {
                   {/* ❤️ Bouton favoris */}
                   <button
                     className="icon-btn"
-                    onClick={() => toggleFavori(recette._id || recette.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleFavori(recetteId);
+                    }}
                     title="Ajouter aux favoris"
                   >
-                    {favoris.includes(recette._id || recette.id) ? (
+                    {isLiked ? (
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         fill="#e63946"
@@ -142,9 +173,10 @@ function CartesAccueil() {
                   {/* 📤 Bouton partage */}
                   <button
                     className="icon-btn"
-                    onClick={() =>
-                      partagerRecette(recette.nom, recette._id || recette.id)
-                    }
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      partagerRecette(recette);
+                    }}
                     title="Partager cette recette"
                   >
                     <svg
@@ -171,12 +203,18 @@ function CartesAccueil() {
               <p>{recette.description}</p>
               <button
                 className="btn-recette"
-                onClick={() => voirRecette(recette._id || recette.id)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  voirRecette(recetteId);
+                }}
               >
                 Voir la recette
               </button>
 
-              {message && <span className="copied-msg">{message}</span>}
+              {/* ✅ Message individuel sur chaque carte */}
+              {messages[recetteId] && (
+                <span className="copied-msg">{messages[recetteId]}</span>
+              )}
             </div>
           );
         })
