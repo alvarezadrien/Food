@@ -3,7 +3,9 @@ import { IconButton, InputAdornment } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import "./PasswordFormPopup.css";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+// ✅ URL automatique (Render ou localhost)
+const API_URL =
+  import.meta.env.VITE_API_URL || "https://food-jllh.onrender.com";
 
 const PasswordFormPopup = ({ onClose }) => {
   const [formData, setFormData] = useState({
@@ -20,21 +22,25 @@ const PasswordFormPopup = ({ onClose }) => {
     confirm: false,
   });
 
+  // 🔹 Gestion du changement d’input
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // 🔹 Affichage / masquage des mots de passe
   const toggleShowPassword = (field) => {
     setShowPassword((prev) => ({ ...prev, [field]: !prev[field] }));
   };
 
+  // 🔹 Soumission du formulaire
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
     setError("");
     setLoading(true);
 
+    // Vérifie la correspondance entre les deux nouveaux mots de passe
     if (formData.newPassword !== formData.confirmNewPassword) {
       setError(
         "Le nouveau mot de passe et sa confirmation ne correspondent pas."
@@ -46,11 +52,17 @@ const PasswordFormPopup = ({ onClose }) => {
     try {
       const token = localStorage.getItem("token");
 
+      if (!token) {
+        setError("Vous devez être connecté pour changer votre mot de passe.");
+        setLoading(false);
+        return;
+      }
+
       const response = await fetch(`${API_URL}/api/auth/password`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`, // ✅ Important !
         },
         body: JSON.stringify({
           currentPassword: formData.currentPassword,
@@ -58,9 +70,16 @@ const PasswordFormPopup = ({ onClose }) => {
         }),
       });
 
+      // 🔸 Analyse du résultat
       const data = await response.json();
 
-      if (!response.ok) throw new Error(data.msg || "Erreur serveur");
+      if (response.status === 401) {
+        throw new Error("Session expirée. Veuillez vous reconnecter.");
+      }
+
+      if (!response.ok) {
+        throw new Error(data.msg || "Erreur serveur lors de la mise à jour.");
+      }
 
       setMessage(data.msg || "Mot de passe mis à jour avec succès !");
       setError("");
@@ -89,6 +108,7 @@ const PasswordFormPopup = ({ onClose }) => {
         </div>
 
         <form onSubmit={handleSubmit} className="popup-form">
+          {/* Mot de passe actuel */}
           <div className="form-group">
             <label htmlFor="currentPassword">Mot de passe actuel :</label>
             <div className="password-input-wrapper">
@@ -112,6 +132,7 @@ const PasswordFormPopup = ({ onClose }) => {
             </div>
           </div>
 
+          {/* Nouveau mot de passe */}
           <div className="form-group">
             <label htmlFor="newPassword">Nouveau mot de passe :</label>
             <div className="password-input-wrapper">
@@ -135,6 +156,7 @@ const PasswordFormPopup = ({ onClose }) => {
             </div>
           </div>
 
+          {/* Confirmation */}
           <div className="form-group">
             <label htmlFor="confirmNewPassword">
               Confirmer le nouveau mot de passe :
@@ -160,9 +182,11 @@ const PasswordFormPopup = ({ onClose }) => {
             </div>
           </div>
 
+          {/* Messages */}
           {message && <p className="success-message">{message}</p>}
           {error && <p className="error-message">{error}</p>}
 
+          {/* Bouton */}
           <div className="popup-footer">
             <button type="submit" className="submit-btn" disabled={loading}>
               {loading ? "Mise à jour..." : "Changer le mot de passe"}
