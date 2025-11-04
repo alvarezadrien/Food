@@ -20,7 +20,9 @@ router.post("/register", async (req, res) => {
         console.log("🟢 Requête inscription reçue :", req.body);
 
         if (!username || !email || !password) {
-            return res.status(400).json({ message: "Tous les champs sont obligatoires." });
+            return res
+                .status(400)
+                .json({ message: "Tous les champs sont obligatoires." });
         }
 
         const userExists = await User.findOne({ email });
@@ -35,7 +37,11 @@ router.post("/register", async (req, res) => {
 
         res.status(201).json({
             message: "Inscription réussie ! Vous pouvez vous connecter.",
-            user: { id: newUser._id, username: newUser.username, email: newUser.email },
+            user: {
+                id: newUser._id,
+                username: newUser.username,
+                email: newUser.email,
+            },
         });
     } catch (error) {
         console.error("❌ Erreur inscription :", error);
@@ -52,7 +58,9 @@ router.post("/login", async (req, res) => {
         console.log("🟠 Requête de connexion reçue :", req.body);
 
         if (!email || !password) {
-            return res.status(400).json({ message: "Email et mot de passe requis." });
+            return res
+                .status(400)
+                .json({ message: "Email et mot de passe requis." });
         }
 
         const user = await User.findOne({ email }).select("+password");
@@ -85,6 +93,69 @@ router.post("/login", async (req, res) => {
     } catch (error) {
         console.error("❌ Erreur connexion :", error);
         res.status(500).json({ message: "Erreur serveur lors de la connexion." });
+    }
+});
+
+// ---------------------------
+// 🔹 GET /:id — Récupérer un utilisateur
+// ---------------------------
+router.get("/:id", async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id).select("-password");
+        if (!user)
+            return res.status(404).json({ message: "Utilisateur introuvable." });
+        res.status(200).json(user);
+    } catch (error) {
+        console.error("❌ Erreur GET utilisateur :", error);
+        res.status(500).json({ message: "Erreur serveur." });
+    }
+});
+
+// ---------------------------
+// 🔸 PUT /:id — Mettre à jour un utilisateur
+// ---------------------------
+router.put("/:id", async (req, res) => {
+    try {
+        const { username, email, password } = req.body;
+        const updatedFields = {};
+
+        if (username) updatedFields.username = username;
+        if (email) updatedFields.email = email;
+        if (password)
+            updatedFields.password = await bcrypt.hash(password, 10);
+
+        const updatedUser = await User.findByIdAndUpdate(
+            req.params.id,
+            updatedFields,
+            { new: true }
+        ).select("-password");
+
+        if (!updatedUser)
+            return res.status(404).json({ message: "Utilisateur introuvable." });
+
+        res.status(200).json({
+            message: "Profil mis à jour avec succès.",
+            user: updatedUser,
+        });
+    } catch (error) {
+        console.error("❌ Erreur mise à jour utilisateur :", error);
+        res.status(500).json({ message: "Erreur serveur." });
+    }
+});
+
+// ---------------------------
+// 🔴 DELETE /:id — Supprimer un utilisateur
+// ---------------------------
+router.delete("/:id", async (req, res) => {
+    try {
+        const deletedUser = await User.findByIdAndDelete(req.params.id);
+        if (!deletedUser)
+            return res.status(404).json({ message: "Utilisateur introuvable." });
+
+        res.status(200).json({ message: "Utilisateur supprimé avec succès." });
+    } catch (error) {
+        console.error("❌ Erreur suppression utilisateur :", error);
+        res.status(500).json({ message: "Erreur serveur." });
     }
 });
 

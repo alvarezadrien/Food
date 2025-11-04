@@ -138,7 +138,6 @@ const Connection = () => {
     }
   };
 
-  // 🔹 Gestion des erreurs à afficher
   const showError = (field) =>
     (touched[field] || submittedRegister || submittedLogin) && errors[field];
 
