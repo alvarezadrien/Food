@@ -1,28 +1,23 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import "./Compte.css";
 import DataFormPopup from "./Popup/DataFormPopup";
 import PasswordFormPopup from "./Popup/PasswordFormPopup";
+import { AuthContext } from "../../../../context/AuthContext";
 
 const Compte = () => {
+  const { user, logout, token, setUser } = useContext(AuthContext); // ✅ utilisation du contexte
   const [activeTab, setActiveTab] = useState("infos");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showEditPopup, setShowEditPopup] = useState(false);
   const [showPasswordPopup, setShowPasswordPopup] = useState(false);
-  const [user, setUser] = useState(null);
   const [message, setMessage] = useState("");
 
-  const API_BASE = import.meta.env.VITE_API_URL;
-
-  // 🔹 Charger l'utilisateur depuis le localStorage
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) setUser(JSON.parse(storedUser));
-  }, []);
+  const API_BASE =
+    import.meta.env.VITE_API_URL || "https://food-jllh.onrender.com";
 
   // 🔹 Déconnexion
   const handleLogout = () => {
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
+    logout();
     setMessage("👋 Déconnexion réussie !");
     setTimeout(() => {
       window.location.href = "/";
@@ -41,12 +36,15 @@ const Compte = () => {
     try {
       const res = await fetch(`${API_BASE}/api/auth/${user.id}`, {
         method: "DELETE",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // ✅ Sécurisé
+        },
       });
 
       if (!res.ok) throw new Error("Erreur lors de la suppression du compte.");
 
-      localStorage.removeItem("user");
+      logout();
       setMessage("✅ Compte supprimé avec succès !");
       setTimeout(() => {
         window.location.href = "/";
@@ -61,7 +59,7 @@ const Compte = () => {
 
   // 🔹 Callback quand les infos sont mises à jour
   const handleUpdateSuccess = (updatedUser) => {
-    setUser(updatedUser);
+    setUser(updatedUser); // ✅ met à jour le contexte
     setMessage("✅ Profil mis à jour !");
   };
 

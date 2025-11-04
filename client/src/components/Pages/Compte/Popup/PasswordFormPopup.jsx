@@ -1,13 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { IconButton, InputAdornment } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { AuthContext } from "../../../../../context/AuthContext";
 import "./PasswordFormPopup.css";
 
-// ✅ URL automatique (Render ou localhost)
 const API_URL =
   import.meta.env.VITE_API_URL || "https://food-jllh.onrender.com";
 
 const PasswordFormPopup = ({ onClose }) => {
+  const { token, logout } = useContext(AuthContext);
+
   const [formData, setFormData] = useState({
     currentPassword: "",
     newPassword: "",
@@ -22,47 +24,42 @@ const PasswordFormPopup = ({ onClose }) => {
     confirm: false,
   });
 
-  // 🔹 Gestion du changement d’input
+  // 🔹 Gestion des champs
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // 🔹 Affichage / masquage des mots de passe
+  // 🔹 Toggle visibilité
   const toggleShowPassword = (field) => {
     setShowPassword((prev) => ({ ...prev, [field]: !prev[field] }));
   };
 
-  // 🔹 Soumission du formulaire
+  // 🔹 Soumission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
     setError("");
     setLoading(true);
 
-    // Vérifie la correspondance entre les deux nouveaux mots de passe
     if (formData.newPassword !== formData.confirmNewPassword) {
-      setError(
-        "Le nouveau mot de passe et sa confirmation ne correspondent pas."
-      );
+      setError("Les deux nouveaux mots de passe ne correspondent pas.");
       setLoading(false);
       return;
     }
 
     try {
-      const token = localStorage.getItem("token");
-
       if (!token) {
         setError("Vous devez être connecté pour changer votre mot de passe.");
         setLoading(false);
         return;
       }
 
-      const response = await fetch(`${API_URL}/api/auth/password`, {
+      const res = await fetch(`${API_URL}/api/auth/password`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // ✅ Important !
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           currentPassword: formData.currentPassword,
@@ -70,28 +67,24 @@ const PasswordFormPopup = ({ onClose }) => {
         }),
       });
 
-      // 🔸 Analyse du résultat
-      const data = await response.json();
+      const data = await res.json();
 
-      if (response.status === 401) {
+      if (res.status === 401) {
+        logout();
         throw new Error("Session expirée. Veuillez vous reconnecter.");
       }
 
-      if (!response.ok) {
-        throw new Error(data.msg || "Erreur serveur lors de la mise à jour.");
-      }
+      if (!res.ok) throw new Error(data.msg || "Erreur serveur.");
 
-      setMessage(data.msg || "Mot de passe mis à jour avec succès !");
-      setError("");
+      setMessage("✅ Mot de passe mis à jour avec succès !");
       setFormData({
         currentPassword: "",
         newPassword: "",
         confirmNewPassword: "",
       });
     } catch (err) {
-      console.error("Erreur lors du changement de mot de passe :", err);
-      setError(err.message || "Erreur lors du changement de mot de passe.");
-      setMessage("");
+      console.error("❌ Erreur changement mot de passe :", err);
+      setError(err.message);
     } finally {
       setLoading(false);
     }
@@ -124,7 +117,6 @@ const PasswordFormPopup = ({ onClose }) => {
                 <IconButton
                   onClick={() => toggleShowPassword("current")}
                   edge="end"
-                  aria-label="toggle password visibility"
                 >
                   {showPassword.current ? <VisibilityOff /> : <Visibility />}
                 </IconButton>
@@ -148,7 +140,6 @@ const PasswordFormPopup = ({ onClose }) => {
                 <IconButton
                   onClick={() => toggleShowPassword("new")}
                   edge="end"
-                  aria-label="toggle password visibility"
                 >
                   {showPassword.new ? <VisibilityOff /> : <Visibility />}
                 </IconButton>
@@ -159,7 +150,7 @@ const PasswordFormPopup = ({ onClose }) => {
           {/* Confirmation */}
           <div className="form-group">
             <label htmlFor="confirmNewPassword">
-              Confirmer le nouveau mot de passe :
+              Confirmer le mot de passe :
             </label>
             <div className="password-input-wrapper">
               <input
@@ -174,7 +165,6 @@ const PasswordFormPopup = ({ onClose }) => {
                 <IconButton
                   onClick={() => toggleShowPassword("confirm")}
                   edge="end"
-                  aria-label="toggle password visibility"
                 >
                   {showPassword.confirm ? <VisibilityOff /> : <Visibility />}
                 </IconButton>
