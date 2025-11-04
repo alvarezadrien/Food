@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from "react";
 import "./Compte.css";
+import DataFormPopup from "./Popup/DataFormPopup";
 
 const Compte = () => {
   const [activeTab, setActiveTab] = useState("infos");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [user, setUser] = useState(null);
   const [message, setMessage] = useState("");
+  const [showEditPopup, setShowEditPopup] = useState(false);
 
   const API_BASE = import.meta.env.VITE_API_URL;
 
   // 🔹 Charger l'utilisateur depuis localStorage
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
+    if (storedUser) setUser(JSON.parse(storedUser));
   }, []);
 
   // 🔹 Déconnexion
@@ -46,7 +46,7 @@ const Compte = () => {
       localStorage.removeItem("user");
       setMessage("✅ Compte supprimé avec succès !");
       setTimeout(() => {
-        window.location.href = "/"; // retour à l'accueil
+        window.location.href = "/";
       }, 1500);
     } catch (err) {
       console.error("❌ Erreur suppression :", err);
@@ -54,6 +54,12 @@ const Compte = () => {
     }
 
     setShowDeleteModal(false);
+  };
+
+  // 🔹 Callback quand les infos sont mises à jour
+  const handleUpdateSuccess = (updatedUser) => {
+    setUser(updatedUser);
+    setMessage("✅ Profil mis à jour !");
   };
 
   if (!user) {
@@ -120,7 +126,7 @@ const Compte = () => {
           </div>
         </div>
 
-        {/* === Colonne droite (contenu dynamique) === */}
+        {/* === Colonne droite === */}
         <div className="compte-right">
           {activeTab === "infos" && (
             <div className="tab-section">
@@ -128,9 +134,13 @@ const Compte = () => {
               <ul>
                 <li>Pseudo : {user.username}</li>
                 <li>Email : {user.email}</li>
-                {user.prenom && <li>Prénom : {user.prenom}</li>}
-                {user.nom && <li>Nom : {user.nom}</li>}
               </ul>
+              <button
+                className="edit-info-btn"
+                onClick={() => setShowEditPopup(true)}
+              >
+                ✏️ Modifier mes informations
+              </button>
             </div>
           )}
 
@@ -162,8 +172,8 @@ const Compte = () => {
           <div className="delete-modal">
             <h3>🗑️ Supprimer mon compte</h3>
             <p>
-              Êtes-vous sûr de vouloir supprimer votre compte ?
-              <strong> Cette action est irréversible.</strong>
+              Êtes-vous sûr de vouloir supprimer votre compte ?{" "}
+              <strong>Cette action est irréversible.</strong>
             </p>
             <div className="delete-modal-buttons">
               <button
@@ -181,6 +191,15 @@ const Compte = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* === Popup modification infos === */}
+      {showEditPopup && (
+        <DataFormPopup
+          user={user}
+          onClose={() => setShowEditPopup(false)}
+          onUpdateSuccess={handleUpdateSuccess}
+        />
       )}
 
       {message && <p className="auth-message">{message}</p>}
