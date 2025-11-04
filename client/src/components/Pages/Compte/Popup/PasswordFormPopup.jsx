@@ -9,7 +9,6 @@ const API_URL =
 
 const PasswordFormPopup = ({ onClose }) => {
   const { token, logout } = useContext(AuthContext);
-
   const [formData, setFormData] = useState({
     currentPassword: "",
     newPassword: "",
@@ -24,18 +23,15 @@ const PasswordFormPopup = ({ onClose }) => {
     confirm: false,
   });
 
-  // 🔹 Gestion des champs
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // 🔹 Toggle visibilité
   const toggleShowPassword = (field) => {
     setShowPassword((prev) => ({ ...prev, [field]: !prev[field] }));
   };
 
-  // 🔹 Soumission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
@@ -49,7 +45,6 @@ const PasswordFormPopup = ({ onClose }) => {
     }
 
     try {
-      // ✅ Envoi direct puisque l’utilisateur est déjà connecté
       const res = await fetch(`${API_URL}/api/auth/password`, {
         method: "PUT",
         headers: {
@@ -65,14 +60,13 @@ const PasswordFormPopup = ({ onClose }) => {
       const data = await res.json();
 
       if (res.status === 401) {
-        logout(); // déconnexion auto si token expiré
+        logout();
         throw new Error("Votre session a expiré. Veuillez vous reconnecter.");
       }
 
       if (!res.ok) throw new Error(data.msg || "Erreur serveur.");
 
       setMessage("✅ Mot de passe mis à jour avec succès !");
-      setError("");
       setFormData({
         currentPassword: "",
         newPassword: "",
@@ -97,7 +91,6 @@ const PasswordFormPopup = ({ onClose }) => {
         </div>
 
         <form onSubmit={handleSubmit} className="popup-form">
-          {/* Mot de passe actuel */}
           <div className="form-group">
             <label htmlFor="currentPassword">Mot de passe actuel :</label>
             <div className="password-input-wrapper">
@@ -120,7 +113,6 @@ const PasswordFormPopup = ({ onClose }) => {
             </div>
           </div>
 
-          {/* Nouveau mot de passe */}
           <div className="form-group">
             <label htmlFor="newPassword">Nouveau mot de passe :</label>
             <div className="password-input-wrapper">
@@ -143,7 +135,6 @@ const PasswordFormPopup = ({ onClose }) => {
             </div>
           </div>
 
-          {/* Confirmation */}
           <div className="form-group">
             <label htmlFor="confirmNewPassword">
               Confirmer le mot de passe :
@@ -168,11 +159,9 @@ const PasswordFormPopup = ({ onClose }) => {
             </div>
           </div>
 
-          {/* Messages */}
           {message && <p className="success-message">{message}</p>}
           {error && <p className="error-message">{error}</p>}
 
-          {/* Bouton */}
           <div className="popup-footer">
             <button type="submit" className="submit-btn" disabled={loading}>
               {loading ? "Mise à jour..." : "Changer le mot de passe"}

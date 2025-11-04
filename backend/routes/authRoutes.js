@@ -3,6 +3,7 @@ const router = express.Router();
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const authMiddleware = require("../middleware/authMiddleware"); // ✅ import du middleware
 
 const createToken = (userId) => {
     return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
@@ -138,43 +139,26 @@ router.put("/profile", async (req, res) => {
 });
 
 // ---------------------------
-// 🔐 PUT /password — Modifier le mot de passe (⚡ connexion requise)
+// 🔐 PUT /password — Modifier le mot de passe (protégé par token)
 // ---------------------------
-router.put("/password", async (req, res) => {
+router.put("/password", authMiddleware, async (req, res) => {
     try {
-        const authHeader = req.headers.authorization;
-        if (!authHeader || !authHeader.startsWith("Bearer ")) {
-            return res.status(401).json({ msg: "Non autorisé : token manquant." });
-        }
-
-        // Vérifie le token JWT
-        const token = authHeader.split(" ")[1];
-        let decoded;
-        try {
-            decoded = jwt.verify(token, process.env.JWT_SECRET);
-        } catch (err) {
-            return res.status(401).json({ msg: "Token invalide ou expiré." });
-        }
-
-        // Récupère le user à partir du token
-        const user = await User.findById(decoded.id).select("+password");
-        if (!user) {
-            return res.status(404).json({ msg: "Utilisateur non trouvé." });
-        }
-
-        // Vérifie les champs du body
         const { currentPassword, newPassword } = req.body;
+
         if (!currentPassword || !newPassword) {
             return res.status(400).json({ msg: "Champs manquants." });
         }
 
-        // Vérifie le mot de passe actuel
+        const user = await User.findById(req.user._id).select("+password");
+        if (!user) {
+            return res.status(404).json({ msg: "Utilisateur non trouvé." });
+        }
+
         const isMatch = await bcrypt.compare(currentPassword, user.password);
         if (!isMatch) {
             return res.status(400).json({ msg: "Mot de passe actuel incorrect." });
         }
 
-        // Met à jour le mot de passe
         user.password = await bcrypt.hash(newPassword, 10);
         await user.save();
 
@@ -182,12 +166,6 @@ router.put("/password", async (req, res) => {
         res.status(200).json({ msg: "Mot de passe mis à jour avec succès ✅" });
     } catch (error) {
         console.error("❌ Erreur changement de mot de passe :", error);
-
-        // Gestion d'erreurs spécifique JWT
-        if (error.name === "JsonWebTokenError" || error.name === "TokenExpiredError") {
-            return res.status(401).json({ msg: "Token invalide ou expiré." });
-        }
-
         res.status(500).json({ msg: "Erreur serveur lors du changement de mot de passe." });
     }
 });
