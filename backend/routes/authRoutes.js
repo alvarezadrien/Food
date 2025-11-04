@@ -1,3 +1,4 @@
+// routes/authRoutes.js
 const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
@@ -159,13 +160,11 @@ router.put("/password", authMiddleware, async (req, res) => {
             return res.status(404).json({ msg: "Utilisateur non trouvé." });
         }
 
-        // Vérifie le mot de passe actuel
         const isMatch = await bcrypt.compare(currentPassword, user.password);
         if (!isMatch) {
             return res.status(400).json({ msg: "Mot de passe actuel incorrect." });
         }
 
-        // ✅ Hachage manuel (évite double hash)
         const hashedPassword = await bcrypt.hash(newPassword, 10);
         await User.updateOne({ _id: req.user._id }, { password: hashedPassword });
 
@@ -225,6 +224,43 @@ router.delete("/:id", async (req, res) => {
     } catch (error) {
         console.error("❌ Erreur suppression utilisateur :", error);
         res.status(500).json({ msg: "Erreur serveur." });
+    }
+});
+
+/* ============================================================
+   ❤️ FAVORIS UTILISATEUR
+============================================================ */
+
+// 🔸 Ajouter ou retirer un favori
+router.put("/favoris/:recetteId", authMiddleware, async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
+        const recetteId = req.params.recetteId;
+
+        if (!user) return res.status(404).json({ msg: "Utilisateur introuvable" });
+
+        const index = user.favoris.indexOf(recetteId);
+        if (index > -1) {
+            user.favoris.splice(index, 1);
+        } else {
+            user.favoris.push(recetteId);
+        }
+
+        await user.save();
+        res.json({ msg: "Favoris mis à jour", favoris: user.favoris });
+    } catch (err) {
+        console.error("❌ Erreur favoris :", err);
+        res.status(500).json({ msg: "Erreur serveur favoris" });
+    }
+});
+
+// 🔸 Récupérer les favoris du user
+router.get("/favoris", authMiddleware, async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id).populate("favoris");
+        res.json(user.favoris);
+    } catch (err) {
+        res.status(500).json({ msg: "Erreur lors du chargement des favoris" });
     }
 });
 
