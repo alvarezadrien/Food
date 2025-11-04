@@ -64,15 +64,11 @@ router.post("/login", async (req, res) => {
         }
 
         const user = await User.findOne({ email }).select("+password");
-        console.log("🔍 Utilisateur trouvé :", user ? user.email : "aucun");
-
         if (!user) {
             return res.status(400).json({ message: "Utilisateur non trouvé." });
         }
 
         const isMatch = await bcrypt.compare(password, user.password || "");
-        console.log("🔒 Résultat comparaison bcrypt:", isMatch);
-
         if (!isMatch) {
             return res.status(400).json({ message: "Mot de passe incorrect." });
         }
@@ -110,11 +106,11 @@ router.get("/:id", async (req, res) => {
 });
 
 // ---------------------------
-// ✏️ PUT /profile — Mettre à jour les infos du profil
+// ✏️ PUT /profile — Mettre à jour le profil (version corrigée)
 // ---------------------------
 router.put("/profile", async (req, res) => {
     try {
-        const { id, username, email } = req.body;
+        const { username, email, id } = req.body;
 
         if (!id) {
             return res.status(400).json({ message: "ID utilisateur manquant." });

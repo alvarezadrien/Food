@@ -4,6 +4,7 @@ import "./DataFormPopup.css";
 const DataFormPopup = ({ onClose, user, onUpdateSuccess }) => {
   const API_BASE = import.meta.env.VITE_API_URL;
   const [formData, setFormData] = useState({
+    id: user.id, // ✅ Envoie l'ID du user connecté
     username: user.username || "",
     email: user.email || "",
   });
@@ -34,7 +35,7 @@ const DataFormPopup = ({ onClose, user, onUpdateSuccess }) => {
 
       if (!res.ok) throw new Error(data.message || "Erreur de mise à jour.");
 
-      // Met à jour le localStorage pour que Compte.jsx affiche la nouvelle info
+      // ✅ Met à jour localStorage + UI
       const updatedUser = { ...user, ...formData };
       localStorage.setItem("user", JSON.stringify(updatedUser));
 
