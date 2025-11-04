@@ -210,3 +210,25 @@
     width: 100%;
   }
 }
+
+/* --- Statut connexion Footer --- */
+.footer-profile-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.footer-status-dot {
+  display: inline-block;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+}
+
+.footer-status-dot.connected {
+  background-color: #4caf50; /* 🟢 vert */
+}
+
+.footer-status-dot.disconnected {
+  background-color: #b0b0b0; /* ⚪ gris */
+}

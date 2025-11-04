@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./Footer.css";
 import { FaHome, FaUtensils, FaUserAlt, FaEnvelope } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -36,6 +36,21 @@ const categories = [
 
 function Footer() {
   const navigate = useNavigate();
+  const [userConnected, setUserConnected] = useState(false);
+  const [username, setUsername] = useState("");
+
+  // 🔹 Vérifie si l'utilisateur est connecté
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      const userData = JSON.parse(storedUser);
+      setUserConnected(true);
+      setUsername(userData.username || "Utilisateur");
+    } else {
+      setUserConnected(false);
+      setUsername("");
+    }
+  }, []);
 
   const handleCategoryClick = (path) => {
     navigate(path);
@@ -93,8 +108,16 @@ function Footer() {
             </li>
             <li>
               <FaUserAlt />{" "}
-              <a href="/profil" className="footer-link">
-                Profil
+              <a
+                href={userConnected ? "/Compte" : "/Connection"}
+                className="footer-link footer-profile-link"
+              >
+                {userConnected ? `Mon compte (${username})` : "Connexion"}
+                <span
+                  className={`footer-status-dot ${
+                    userConnected ? "connected" : "disconnected"
+                  }`}
+                ></span>
               </a>
             </li>
             <li>
