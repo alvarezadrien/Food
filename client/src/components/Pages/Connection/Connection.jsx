@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Connection.css";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { AuthContext } from "../../../../context/AuthContext";
 
 const Connection = () => {
-  const API_BASE = import.meta.env.VITE_API_URL;
+  const { login, signup } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const [registerData, setRegisterData] = useState({
@@ -55,28 +56,21 @@ const Connection = () => {
       : "",
   });
 
-  // 🔹 Gestion du changement
-  const handleRegisterChange = (e) => {
+  // 🔹 Gestion des champs
+  const handleRegisterChange = (e) =>
     setRegisterData({ ...registerData, [e.target.id]: e.target.value });
-  };
-  const handleLoginChange = (e) => {
-    setLoginData({ ...loginData, [e.target.id]: e.target.value });
-  };
-  const handleBlur = (e) => {
-    setTouched({ ...touched, [e.target.id]: true });
-  };
 
-  // 🔹 Inscription
+  const handleLoginChange = (e) =>
+    setLoginData({ ...loginData, [e.target.id]: e.target.value });
+
+  const handleBlur = (e) => setTouched({ ...touched, [e.target.id]: true });
+
+  // 🔹 Soumission inscription
   const handleRegisterSubmit = async (e) => {
     e.preventDefault();
     setSubmittedRegister(true);
     const validationErrors = validateRegister();
     setErrors(validationErrors);
-
-    if (!API_BASE) {
-      setMessage("❌ Erreur de configuration API : VITE_API_URL manquant");
-      return;
-    }
 
     if (
       !validationErrors.username &&
@@ -84,56 +78,36 @@ const Connection = () => {
       !validationErrors.password
     ) {
       try {
-        const res = await fetch(`${API_BASE}/api/auth/register`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(registerData),
-        });
-
-        if (!res.ok)
-          throw new Error(`Erreur API (${res.status}) lors de l'inscription.`);
-
-        const data = await res.json();
+        await signup(
+          registerData.username,
+          registerData.email,
+          registerData.password
+        );
         setMessage("✅ Inscription réussie ! Vous pouvez vous connecter.");
         setRightPanelActive(false);
         setRegisterData({ username: "", email: "", password: "" });
       } catch (err) {
-        console.error("❌ Erreur API :", err);
+        console.error("❌ Erreur inscription :", err);
         setMessage(err.message || "Erreur lors de l'inscription ❌");
       }
     }
   };
 
-  // 🔹 Connexion
+  // 🔹 Soumission connexion
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setSubmittedLogin(true);
     const validationErrors = validateLogin();
     setErrors(validationErrors);
 
-    if (!API_BASE) {
-      setMessage("❌ Erreur de configuration API : VITE_API_URL manquant");
-      return;
-    }
-
     if (!validationErrors.email && !validationErrors.password) {
       try {
-        const res = await fetch(`${API_BASE}/api/auth/login`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(loginData),
-        });
-
-        const data = await res.json();
-        if (!res.ok)
-          throw new Error(data.message || "Email ou mot de passe invalide.");
-
-        localStorage.setItem("user", JSON.stringify(data));
-        setMessage(`✅ Bienvenue ${data.username || "utilisateur"} !`);
+        await login(loginData.email, loginData.password);
+        setMessage("✅ Connexion réussie !");
         setTimeout(() => navigate("/Compte"), 1200);
       } catch (err) {
-        console.error("❌ Erreur API :", err);
-        setMessage(err.message || "Erreur de connexion ❌");
+        console.error("❌ Erreur connexion :", err);
+        setMessage(err.message || "Erreur lors de la connexion ❌");
       }
     }
   };

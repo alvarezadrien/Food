@@ -3,29 +3,31 @@ const router = express.Router();
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-const authMiddleware = require("../middleware/authMiddleware"); // ✅ import du middleware
+const authMiddleware = require("../middleware/authMiddleware");
 
-const createToken = (userId) => {
-    return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
+// 🧠 Fonction utilitaire : création du token JWT
+const createToken = (userId) =>
+    jwt.sign({ id: userId }, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRES_IN || "7d",
     });
-};
 
-// ---------------------------
-// 🟢 INSCRIPTION
-// ---------------------------
+/* ============================================================
+   🟢 INSCRIPTION
+============================================================ */
 router.post("/register", async (req, res) => {
     try {
         const { username, email, password } = req.body;
         console.log("🟢 Requête inscription reçue :", req.body);
 
         if (!username || !email || !password) {
-            return res.status(400).json({ message: "Tous les champs sont obligatoires." });
+            return res
+                .status(400)
+                .json({ msg: "Tous les champs sont obligatoires." });
         }
 
         const userExists = await User.findOne({ email });
         if (userExists) {
-            return res.status(400).json({ message: "Cet email est déjà utilisé." });
+            return res.status(400).json({ msg: "Cet email est déjà utilisé." });
         }
 
         const newUser = new User({ username, email, password });
@@ -34,7 +36,7 @@ router.post("/register", async (req, res) => {
         console.log("✅ Nouvel utilisateur créé :", newUser.email);
 
         res.status(201).json({
-            message: "Inscription réussie ! Vous pouvez vous connecter.",
+            msg: "Inscription réussie ! Vous pouvez vous connecter.",
             user: {
                 id: newUser._id,
                 username: newUser.username,
@@ -43,30 +45,30 @@ router.post("/register", async (req, res) => {
         });
     } catch (error) {
         console.error("❌ Erreur inscription :", error);
-        res.status(500).json({ message: "Erreur serveur lors de l'inscription." });
+        res.status(500).json({ msg: "Erreur serveur lors de l'inscription." });
     }
 });
 
-// ---------------------------
-// 🟠 CONNEXION
-// ---------------------------
+/* ============================================================
+   🟠 CONNEXION
+============================================================ */
 router.post("/login", async (req, res) => {
     try {
         const { email, password } = req.body;
         console.log("🟠 Requête de connexion reçue :", req.body);
 
         if (!email || !password) {
-            return res.status(400).json({ message: "Email et mot de passe requis." });
+            return res.status(400).json({ msg: "Email et mot de passe requis." });
         }
 
         const user = await User.findOne({ email }).select("+password");
         if (!user) {
-            return res.status(400).json({ message: "Utilisateur non trouvé." });
+            return res.status(400).json({ msg: "Utilisateur non trouvé." });
         }
 
         const isMatch = await bcrypt.compare(password, user.password || "");
         if (!isMatch) {
-            return res.status(400).json({ message: "Mot de passe incorrect." });
+            return res.status(400).json({ msg: "Mot de passe incorrect." });
         }
 
         const token = createToken(user._id);
@@ -74,7 +76,7 @@ router.post("/login", async (req, res) => {
         console.log("✅ Connexion réussie pour :", user.email);
 
         res.status(200).json({
-            message: "Connexion réussie !",
+            msg: "Connexion réussie !",
             token,
             id: user._id,
             username: user.username,
@@ -82,39 +84,39 @@ router.post("/login", async (req, res) => {
         });
     } catch (error) {
         console.error("❌ Erreur connexion :", error);
-        res.status(500).json({ message: "Erreur serveur lors de la connexion." });
+        res.status(500).json({ msg: "Erreur serveur lors de la connexion." });
     }
 });
 
-// ---------------------------
-// 🔹 GET /:id — Récupérer un utilisateur
-// ---------------------------
+/* ============================================================
+   🔹 GET /:id — Récupérer un utilisateur
+============================================================ */
 router.get("/:id", async (req, res) => {
     try {
         const user = await User.findById(req.params.id).select("-password");
         if (!user)
-            return res.status(404).json({ message: "Utilisateur introuvable." });
+            return res.status(404).json({ msg: "Utilisateur introuvable." });
         res.status(200).json(user);
     } catch (error) {
         console.error("❌ Erreur GET utilisateur :", error);
-        res.status(500).json({ message: "Erreur serveur." });
+        res.status(500).json({ msg: "Erreur serveur." });
     }
 });
 
-// ---------------------------
-// ✏️ PUT /profile — Mettre à jour le profil
-// ---------------------------
+/* ============================================================
+   ✏️ PUT /profile — Mettre à jour le profil
+============================================================ */
 router.put("/profile", async (req, res) => {
     try {
         const { username, email, id } = req.body;
 
         if (!id) {
-            return res.status(400).json({ message: "ID utilisateur manquant." });
+            return res.status(400).json({ msg: "ID utilisateur manquant." });
         }
 
         const user = await User.findById(id);
         if (!user) {
-            return res.status(404).json({ message: "Utilisateur non trouvé." });
+            return res.status(404).json({ msg: "Utilisateur non trouvé." });
         }
 
         if (username) user.username = username;
@@ -125,7 +127,7 @@ router.put("/profile", async (req, res) => {
         console.log(`✅ Profil mis à jour pour : ${user.email}`);
 
         res.status(200).json({
-            message: "Profil mis à jour avec succès !",
+            msg: "Profil mis à jour avec succès !",
             user: {
                 id: user._id,
                 username: user.username,
@@ -134,13 +136,15 @@ router.put("/profile", async (req, res) => {
         });
     } catch (error) {
         console.error("❌ Erreur mise à jour profil :", error);
-        res.status(500).json({ message: "Erreur serveur lors de la mise à jour du profil." });
+        res
+            .status(500)
+            .json({ msg: "Erreur serveur lors de la mise à jour du profil." });
     }
 });
 
-// ---------------------------
-// 🔐 PUT /password — Modifier le mot de passe (protégé par token)
-// ---------------------------
+/* ============================================================
+   🔐 PUT /password — Modifier le mot de passe (protégé)
+============================================================ */
 router.put("/password", authMiddleware, async (req, res) => {
     try {
         const { currentPassword, newPassword } = req.body;
@@ -150,9 +154,6 @@ router.put("/password", authMiddleware, async (req, res) => {
         }
 
         const user = await User.findById(req.user._id).select("+password");
-        if (!user) {
-            return res.status(404).json({ msg: "Utilisateur non trouvé." });
-        }
 
         const isMatch = await bcrypt.compare(currentPassword, user.password);
         if (!isMatch) {
@@ -166,13 +167,15 @@ router.put("/password", authMiddleware, async (req, res) => {
         res.status(200).json({ msg: "Mot de passe mis à jour avec succès ✅" });
     } catch (error) {
         console.error("❌ Erreur changement de mot de passe :", error);
-        res.status(500).json({ msg: "Erreur serveur lors du changement de mot de passe." });
+        res
+            .status(500)
+            .json({ msg: "Erreur serveur lors du changement de mot de passe." });
     }
 });
 
-// ---------------------------
-// 🔸 PUT /:id — Mettre à jour un utilisateur complet
-// ---------------------------
+/* ============================================================
+   🔸 PUT /:id — Mettre à jour un utilisateur complet
+============================================================ */
 router.put("/:id", async (req, res) => {
     try {
         const { username, email, password } = req.body;
@@ -190,31 +193,31 @@ router.put("/:id", async (req, res) => {
         ).select("-password");
 
         if (!updatedUser)
-            return res.status(404).json({ message: "Utilisateur introuvable." });
+            return res.status(404).json({ msg: "Utilisateur introuvable." });
 
         res.status(200).json({
-            message: "Profil mis à jour avec succès.",
+            msg: "Profil mis à jour avec succès.",
             user: updatedUser,
         });
     } catch (error) {
         console.error("❌ Erreur mise à jour utilisateur :", error);
-        res.status(500).json({ message: "Erreur serveur." });
+        res.status(500).json({ msg: "Erreur serveur." });
     }
 });
 
-// ---------------------------
-// 🔴 DELETE /:id — Supprimer un utilisateur
-// ---------------------------
+/* ============================================================
+   🔴 DELETE /:id — Supprimer un utilisateur
+============================================================ */
 router.delete("/:id", async (req, res) => {
     try {
         const deletedUser = await User.findByIdAndDelete(req.params.id);
         if (!deletedUser)
-            return res.status(404).json({ message: "Utilisateur introuvable." });
+            return res.status(404).json({ msg: "Utilisateur introuvable." });
 
-        res.status(200).json({ message: "Utilisateur supprimé avec succès." });
+        res.status(200).json({ msg: "Utilisateur supprimé avec succès." });
     } catch (error) {
         console.error("❌ Erreur suppression utilisateur :", error);
-        res.status(500).json({ message: "Erreur serveur." });
+        res.status(500).json({ msg: "Erreur serveur." });
     }
 });
 
