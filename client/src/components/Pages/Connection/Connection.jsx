@@ -58,12 +58,12 @@ const Connection = () => {
 
   // 🔹 Gestion des champs
   const handleRegisterChange = (e) =>
-    setRegisterData({ ...registerData, [e.target.id]: e.target.value });
+    setRegisterData({ ...registerData, [e.target.name]: e.target.value });
 
   const handleLoginChange = (e) =>
-    setLoginData({ ...loginData, [e.target.id]: e.target.value });
+    setLoginData({ ...loginData, [e.target.name]: e.target.value });
 
-  const handleBlur = (e) => setTouched({ ...touched, [e.target.id]: true });
+  const handleBlur = (e) => setTouched({ ...touched, [e.target.name]: true });
 
   // 🔹 Soumission inscription
   const handleRegisterSubmit = async (e) => {
@@ -133,35 +133,41 @@ const Connection = () => {
 
             <input
               type="text"
-              id="username"
+              name="username"
+              id="registerUsername"
               className="auth-input"
               placeholder="Nom d'utilisateur"
               value={registerData.username}
               onChange={handleRegisterChange}
               onBlur={handleBlur}
+              autoComplete="username"
             />
             <small className="auth-error">{showError("username")}</small>
 
             <input
               type="email"
-              id="email"
+              name="email"
+              id="registerEmail"
               className="auth-input"
               placeholder="Adresse e-mail"
               value={registerData.email}
               onChange={handleRegisterChange}
               onBlur={handleBlur}
+              autoComplete="email"
             />
             <small className="auth-error">{showError("email")}</small>
 
             <div className="password-container">
               <input
                 type={showRegisterPassword ? "text" : "password"}
-                id="password"
+                name="password"
+                id="registerPassword"
                 className="auth-input"
                 placeholder="Mot de passe"
                 value={registerData.password}
                 onChange={handleRegisterChange}
                 onBlur={handleBlur}
+                autoComplete="new-password"
               />
               <span
                 className="password-toggle"
@@ -185,24 +191,28 @@ const Connection = () => {
 
             <input
               type="email"
-              id="email"
+              name="email"
+              id="loginEmail"
               className="auth-input"
               placeholder="Adresse e-mail"
               value={loginData.email}
               onChange={handleLoginChange}
               onBlur={handleBlur}
+              autoComplete="email"
             />
             <small className="auth-error">{showError("email")}</small>
 
             <div className="password-container">
               <input
                 type={showLoginPassword ? "text" : "password"}
-                id="password"
+                name="password"
+                id="loginPassword"
                 className="auth-input"
                 placeholder="Mot de passe"
                 value={loginData.password}
                 onChange={handleLoginChange}
                 onBlur={handleBlur}
+                autoComplete="current-password"
               />
               <span
                 className="password-toggle"
