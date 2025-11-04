@@ -8,6 +8,7 @@ import {
   FaStar,
   FaCheckCircle,
   FaDownload,
+  FaHeart,
 } from "react-icons/fa";
 import { useParams, useNavigate } from "react-router-dom";
 import jsPDF from "jspdf";
@@ -23,8 +24,11 @@ function FicheRecettes() {
   const [error, setError] = useState("");
   const [personnes, setPersonnes] = useState(1);
   const [checked, setChecked] = useState([]);
+  const [favoris, setFavoris] = useState([]);
+  const [message, setMessage] = useState("");
 
   const apiBase = import.meta.env.VITE_API_URL;
+  const isAuthenticated = !!localStorage.getItem("token");
 
   useEffect(() => {
     const fetchRecette = async () => {
@@ -33,7 +37,6 @@ function FicheRecettes() {
         if (!res.ok) throw new Error("Erreur lors du chargement de la recette");
         const data = await res.json();
 
-        // ✅ Transforme les ingrédients simples en objets si nécessaire
         const ingredientsFormates = data.ingredients.map((ing) => {
           if (typeof ing === "string") {
             const regex = /^(\d+\.?\d*)?\s*([a-zA-Zéèêàùµ]*)?\s*(.*)$/;
@@ -58,12 +61,14 @@ function FicheRecettes() {
     };
 
     fetchRecette();
+
+    const savedFavoris = JSON.parse(localStorage.getItem("favoris")) || [];
+    setFavoris(savedFavoris);
   }, [id, apiBase]);
 
   const increment = () => setPersonnes((prev) => prev + 1);
   const decrement = () => setPersonnes((prev) => (prev > 1 ? prev - 1 : 1));
 
-  // ✅ Calcule la quantité ajustée en fonction du nombre de personnes
   const ajusterQuantite = (quantite) => {
     if (!quantite || !recette?.portions) return quantite || "";
     const ratio = personnes / recette.portions;
@@ -79,6 +84,35 @@ function FicheRecettes() {
     );
   };
 
+  // ❤️ Ajout / retrait favoris
+  const toggleFavori = () => {
+    if (!recette) return;
+    if (!isAuthenticated) {
+      setMessage("🔒 Connectez-vous pour aimer !");
+      setTimeout(() => setMessage(""), 1500);
+      return;
+    }
+
+    setFavoris((prev) => {
+      const exist = prev.some(
+        (r) => r._id === recette._id || r.id === recette.id
+      );
+      const updated = exist
+        ? prev.filter((r) => r._id !== recette._id && r.id !== recette.id)
+        : [...prev, recette];
+
+      localStorage.setItem("favoris", JSON.stringify(updated));
+      setMessage(exist ? "💔 Retiré des favoris" : "❤️ Ajouté aux favoris");
+      setTimeout(() => setMessage(""), 1500);
+      return updated;
+    });
+  };
+
+  const isLiked = favoris.some(
+    (r) => r._id === recette?._id || r.id === recette?.id
+  );
+
+  // 📥 Téléchargement PDF
   const telechargerPDF = async () => {
     const element = recetteRef.current;
     const clone = element.cloneNode(true);
@@ -134,7 +168,6 @@ function FicheRecettes() {
   if (error) return <p>{error}</p>;
   if (!recette) return null;
 
-  // ✅ Gestion correcte des images venant du backend
   const imageSrc = recette.image?.startsWith("http")
     ? recette.image
     : `${apiBase}/assets/ImagesDb/${recette.image || "default.png"}`;
@@ -153,8 +186,21 @@ function FicheRecettes() {
             (e.target.src = `${apiBase}/assets/ImagesDb/default.png`)
           }
         />
+
         <div className="ficheRecette-info">
-          <h1>{recette.nom}</h1>
+          <div className="ficheRecette-top">
+            <h1>{recette.nom}</h1>
+
+            {/* ❤️ Bouton favoris */}
+            <button className="favori-btn" onClick={toggleFavori}>
+              <FaHeart
+                size={24}
+                color={isLiked ? "#e63946" : "#ccc"}
+                title="Ajouter aux favoris"
+              />
+            </button>
+          </div>
+
           <p className="ficheRecette-description">{recette.description}</p>
 
           <div className="ficheRecette-stats">
@@ -187,6 +233,8 @@ function FicheRecettes() {
           <button className="btn-download" onClick={telechargerPDF}>
             <FaDownload /> Télécharger la fiche PDF
           </button>
+
+          {message && <p className="favori-message">{message}</p>}
         </div>
       </div>
 

@@ -305,3 +305,61 @@
     font-size: 1.3rem;
   }
 }
+
+/* === Favoris === */
+.favoris-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.favori-card {
+  background-color: #fffaf0;
+  border: 1px solid #e7dba8;
+  border-radius: 1rem;
+  padding: 1rem;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.favori-card:hover {
+  background-color: #f4eaca;
+  transform: translateY(-3px);
+}
+
+.favori-img {
+  width: 100%;
+  height: 130px;
+  object-fit: cover;
+  border-radius: 0.8rem;
+  margin-bottom: 0.8rem;
+}
+
+.favori-nom {
+  font-weight: bold;
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+}
+
+.remove-favori-btn {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 0.6rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.remove-favori-btn:hover {
+  background-color: #b52b39;
+  transform: translateY(-2px);
+}
+
+.no-favoris {
+  color: #555;
+  font-size: 1.1rem;
+  margin-top: 2rem;
+}

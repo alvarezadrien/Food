@@ -10,13 +10,16 @@ const Compte = () => {
   const [showPasswordPopup, setShowPasswordPopup] = useState(false);
   const [user, setUser] = useState(null);
   const [message, setMessage] = useState("");
+  const [favoris, setFavoris] = useState([]);
 
   const API_BASE = import.meta.env.VITE_API_URL;
 
-  // 🔹 Charger l'utilisateur depuis le localStorage
+  // 🔹 Charger l'utilisateur et les favoris depuis le localStorage
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
+    const storedFavoris = JSON.parse(localStorage.getItem("favoris")) || [];
     if (storedUser) setUser(JSON.parse(storedUser));
+    setFavoris(storedFavoris);
   }, []);
 
   // 🔹 Déconnexion
@@ -47,6 +50,7 @@ const Compte = () => {
       if (!res.ok) throw new Error("Erreur lors de la suppression du compte.");
 
       localStorage.removeItem("user");
+      localStorage.removeItem("favoris");
       setMessage("✅ Compte supprimé avec succès !");
       setTimeout(() => {
         window.location.href = "/";
@@ -57,6 +61,15 @@ const Compte = () => {
     }
 
     setShowDeleteModal(false);
+  };
+
+  // 🔹 Retirer un favori
+  const removeFavori = (id) => {
+    const updated = favoris.filter((fav) => fav._id !== id && fav.id !== id);
+    setFavoris(updated);
+    localStorage.setItem("favoris", JSON.stringify(updated));
+    setMessage("💔 Recette retirée des favoris.");
+    setTimeout(() => setMessage(""), 1500);
   };
 
   // 🔹 Callback quand les infos sont mises à jour
@@ -86,7 +99,7 @@ const Compte = () => {
 
           <div className="intro-texte">
             Bienvenue sur votre espace personnel, {user.username}. Gérez vos
-            informations et vos paramètres ici.
+            informations, vos paramètres et vos favoris ici.
           </div>
 
           {/* --- Onglets verticaux --- */}
@@ -99,6 +112,7 @@ const Compte = () => {
             >
               🧾 Mes informations
             </button>
+
             <button
               className={`tab-left-btn ${
                 activeTab === "securite" ? "active" : ""
@@ -107,6 +121,16 @@ const Compte = () => {
             >
               🔐 Sécurité
             </button>
+
+            <button
+              className={`tab-left-btn ${
+                activeTab === "favoris" ? "active" : ""
+              }`}
+              onClick={() => setActiveTab("favoris")}
+            >
+              ❤️ Mes favoris
+            </button>
+
             <button
               className={`tab-left-btn ${activeTab === "avis" ? "active" : ""}`}
               onClick={() => setActiveTab("avis")}
@@ -131,6 +155,7 @@ const Compte = () => {
 
         {/* === Colonne droite === */}
         <div className="compte-right">
+          {/* 🔹 Onglet Informations */}
           {activeTab === "infos" && (
             <div className="tab-section">
               <h2>Mes informations personnelles</h2>
@@ -147,6 +172,7 @@ const Compte = () => {
             </div>
           )}
 
+          {/* 🔹 Onglet Sécurité */}
           {activeTab === "securite" && (
             <div className="tab-section">
               <h2>Paramètres de sécurité</h2>
@@ -160,9 +186,50 @@ const Compte = () => {
             </div>
           )}
 
+          {/* 🔹 Onglet Favoris */}
+          {activeTab === "favoris" && (
+            <div className="tab-section">
+              <h2>❤️ Mes recettes favorites</h2>
+              {favoris.length > 0 ? (
+                <div className="favoris-grid">
+                  {favoris.map((recette) => (
+                    <div
+                      className="favori-card"
+                      key={recette._id || recette.id}
+                    >
+                      <img
+                        src={
+                          recette.image?.startsWith("http")
+                            ? recette.image
+                            : `${API_BASE}/assets/ImagesDb/${
+                                recette.image || "default.png"
+                              }`
+                        }
+                        alt={recette.nom}
+                        className="favori-img"
+                      />
+                      <p className="favori-nom">{recette.nom}</p>
+                      <button
+                        className="remove-favori-btn"
+                        onClick={() => removeFavori(recette._id || recette.id)}
+                      >
+                        💔 Retirer
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="no-favoris">
+                  Vous n’avez pas encore ajouté de recettes en favoris.
+                </p>
+              )}
+            </div>
+          )}
+
+          {/* 🔹 Onglet Avis */}
           {activeTab === "avis" && (
             <div className="tab-section">
-              <h2>Vos avis laissés</h2>
+              <h2>💬 Vos avis laissés</h2>
               <p>
                 Vous avez laissé 2 avis sur nos produits. Merci pour votre
                 retour 💚

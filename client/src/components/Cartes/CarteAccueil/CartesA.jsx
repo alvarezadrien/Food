@@ -4,8 +4,8 @@ import "./CartesA.css";
 
 function CartesAccueil() {
   const [recettes, setRecettes] = useState([]);
-  const [favoris, setFavoris] = useState([]); // IDs des recettes aimées
-  const [messages, setMessages] = useState({}); // Messages individuels par carte
+  const [favoris, setFavoris] = useState([]);
+  const [messages, setMessages] = useState({});
   const navigate = useNavigate();
 
   const apiBase = import.meta.env.VITE_API_URL;
@@ -19,8 +19,7 @@ function CartesAccueil() {
 
         const data = await res.json();
         const recettesMelangees = data.recettes.sort(() => 0.5 - Math.random());
-        const quatreRecettes = recettesMelangees.slice(0, 4);
-        setRecettes(quatreRecettes);
+        setRecettes(recettesMelangees.slice(0, 4));
       } catch (err) {
         console.error("❌ Erreur API :", err);
         afficherMessage("global", "Impossible de charger les recettes ❌");
@@ -29,29 +28,35 @@ function CartesAccueil() {
 
     fetchRecettes();
 
-    const interval = setInterval(fetchRecettes, 21600000); // 6h
-    return () => clearInterval(interval);
+    const savedFavoris = JSON.parse(localStorage.getItem("favoris")) || [];
+    setFavoris(savedFavoris);
   }, [apiBase]);
 
-  // ❤️ Gestion des favoris avec message individuel
-  const toggleFavori = (id) => {
+  const toggleFavori = (recette) => {
+    const id = recette._id || recette.id;
+
     if (!isAuthenticated) {
       afficherMessage(id, "🔒 Connectez-vous pour aimer !");
       return;
     }
 
     setFavoris((prev) => {
-      if (prev.includes(id)) {
-        afficherMessage(id, "💔 Retiré des favoris");
-        return prev.filter((f) => f !== id);
-      } else {
-        afficherMessage(id, "❤️ Ajouté aux favoris");
-        return [...prev, id];
-      }
+      const updatedFavoris = prev.some((r) => r._id === id || r.id === id)
+        ? prev.filter((r) => r._id !== id && r.id !== id)
+        : [...prev, recette];
+
+      localStorage.setItem("favoris", JSON.stringify(updatedFavoris));
+      afficherMessage(
+        id,
+        prev.some((r) => r._id === id || r.id === id)
+          ? "💔 Retiré des favoris"
+          : "❤️ Ajouté aux favoris"
+      );
+
+      return updatedFavoris;
     });
   };
 
-  // 📤 Partage de recette
   const partagerRecette = async (recette) => {
     const id = recette._id || recette.id;
     const url = `${window.location.origin}/Fiches_Recettes/${encodeURIComponent(
@@ -76,7 +81,6 @@ function CartesAccueil() {
     }
   };
 
-  // 🧠 Fonction utilitaire pour gérer les messages temporaires par carte
   const afficherMessage = (id, texte) => {
     setMessages((prev) => ({ ...prev, [id]: texte }));
     setTimeout(() => {
@@ -88,7 +92,6 @@ function CartesAccueil() {
     }, 1500);
   };
 
-  // 🔗 Redirection vers la fiche recette
   const voirRecette = (id) => {
     navigate(`/Fiches_Recettes/${id}`);
   };
@@ -98,7 +101,9 @@ function CartesAccueil() {
       {recettes.length > 0 ? (
         recettes.map((recette) => {
           const recetteId = recette._id || recette.id;
-          const isLiked = favoris.includes(recetteId);
+          const isLiked = favoris.some(
+            (r) => r._id === recetteId || r.id === recetteId
+          );
 
           const imageSrc = recette.image?.startsWith("http")
             ? recette.image
@@ -123,12 +128,11 @@ function CartesAccueil() {
                 <h3>{recette.nom}</h3>
 
                 <div className="icons-actions">
-                  {/* ❤️ Bouton favoris */}
                   <button
                     className="icon-btn"
                     onClick={(e) => {
                       e.stopPropagation();
-                      toggleFavori(recetteId);
+                      toggleFavori(recette);
                     }}
                     title="Ajouter aux favoris"
                   >
@@ -170,7 +174,6 @@ function CartesAccueil() {
                     )}
                   </button>
 
-                  {/* 📤 Bouton partage */}
                   <button
                     className="icon-btn"
                     onClick={(e) => {
@@ -211,7 +214,6 @@ function CartesAccueil() {
                 Voir la recette
               </button>
 
-              {/* ✅ Message individuel sur chaque carte */}
               {messages[recetteId] && (
                 <span className="copied-msg">{messages[recetteId]}</span>
               )}

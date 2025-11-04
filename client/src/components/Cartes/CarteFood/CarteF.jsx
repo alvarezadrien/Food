@@ -15,17 +15,11 @@ function CarteFood({ categorie, searchQuery }) {
   const isAuthenticated = !!localStorage.getItem("token");
 
   useEffect(() => {
+    const apiBase = import.meta.env.VITE_API_URL;
+
     const fetchRecettes = async () => {
-      const apiBase = import.meta.env.VITE_API_URL;
-
-      if (!apiBase) {
-        console.error("❌ Variable VITE_API_URL non définie dans .env");
-        return;
-      }
-
       try {
         let url = "";
-
         if (searchQuery) {
           url = `${apiBase}/api/recettes/search?q=${encodeURIComponent(
             searchQuery
@@ -43,8 +37,7 @@ function CarteFood({ categorie, searchQuery }) {
           throw new Error(`Erreur API (${res.status}) lors du chargement.`);
 
         const data = await res.json();
-        const recettesData = data.recettes || data.results || [];
-        setRecettes(recettesData);
+        setRecettes(data.recettes || data.results || []);
         setTotalPages(data.totalPages || 1);
       } catch (err) {
         console.error("❌ Erreur API :", err);
@@ -52,23 +45,37 @@ function CarteFood({ categorie, searchQuery }) {
     };
 
     fetchRecettes();
+
+    // Charger les favoris depuis le localStorage
+    const savedFavoris = JSON.parse(localStorage.getItem("favoris")) || [];
+    setFavoris(savedFavoris);
   }, [currentPage, categorie, searchQuery]);
 
-  // ❤️ Ajout / retrait favoris — avec message local par carte
-  const toggleFavori = (id) => {
+  // ❤️ Ajouter / retirer un favori + sauvegarder localement
+  const toggleFavori = (recette) => {
+    const id = recette._id || recette.id;
+
     if (!isAuthenticated) {
       afficherMessage(id, "🔒 Connectez-vous pour aimer !");
       return;
     }
 
     setFavoris((prevFavoris) => {
-      if (prevFavoris.includes(id)) {
-        afficherMessage(id, "💔 Retiré des favoris");
-        return prevFavoris.filter((favId) => favId !== id);
-      } else {
-        afficherMessage(id, "❤️ Ajouté aux favoris");
-        return [...prevFavoris, id];
-      }
+      const updatedFavoris = prevFavoris.some(
+        (r) => r._id === id || r.id === id
+      )
+        ? prevFavoris.filter((r) => r._id !== id && r.id !== id)
+        : [...prevFavoris, recette];
+
+      localStorage.setItem("favoris", JSON.stringify(updatedFavoris));
+      afficherMessage(
+        id,
+        prevFavoris.some((r) => r._id === id || r.id === id)
+          ? "💔 Retiré des favoris"
+          : "❤️ Ajouté aux favoris"
+      );
+
+      return updatedFavoris;
     });
   };
 
@@ -97,7 +104,7 @@ function CarteFood({ categorie, searchQuery }) {
     }
   };
 
-  // 🧠 Fonction utilitaire : affiche un message temporaire sur la carte donnée
+  // 🧠 Message individuel temporaire
   const afficherMessage = (id, texte) => {
     setMessages((prev) => ({ ...prev, [id]: texte }));
     setTimeout(() => {
@@ -123,7 +130,9 @@ function CarteFood({ categorie, searchQuery }) {
         {recettes.length > 0 ? (
           recettes.map((recette) => {
             const recetteId = recette._id || recette.id;
-            const isLiked = favoris.includes(recetteId);
+            const isLiked = favoris.some(
+              (r) => r._id === recetteId || r.id === recetteId
+            );
 
             return (
               <div
@@ -157,7 +166,7 @@ function CarteFood({ categorie, searchQuery }) {
                       className="carteAccueil-iconBtn"
                       onClick={(e) => {
                         e.stopPropagation();
-                        toggleFavori(recetteId);
+                        toggleFavori(recette);
                       }}
                       title="Aimer cette recette"
                     >
@@ -171,12 +180,12 @@ function CarteFood({ categorie, searchQuery }) {
                         >
                           <path
                             d="M12 21.35l-1.45-1.32C5.4 15.36 
-                            2 12.28 2 8.5 2 5.42 4.42 3 
-                            7.5 3c1.74 0 3.41.81 4.5 
-                            2.09C13.09 3.81 14.76 3 
-                            16.5 3 19.58 3 22 5.42 
-                            22 8.5c0 3.78-3.4 6.86-8.55 
-                            11.54L12 21.35z"
+                          2 12.28 2 8.5 2 5.42 4.42 3 
+                          7.5 3c1.74 0 3.41.81 4.5 
+                          2.09C13.09 3.81 14.76 3 
+                          16.5 3 19.58 3 22 5.42 
+                          22 8.5c0 3.78-3.4 6.86-8.55 
+                          11.54L12 21.35z"
                           />
                         </svg>
                       ) : (
@@ -191,15 +200,15 @@ function CarteFood({ categorie, searchQuery }) {
                         >
                           <path
                             d="M12.1 8.64l-.1.1-.11-.1C10.14 
-                            6.6 7.1 6.6 5.14 8.64a4.86 
-                            4.86 0 000 6.9L12 22l6.86-6.46a4.86 
-                            4.86 0 000-6.9c-1.96-2.04-5-2.04-6.76 0z"
+                          6.6 7.1 6.6 5.14 8.64a4.86 
+                          4.86 0 000 6.9L12 22l6.86-6.46a4.86 
+                          4.86 0 000-6.9c-1.96-2.04-5-2.04-6.76 0z"
                           />
                         </svg>
                       )}
                     </button>
 
-                    {/* 🔗 Bouton partage */}
+                    {/* 🔗 Partage */}
                     <button
                       className="carteAccueil-iconBtn"
                       onClick={(e) => {
@@ -243,7 +252,6 @@ function CarteFood({ categorie, searchQuery }) {
                   Voir la recette
                 </button>
 
-                {/* ✅ Message propre à chaque carte */}
                 {messages[recetteId] && (
                   <span className="carteAccueil-message">
                     {messages[recetteId]}
