@@ -28,21 +28,24 @@ const userSchema = new mongoose.Schema(
             required: [true, "Le mot de passe est requis"],
             minlength: [8, "Le mot de passe doit contenir au moins 8 caractères"],
             maxlength: [128, "Le mot de passe est trop long"],
-            select: false, // ne jamais renvoyer le password par défaut
+            select: false, // ne jamais renvoyer le mot de passe par défaut
         },
     },
     { timestamps: true }
 );
 
-// 🔹 Hash du mot de passe avant enregistrement (une seule fois)
+// 🔹 Hash du mot de passe avant enregistrement
 userSchema.pre("save", async function (next) {
+    // Si le mot de passe n’a pas été modifié, on passe à la suite
     if (!this.isModified("password")) return next();
+
     try {
         const salt = await bcrypt.genSalt(10);
         this.password = await bcrypt.hash(this.password, salt);
-        next();
+        return next();
     } catch (err) {
-        next(err);
+        console.error("❌ Erreur lors du hash du mot de passe :", err);
+        return next(err);
     }
 });
 

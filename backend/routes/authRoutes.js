@@ -159,15 +159,15 @@ router.put("/password", authMiddleware, async (req, res) => {
             return res.status(404).json({ msg: "Utilisateur non trouvé." });
         }
 
+        // Vérifie le mot de passe actuel
         const isMatch = await bcrypt.compare(currentPassword, user.password);
         if (!isMatch) {
             return res.status(400).json({ msg: "Mot de passe actuel incorrect." });
         }
 
-        // ✅ Hachage manuel (plus sûr sur Render)
+        // ✅ Hachage manuel (évite double hash)
         const hashedPassword = await bcrypt.hash(newPassword, 10);
-        user.password = hashedPassword;
-        await user.save();
+        await User.updateOne({ _id: req.user._id }, { password: hashedPassword });
 
         console.log(`🔑 Mot de passe mis à jour pour : ${user.email}`);
         res.status(200).json({ msg: "Mot de passe mis à jour avec succès ✅" });
