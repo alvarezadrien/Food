@@ -12,7 +12,7 @@ const createToken = (userId) => {
 };
 
 // ---------------------------
-// 🟢 Route d'inscription
+// 🟢 INSCRIPTION
 // ---------------------------
 router.post("/register", async (req, res) => {
     try {
@@ -50,7 +50,7 @@ router.post("/register", async (req, res) => {
 });
 
 // ---------------------------
-// 🟠 Route de connexion
+// 🟠 CONNEXION
 // ---------------------------
 router.post("/login", async (req, res) => {
     try {
@@ -70,9 +70,7 @@ router.post("/login", async (req, res) => {
             return res.status(400).json({ message: "Utilisateur non trouvé." });
         }
 
-        console.log("🧩 Vérification du mot de passe...");
         const isMatch = await bcrypt.compare(password, user.password || "");
-
         console.log("🔒 Résultat comparaison bcrypt:", isMatch);
 
         if (!isMatch) {
@@ -112,7 +110,46 @@ router.get("/:id", async (req, res) => {
 });
 
 // ---------------------------
-// 🔸 PUT /:id — Mettre à jour un utilisateur
+// ✏️ PUT /profile — Mettre à jour les infos du profil
+// ---------------------------
+router.put("/profile", async (req, res) => {
+    try {
+        const { id, username, email } = req.body;
+
+        if (!id) {
+            return res.status(400).json({ message: "ID utilisateur manquant." });
+        }
+
+        const user = await User.findById(id);
+        if (!user) {
+            return res.status(404).json({ message: "Utilisateur non trouvé." });
+        }
+
+        if (username) user.username = username;
+        if (email) user.email = email;
+
+        await user.save();
+
+        console.log(`✅ Profil mis à jour pour : ${user.email}`);
+
+        res.status(200).json({
+            message: "Profil mis à jour avec succès !",
+            user: {
+                id: user._id,
+                username: user.username,
+                email: user.email,
+            },
+        });
+    } catch (error) {
+        console.error("❌ Erreur mise à jour profil :", error);
+        res
+            .status(500)
+            .json({ message: "Erreur serveur lors de la mise à jour du profil." });
+    }
+});
+
+// ---------------------------
+// 🔸 PUT /:id — Mettre à jour un utilisateur complet
 // ---------------------------
 router.put("/:id", async (req, res) => {
     try {
