@@ -1,9 +1,9 @@
+// routes/authRoutes.js
 const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-const authMiddleware = require("../middleware/authMiddleware"); // ✅ Middleware de sécurité
 
 const createToken = (userId) => {
     return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
@@ -45,7 +45,9 @@ router.post("/register", async (req, res) => {
         });
     } catch (error) {
         console.error("❌ Erreur inscription :", error);
-        res.status(500).json({ message: "Erreur serveur lors de l'inscription." });
+        res
+            .status(500)
+            .json({ message: "Erreur serveur lors de l'inscription." });
     }
 });
 
@@ -74,6 +76,7 @@ router.post("/login", async (req, res) => {
         }
 
         const token = createToken(user._id);
+
         console.log("✅ Connexion réussie pour :", user.email);
 
         res.status(200).json({
@@ -105,14 +108,17 @@ router.get("/:id", async (req, res) => {
 });
 
 // ---------------------------
-// ✏️ PUT /profile — Mettre à jour le profil (🔒 sécurisé)
+// ✏️ PUT /profile — Mettre à jour le profil
 // ---------------------------
-router.put("/profile", authMiddleware, async (req, res) => {
+router.put("/profile", async (req, res) => {
     try {
-        const { username, email } = req.body;
-        const userId = req.user.id; // récupéré depuis le token
+        const { username, email, id } = req.body;
 
-        const user = await User.findById(userId);
+        if (!id) {
+            return res.status(400).json({ message: "ID utilisateur manquant." });
+        }
+
+        const user = await User.findById(id);
         if (!user) {
             return res.status(404).json({ message: "Utilisateur non trouvé." });
         }
@@ -141,17 +147,29 @@ router.put("/profile", authMiddleware, async (req, res) => {
 });
 
 // ---------------------------
-// 🔐 PUT /password — Modifier le mot de passe (🔒 sécurisé)
+// 🔐 PUT /password — Modifier le mot de passe
 // ---------------------------
-router.put("/password", authMiddleware, async (req, res) => {
+router.put("/password", async (req, res) => {
     try {
-        const { currentPassword, newPassword } = req.body;
+        const authHeader = req.headers.authorization;
+        if (!authHeader || !authHeader.startsWith("Bearer ")) {
+            return res.status(401).json({ msg: "Non autorisé : token manquant." });
+        }
 
+        const token = authHeader.split(" ")[1];
+        let decoded;
+        try {
+            decoded = jwt.verify(token, process.env.JWT_SECRET);
+        } catch (err) {
+            return res.status(401).json({ msg: "Token invalide ou expiré." });
+        }
+
+        const { currentPassword, newPassword } = req.body;
         if (!currentPassword || !newPassword) {
             return res.status(400).json({ msg: "Champs manquants." });
         }
 
-        const user = await User.findById(req.user.id).select("+password");
+        const user = await User.findById(decoded.id).select("+password");
         if (!user) {
             return res.status(404).json({ msg: "Utilisateur non trouvé." });
         }
@@ -175,14 +193,42 @@ router.put("/password", authMiddleware, async (req, res) => {
 });
 
 // ---------------------------
-// 🔴 DELETE /:id — Supprimer un utilisateur (🔒 sécurisé)
+// 🔸 PUT /:id — Mettre à jour un utilisateur complet
 // ---------------------------
-router.delete("/:id", authMiddleware, async (req, res) => {
+router.put("/:id", async (req, res) => {
     try {
-        if (req.user.id !== req.params.id) {
-            return res.status(403).json({ message: "Action non autorisée." });
-        }
+        const { username, email, password } = req.body;
+        const updatedFields = {};
 
+        if (username) updatedFields.username = username;
+        if (email) updatedFields.email = email;
+        if (password)
+            updatedFields.password = await bcrypt.hash(password, 10);
+
+        const updatedUser = await User.findByIdAndUpdate(
+            req.params.id,
+            updatedFields,
+            { new: true }
+        ).select("-password");
+
+        if (!updatedUser)
+            return res.status(404).json({ message: "Utilisateur introuvable." });
+
+        res.status(200).json({
+            message: "Profil mis à jour avec succès.",
+            user: updatedUser,
+        });
+    } catch (error) {
+        console.error("❌ Erreur mise à jour utilisateur :", error);
+        res.status(500).json({ message: "Erreur serveur." });
+    }
+});
+
+// ---------------------------
+// 🔴 DELETE /:id — Supprimer un utilisateur
+// ---------------------------
+router.delete("/:id", async (req, res) => {
+    try {
         const deletedUser = await User.findByIdAndDelete(req.params.id);
         if (!deletedUser)
             return res.status(404).json({ message: "Utilisateur introuvable." });
