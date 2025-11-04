@@ -1,9 +1,9 @@
-// routes/authRoutes.js
 const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const authMiddleware = require("../middleware/authMiddleware"); // ✅ Middleware de sécurité
 
 const createToken = (userId) => {
     return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
@@ -74,7 +74,6 @@ router.post("/login", async (req, res) => {
         }
 
         const token = createToken(user._id);
-
         console.log("✅ Connexion réussie pour :", user.email);
 
         res.status(200).json({
@@ -106,17 +105,14 @@ router.get("/:id", async (req, res) => {
 });
 
 // ---------------------------
-// ✏️ PUT /profile — Mettre à jour le profil
+// ✏️ PUT /profile — Mettre à jour le profil (🔒 sécurisé)
 // ---------------------------
-router.put("/profile", async (req, res) => {
+router.put("/profile", authMiddleware, async (req, res) => {
     try {
-        const { username, email, id } = req.body;
+        const { username, email } = req.body;
+        const userId = req.user.id; // récupéré depuis le token
 
-        if (!id) {
-            return res.status(400).json({ message: "ID utilisateur manquant." });
-        }
-
-        const user = await User.findById(id);
+        const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ message: "Utilisateur non trouvé." });
         }
@@ -145,80 +141,48 @@ router.put("/profile", async (req, res) => {
 });
 
 // ---------------------------
-// 🔐 PUT /password — Modifier le mot de passe
+// 🔐 PUT /password — Modifier le mot de passe (🔒 sécurisé)
 // ---------------------------
-router.put("/password", async (req, res) => {
+router.put("/password", authMiddleware, async (req, res) => {
     try {
-        const authHeader = req.headers.authorization;
-        if (!authHeader || !authHeader.startsWith("Bearer ")) {
-            return res.status(401).json({ msg: "Non autorisé. Token manquant." });
+        const { currentPassword, newPassword } = req.body;
+
+        if (!currentPassword || !newPassword) {
+            return res.status(400).json({ msg: "Champs manquants." });
         }
 
-        const token = authHeader.split(" ")[1];
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-        const user = await User.findById(decoded.id).select("+password");
+        const user = await User.findById(req.user.id).select("+password");
         if (!user) {
             return res.status(404).json({ msg: "Utilisateur non trouvé." });
         }
 
-        const { currentPassword, newPassword } = req.body;
         const isMatch = await bcrypt.compare(currentPassword, user.password);
-
         if (!isMatch) {
             return res.status(400).json({ msg: "Mot de passe actuel incorrect." });
         }
 
-        const hashedNewPassword = await bcrypt.hash(newPassword, 10);
-        user.password = hashedNewPassword;
+        user.password = await bcrypt.hash(newPassword, 10);
         await user.save();
 
         console.log(`🔑 Mot de passe mis à jour pour : ${user.email}`);
-
-        res.status(200).json({ msg: "Mot de passe mis à jour avec succès !" });
+        res.status(200).json({ msg: "Mot de passe mis à jour avec succès ✅" });
     } catch (error) {
         console.error("❌ Erreur changement de mot de passe :", error);
-        res.status(500).json({ msg: "Erreur serveur lors du changement de mot de passe." });
+        res
+            .status(500)
+            .json({ msg: "Erreur serveur lors du changement de mot de passe." });
     }
 });
 
 // ---------------------------
-// 🔸 PUT /:id — Mettre à jour un utilisateur complet
+// 🔴 DELETE /:id — Supprimer un utilisateur (🔒 sécurisé)
 // ---------------------------
-router.put("/:id", async (req, res) => {
+router.delete("/:id", authMiddleware, async (req, res) => {
     try {
-        const { username, email, password } = req.body;
-        const updatedFields = {};
+        if (req.user.id !== req.params.id) {
+            return res.status(403).json({ message: "Action non autorisée." });
+        }
 
-        if (username) updatedFields.username = username;
-        if (email) updatedFields.email = email;
-        if (password)
-            updatedFields.password = await bcrypt.hash(password, 10);
-
-        const updatedUser = await User.findByIdAndUpdate(
-            req.params.id,
-            updatedFields,
-            { new: true }
-        ).select("-password");
-
-        if (!updatedUser)
-            return res.status(404).json({ message: "Utilisateur introuvable." });
-
-        res.status(200).json({
-            message: "Profil mis à jour avec succès.",
-            user: updatedUser,
-        });
-    } catch (error) {
-        console.error("❌ Erreur mise à jour utilisateur :", error);
-        res.status(500).json({ message: "Erreur serveur." });
-    }
-});
-
-// ---------------------------
-// 🔴 DELETE /:id — Supprimer un utilisateur
-// ---------------------------
-router.delete("/:id", async (req, res) => {
-    try {
         const deletedUser = await User.findByIdAndDelete(req.params.id);
         if (!deletedUser)
             return res.status(404).json({ message: "Utilisateur introuvable." });
