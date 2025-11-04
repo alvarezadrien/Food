@@ -49,12 +49,7 @@ const PasswordFormPopup = ({ onClose }) => {
     }
 
     try {
-      if (!token) {
-        setError("Vous devez être connecté pour changer votre mot de passe.");
-        setLoading(false);
-        return;
-      }
-
+      // ✅ Envoi direct puisque l’utilisateur est déjà connecté
       const res = await fetch(`${API_URL}/api/auth/password`, {
         method: "PUT",
         headers: {
@@ -70,13 +65,14 @@ const PasswordFormPopup = ({ onClose }) => {
       const data = await res.json();
 
       if (res.status === 401) {
-        logout();
-        throw new Error("Session expirée. Veuillez vous reconnecter.");
+        logout(); // déconnexion auto si token expiré
+        throw new Error("Votre session a expiré. Veuillez vous reconnecter.");
       }
 
       if (!res.ok) throw new Error(data.msg || "Erreur serveur.");
 
       setMessage("✅ Mot de passe mis à jour avec succès !");
+      setError("");
       setFormData({
         currentPassword: "",
         newPassword: "",
