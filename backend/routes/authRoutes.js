@@ -5,7 +5,9 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const authMiddleware = require("../middleware/authMiddleware");
 
-// 🧠 Fonction utilitaire : création du token JWT
+/* ============================================================
+   🧠 Fonction utilitaire : création du token JWT
+============================================================ */
 const createToken = (userId) =>
     jwt.sign({ id: userId }, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRES_IN || "7d",
@@ -20,9 +22,7 @@ router.post("/register", async (req, res) => {
         console.log("🟢 Requête inscription reçue :", req.body);
 
         if (!username || !email || !password) {
-            return res
-                .status(400)
-                .json({ msg: "Tous les champs sont obligatoires." });
+            return res.status(400).json({ msg: "Tous les champs sont obligatoires." });
         }
 
         const userExists = await User.findOne({ email });
@@ -94,8 +94,9 @@ router.post("/login", async (req, res) => {
 router.get("/:id", async (req, res) => {
     try {
         const user = await User.findById(req.params.id).select("-password");
-        if (!user)
+        if (!user) {
             return res.status(404).json({ msg: "Utilisateur introuvable." });
+        }
         res.status(200).json(user);
     } catch (error) {
         console.error("❌ Erreur GET utilisateur :", error);
@@ -154,13 +155,18 @@ router.put("/password", authMiddleware, async (req, res) => {
         }
 
         const user = await User.findById(req.user._id).select("+password");
+        if (!user) {
+            return res.status(404).json({ msg: "Utilisateur non trouvé." });
+        }
 
+        // Vérifie que l'ancien mot de passe est correct
         const isMatch = await bcrypt.compare(currentPassword, user.password);
         if (!isMatch) {
             return res.status(400).json({ msg: "Mot de passe actuel incorrect." });
         }
 
-        user.password = await bcrypt.hash(newPassword, 10);
+        // ✅ On ne re-hash pas ici : le pre-save du modèle s’en charge automatiquement
+        user.password = newPassword;
         await user.save();
 
         console.log(`🔑 Mot de passe mis à jour pour : ${user.email}`);
@@ -183,17 +189,17 @@ router.put("/:id", async (req, res) => {
 
         if (username) updatedFields.username = username;
         if (email) updatedFields.email = email;
-        if (password)
-            updatedFields.password = await bcrypt.hash(password, 10);
+        if (password) updatedFields.password = password;
 
         const updatedUser = await User.findByIdAndUpdate(
             req.params.id,
             updatedFields,
-            { new: true }
+            { new: true, runValidators: true }
         ).select("-password");
 
-        if (!updatedUser)
+        if (!updatedUser) {
             return res.status(404).json({ msg: "Utilisateur introuvable." });
+        }
 
         res.status(200).json({
             msg: "Profil mis à jour avec succès.",
@@ -211,8 +217,9 @@ router.put("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
     try {
         const deletedUser = await User.findByIdAndDelete(req.params.id);
-        if (!deletedUser)
+        if (!deletedUser) {
             return res.status(404).json({ msg: "Utilisateur introuvable." });
+        }
 
         res.status(200).json({ msg: "Utilisateur supprimé avec succès." });
     } catch (error) {
