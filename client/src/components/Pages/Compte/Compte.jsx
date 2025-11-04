@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./Compte.css";
 import DataFormPopup from "./Popup/DataFormPopup";
 import PasswordFormPopup from "./Popup/PasswordFormPopup";
+import { useNavigate } from "react-router-dom";
 
 const Compte = () => {
   const [activeTab, setActiveTab] = useState("infos");
@@ -13,6 +14,7 @@ const Compte = () => {
   const [favoris, setFavoris] = useState([]);
 
   const API_BASE = import.meta.env.VITE_API_URL;
+  const navigate = useNavigate();
 
   // 🔹 Charger l'utilisateur et les favoris depuis le localStorage
   useEffect(() => {
@@ -196,6 +198,11 @@ const Compte = () => {
                     <div
                       className="favori-card"
                       key={recette._id || recette.id}
+                      onClick={() =>
+                        navigate(
+                          `/Fiches_Recettes/${recette._id || recette.id}`
+                        )
+                      }
                     >
                       <img
                         src={
@@ -211,7 +218,10 @@ const Compte = () => {
                       <p className="favori-nom">{recette.nom}</p>
                       <button
                         className="remove-favori-btn"
-                        onClick={() => removeFavori(recette._id || recette.id)}
+                        onClick={(e) => {
+                          e.stopPropagation(); // évite d’ouvrir la fiche en même temps
+                          removeFavori(recette._id || recette.id);
+                        }}
                       >
                         💔 Retirer
                       </button>
